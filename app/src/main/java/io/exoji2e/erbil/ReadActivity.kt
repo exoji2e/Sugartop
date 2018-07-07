@@ -6,6 +6,7 @@ import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Resources
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.NfcV
@@ -15,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import java.io.IOException
 import java.util.*
+import kotlinx.android.synthetic.main.activity_read.ResultTextView
 
 
 class ReadActivity : AppCompatActivity() {
@@ -25,6 +27,7 @@ class ReadActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_read)
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
@@ -69,8 +72,18 @@ class ReadActivity : AppCompatActivity() {
 
     private fun showReadingLayout() {
         //TODO: save data, display nicely
-
-        Toast.makeText(this, "" + Util.last(raw_data), Toast.LENGTH_LONG).show()
+        val sb = StringBuilder(1200)
+        for (i in 0..359) {
+            sb.append(i).append(" ").append(RawParser.byte2uns(raw_data[i])).append("\n")
+        }
+        Log.d(TAG, sb.toString())
+        val bloodsugr : Int = RawParser.last(raw_data)
+        Log.d(TAG, "Bloodsugar= " + bloodsugr.toString())
+        try {
+            ResultTextView.text = String.format("%.2f ( %d )", RawParser.sensor2mmol(bloodsugr), bloodsugr)
+        } catch(e: Exception) {
+            Log.e(TAG, e.toString())
+        }//Toast.makeText(this, "" + RawParser.last(raw_data), Toast.LENGTH_LONG).show()
     }
 
     private inner class NfcVReaderTask : AsyncTask<Tag, Void, Tag>() {
