@@ -14,9 +14,13 @@ import android.os.AsyncTask
 import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_read.*
 import java.io.IOException
 import java.util.*
-import kotlinx.android.synthetic.main.activity_read.ResultTextView
+import com.jjoe64.graphview.series.LineGraphSeries
+import com.jjoe64.graphview.series.DataPoint
+
+
 
 
 class ReadActivity : AppCompatActivity() {
@@ -79,11 +83,13 @@ class ReadActivity : AppCompatActivity() {
         Log.d(TAG, sb.toString())
         val bloodsugr : Int = RawParser.last(raw_data)
         Log.d(TAG, "Bloodsugar= " + bloodsugr.toString())
-        try {
-            ResultTextView.text = String.format("%.2f ( %d )", RawParser.sensor2mmol(bloodsugr), bloodsugr)
-        } catch(e: Exception) {
-            Log.e(TAG, e.toString())
-        }//Toast.makeText(this, "" + RawParser.last(raw_data), Toast.LENGTH_LONG).show()
+        ResultTextView.text = String.format("%.2f ( %d )", RawParser.sensor2mmol(bloodsugr), bloodsugr)
+        val history = RawParser.history(raw_data)
+        val out = Array(32, init={i -> DataPoint(i.toDouble(), RawParser.sensor2mmol(RawParser.bin2int(history[i][1], history[i][0])))})
+        val series = LineGraphSeries<DataPoint>(out);
+        GraphBelowRes.viewport.setXAxisBoundsManual(true)
+        GraphBelowRes.viewport.setMaxX(32.0)
+        GraphBelowRes.addSeries(series)
     }
 
     private inner class NfcVReaderTask : AsyncTask<Tag, Void, Tag>() {
