@@ -1,8 +1,8 @@
 # 'Erbil' == reverse('librE')
 
-Free Style Libre is a wearable sensor that measures the glucose level through the blood plasma.
+Freestyle Libre is a wearable sensor that measures the glucose level through the blood plasma.
 
-As a diabetic one currently has two options; always carry with you an extra device with dimentions of a really onld mobile phone, or use your mobile phone, but accept some really shitty user agreements where you don't own your data.
+As a diabetic one currently has two options; 1: always carry with you an extra device with dimentions of a really old mobile phone. 2: use your mobile phone, but accept some really shitty user agreements where you don't own your data.
 
 Well, I chose another path. Reverse Enginnering. (Ok hold on, I just started)
 
