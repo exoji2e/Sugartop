@@ -15,30 +15,33 @@ class RawParser {
         // each sample contains 6 bytes. History consists of 32 samples in a cyclical buffer
         // spanning the last 8 hours (4 samples per hour). index 27 of data tells us where in the
         // buffer, the next value will be written. The buffer starts at index 124.
-        fun history(data: ByteArray): Array<ByteArray> {
+        fun history(data: ByteArray): List<SensorData> {
             val (iH, startH) = Pair(data[27], 124)
             val flat_history = data.sliceArray(IntRange(startH + iH*6, startH + 32*6 - 1)).
                     plus(data.sliceArray(IntRange(startH, startH + iH*6 - 1)))
-            return deflatten(flat_history)
+            return deflatten(flat_history).map({d -> SensorData(d)})
         }
 
         // Similar to history, but only stores 16 values, from the last 16 minutes.
-        fun recent(data: ByteArray): Array<ByteArray> {
+        fun recent(data: ByteArray): List<SensorData> {
             val (iR, startR) = Pair(data[26], 28)
             val flat_recent = data.sliceArray(IntRange(startR + iR*6, startR + 16*6 - 1)).
                     plus(data.sliceArray(IntRange(startR, startR + iR*6 - 1)))
-            return deflatten(flat_recent)
+            return deflatten(flat_recent).map({d -> SensorData(d)})
         }
 
         fun last(data: ByteArray) : Int {
             val recent = recent(data)
-            return bin2int(recent[15][1], recent[15][0])
+            return recent[15].value
         }
         fun guess(data: ByteArray) : Int {
             val recent = recent(data)
-            val now = bin2int(recent[15][1], recent[15][0])
-            val prev = bin2int(recent[10][1], recent[10][0])
+            val now = recent[15].value
+            val prev = recent[10].value
             return now*2 - prev
+        }
+        fun timestamp(data: ByteArray) : Int {
+            return bin2int(data[317], data[316])
         }
     }
 }

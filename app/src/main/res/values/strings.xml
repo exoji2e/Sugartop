@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Erbil</string>
+    <string name="guess">Guess:</string>
+    <string name="recent">Recent:</string>
+    <string name="history">History:</string>
+    <string name="timestamp">Timestamp:</string>
 </resources>

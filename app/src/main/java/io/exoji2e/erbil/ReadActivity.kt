@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.app.Activity
 import android.app.PendingIntent
+import android.app.PendingIntent.getActivity
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Resources
@@ -14,13 +15,13 @@ import android.os.AsyncTask
 import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter
 import kotlinx.android.synthetic.main.activity_read.*
 import java.io.IOException
 import java.util.*
 import com.jjoe64.graphview.series.LineGraphSeries
 import com.jjoe64.graphview.series.DataPoint
-
-
+import java.text.DateFormat
 
 
 class ReadActivity : AppCompatActivity() {
@@ -81,16 +82,29 @@ class ReadActivity : AppCompatActivity() {
             sb.append(i).append(" ").append(RawParser.byte2uns(raw_data[i])).append("\n")
         }
         Log.d(TAG, sb.toString())
-        val bloodsugr : Int = RawParser.guess(raw_data)
-        Log.d(TAG, "Bloodsugar= " + bloodsugr.toString())
-        ResultTextView.text = String.format("%.2f (%d, %d)", RawParser.sensor2mmol(bloodsugr), bloodsugr, RawParser.last(raw_data))
+        val predict = RawParser.guess(raw_data)
+        timestamp.text = String.format("%s %d", getResources().
+                getString(R.string.timestamp), RawParser.timestamp(raw_data))
+        history.text = String.format("%s %d", getResources().
+                getString(R.string.history), RawParser.history(raw_data)[31].value)
+        recent.text = String.format("%s %d", getResources().
+                getString(R.string.recent), RawParser.last(raw_data))
+        guess.text = String.format("%s %d %.2f", getResources().
+                getString(R.string.guess), predict, RawParser.sensor2mmol(predict))
         val history = RawParser.history(raw_data)
-        val out = Array(32, init={i -> DataPoint(i.toDouble(), RawParser.sensor2mmol(RawParser.bin2int(history[i][1], history[i][0])))})
-        val series = LineGraphSeries<DataPoint>(out);
-        GraphBelowRes.viewport.setXAxisBoundsManual(true)
-        GraphBelowRes.viewport.setMaxX(32.0)
-        GraphBelowRes.getViewport()
+        val now = System.currentTimeMillis()
+        val start = now - 60000*15*31
+        val out = Array(32, init={i -> DataPoint(Date(start+i*60000*15), history[i].tommol())})
+        val series = LineGraphSeries<DataPoint>(out)
         GraphBelowRes.addSeries(series)
+
+        GraphBelowRes.getGridLabelRenderer().setLabelFormatter(HourFormatter())
+
+        GraphBelowRes.viewport.setXAxisBoundsManual(true)
+        GraphBelowRes.viewport.setMinX(Date(start).time.toDouble());
+        GraphBelowRes.viewport.setMaxX(Date(now).time.toDouble());
+        GraphBelowRes.gridLabelRenderer.numHorizontalLabels = 6
+        GraphBelowRes.gridLabelRenderer.verticalAxisTitle = "mmol/L"
     }
 
     private inner class NfcVReaderTask : AsyncTask<Tag, Void, Tag>() {
