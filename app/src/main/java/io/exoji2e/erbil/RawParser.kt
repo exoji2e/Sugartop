@@ -6,7 +6,7 @@ class RawParser {
 
         fun byte2uns(a: Byte) : Int = (a.toInt() + 256)%256
 
-        fun sensor2mmol(v: Int) : Double = v/200.0
+        fun sensor2mmol(v: Int) : Double = v*0.0062492 - 1.89978
 
         private fun deflatten(bytes : ByteArray) : Array<ByteArray> {
             return Array(bytes.size/6, init = {i -> bytes.sliceArray(IntRange(i*6, (i+1)*6 - 1))})
@@ -33,6 +33,12 @@ class RawParser {
         fun last(data: ByteArray) : Int {
             val recent = recent(data)
             return bin2int(recent[15][1], recent[15][0])
+        }
+        fun guess(data: ByteArray) : Int {
+            val recent = recent(data)
+            val now = bin2int(recent[15][1], recent[15][0])
+            val prev = bin2int(recent[10][1], recent[10][0])
+            return now*2 - prev
         }
     }
 }

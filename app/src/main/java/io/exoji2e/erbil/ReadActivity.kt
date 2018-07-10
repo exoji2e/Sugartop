@@ -81,14 +81,15 @@ class ReadActivity : AppCompatActivity() {
             sb.append(i).append(" ").append(RawParser.byte2uns(raw_data[i])).append("\n")
         }
         Log.d(TAG, sb.toString())
-        val bloodsugr : Int = RawParser.last(raw_data)
+        val bloodsugr : Int = RawParser.guess(raw_data)
         Log.d(TAG, "Bloodsugar= " + bloodsugr.toString())
-        ResultTextView.text = String.format("%.2f ( %d )", RawParser.sensor2mmol(bloodsugr), bloodsugr)
+        ResultTextView.text = String.format("%.2f (%d, %d)", RawParser.sensor2mmol(bloodsugr), bloodsugr, RawParser.last(raw_data))
         val history = RawParser.history(raw_data)
         val out = Array(32, init={i -> DataPoint(i.toDouble(), RawParser.sensor2mmol(RawParser.bin2int(history[i][1], history[i][0])))})
         val series = LineGraphSeries<DataPoint>(out);
         GraphBelowRes.viewport.setXAxisBoundsManual(true)
         GraphBelowRes.viewport.setMaxX(32.0)
+        GraphBelowRes.getViewport()
         GraphBelowRes.addSeries(series)
     }
 
