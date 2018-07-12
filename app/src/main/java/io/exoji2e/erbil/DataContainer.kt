@@ -1,38 +1,73 @@
 package io.exoji2e.erbil
 
+import android.provider.ContactsContract
 import java.util.*
 
-class DataContainer() {
-    val history = mutableListOf<Reading>()
-    var trend: List<Reading>? = null
+class DataContainer {
+    private val history = mutableListOf<Reading>()
+    //var trend: List<Reading>? = null
     val MINUTE = 60*1000L
-    val noH = 32L
-    fun append(raw_data: ByteArray, time: Long) : Boolean {
-        val start = time - MINUTE*15*noH
+    val noH = 32
+    fun append(raw_data: ByteArray, readingTime: Long) : Boolean {
+        val timestamp = RawParser.timestamp(raw_data)
+        // Timestamp is 2 mod 15 every time a new reading to history is done.
+        val minutesSinceLast = (timestamp + 12)%15
+        val start = readingTime - MINUTE*(15*(noH - 1) + minutesSinceLast)
         val sensor_history = RawParser.history(raw_data)
-        if(history.size == 0) {
-            val v = sensor_history.mapIndexed({i: Int, sensorData: SensorData -> Reading(start + i*15*MINUTE, sensorData)})
-            return push(v)
-        }
-        val last = history[history.size - 1]
-        var match = -1
-        for (i in 0..sensor_history.size -1) {
-            if(last.eq(sensor_history[i])){
-                match = i
-                break
+        val lastStored = last()
+        if(lastStored != null) {
+            var match = -1
+            for (i in 0..sensor_history.size - 1) {
+                if (lastStored.eq(sensor_history[i])) {
+                    match = i
+                }
+            }
+            if (match > -1) {
+                val v = sensor_history.slice(IntRange(match + 1, sensor_history.size - 1))
+                        .mapIndexed({ i: Int, sensorData: SensorData -> Reading(
+                                lastStored.utcTimeStamp + (i + 1) * 15 * MINUTE, sensorData) })
+                if (v.isNotEmpty())
+                    return push(v)
+                else
+                    return true
             }
         }
-        if(match == -1) {
-            val v = sensor_history.mapIndexed({i: Int, sensorData: SensorData -> Reading(start + i*15*MINUTE, sensorData)})
-            return push(v)
-        } else {
-            val v = sensor_history.slice(IntRange(match + 1, sensor_history.size)).
-                    mapIndexed({i: Int, sensorData: SensorData -> Reading(last.utcTimeStamp + (i+1)*15*MINUTE, sensorData)})
-            return push(v)
+        val v = sensor_history.mapIndexed(
+                {i: Int, sensorData: SensorData -> Reading(start + i*15*MINUTE, sensorData)})
+        return push(v)
+    }
+    fun getAll() : List<Reading> {
+        synchronized(DataContainer::class) {
+            return history.toList()
         }
     }
-    // Save to DB first
-    fun push(new_history : List<Reading>) : Boolean {
-        return history.addAll(new_history)
+    fun get8h() : List<Reading> {
+        synchronized(DataContainer::class) {
+            val sz = history.size
+            return history.slice(IntRange(sz - noH, sz - 1)).toList()
+        }
     }
+    //TODO:Save to DB as well
+    fun last() : Reading? {
+        synchronized(DataContainer::class) {
+            if(history.isNotEmpty()) return history.last()
+            else return null
+        }
+    }
+    fun size() : Int {
+        synchronized(DataContainer::class) {
+            return history.size
+        }
+    }
+    fun push(new_history : List<Reading>) : Boolean {
+        synchronized(DataContainer::class) {
+            return history.addAll(new_history)
+        }
+    }
+    companion object {
+        //TODO: Load from DB
+        private var INSTANCE : DataContainer = DataContainer()
+        fun getInstance() : DataContainer = INSTANCE
+    }
+
 }
