@@ -8,7 +8,6 @@ import java.util.*
 
 data class SensorData(val value : Int, val statusCode : Byte, val b3 : Byte, val b4 : Byte, val b5 : Byte) {
     constructor(b : ByteArray) : this(RawParser.bin2int(b[1], b[0]), b[2], b[3], b[4], b[5])
-    fun tommol() : Double = RawParser.sensor2mmol(value)
 }
 
 @Entity(tableName = "glucoseData")

@@ -112,9 +112,7 @@ class DataContainer {
             Log.d(TAG, "Inserted into db!")
         }
         mWorker.postTask(task)
-
         return ret
-
     }
     companion object {
         //TODO: Load from DB

@@ -4,10 +4,8 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.app.Activity
 import android.app.PendingIntent
-import android.app.PendingIntent.getActivity
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.res.Resources
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.NfcV
@@ -15,13 +13,11 @@ import android.os.AsyncTask
 import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
-import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter
 import kotlinx.android.synthetic.main.activity_read.*
 import java.io.IOException
 import java.util.*
 import com.jjoe64.graphview.series.LineGraphSeries
 import com.jjoe64.graphview.series.DataPoint
-import java.text.DateFormat
 
 
 class ReadActivity : AppCompatActivity() {
@@ -78,12 +74,11 @@ class ReadActivity : AppCompatActivity() {
     }
 
     private fun showReadingLayout() {
-        //TODO: save data, display nicely
         val sb = StringBuilder(1200)
         for (i in 0..359) {
             sb.append(i).append(" ").append(RawParser.byte2uns(raw_data[i])).append("\n")
         }
-        Log.d(TAG, sb.toString())
+        Log.i(TAG, sb.toString())
         val now = System.currentTimeMillis()
         dc!!.append(raw_data, now)
         val predict = RawParser.guess(raw_data)
@@ -98,6 +93,7 @@ class ReadActivity : AppCompatActivity() {
         //val history = RawParser.history(raw_data)
         //val start = now - 60000*15*31
         val history = dc!!.get8h()
+        //TODO: Move to new activity. Change/Fix Graph lib.
         val out = history.map({v -> v.toDataPoint()}).toTypedArray()
         val series = LineGraphSeries<DataPoint>(out)
         GraphBelowRes.addSeries(series)
@@ -131,6 +127,9 @@ class ReadActivity : AppCompatActivity() {
             try {
                 nfcvTag.connect()
                 val uid = tag.id
+                val sb = StringBuilder()
+                for (i in 0..7) sb.append(RawParser.byte2uns(uid[i])).append(" ")
+                Log.d(TAG, "TAGid: %s".format(sb.toString()))
                 // Get bytes [i*8:(i+1)*8] from sensor memory and stores in data
                 for (i in 0..40) {
                     val cmd = byteArrayOf(0x60, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, i.toByte(), 0)
@@ -167,23 +166,6 @@ class ReadActivity : AppCompatActivity() {
 
             return tag
         }
-    }
-
-    private fun bytesToHexString(src: ByteArray?): String {
-        val builder = StringBuilder("")
-        if (src == null || src.size <= 0) {
-            return ""
-        }
-
-        val buffer = CharArray(2)
-        for (b in src) {
-            val bi = (b + 256)% 256
-            buffer[0] = Character.forDigit(bi.ushr(4) and 0x0F, 16)
-            buffer[1] = Character.forDigit((bi and 0x0F), 16)
-            builder.append(buffer)
-        }
-
-        return builder.toString()
     }
 
     companion object {
