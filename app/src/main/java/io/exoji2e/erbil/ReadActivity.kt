@@ -28,12 +28,13 @@ class ReadActivity : AppCompatActivity() {
     private var nfcAdapter: NfcAdapter? = null
     private val readingTextView: TextView? = null
     private var raw_data = ByteArray(0)
-    private val dc = DataContainer.getInstance()
+    private var dc : DataContainer? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_read)
+        dc = DataContainer.getInstance(this)
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
@@ -84,19 +85,19 @@ class ReadActivity : AppCompatActivity() {
         }
         Log.d(TAG, sb.toString())
         val now = System.currentTimeMillis()
-        dc.append(raw_data, now)
+        dc!!.append(raw_data, now)
         val predict = RawParser.guess(raw_data)
         timestamp.text = String.format("%s %d", getResources().
                 getString(R.string.timestamp), RawParser.timestamp(raw_data))
         history.text = String.format("%s %d size: %d", getResources().
-                getString(R.string.history), RawParser.history(raw_data)[31].value, dc.size())
+                getString(R.string.history), RawParser.history(raw_data)[31].value, dc!!.size())
         recent.text = String.format("%s %d", getResources().
                 getString(R.string.recent), RawParser.last(raw_data))
         guess.text = String.format("%s %d %.2f", getResources().
                 getString(R.string.guess), predict, RawParser.sensor2mmol(predict))
         //val history = RawParser.history(raw_data)
         //val start = now - 60000*15*31
-        val history = dc.get8h()
+        val history = dc!!.get8h()
         val out = history.map({v -> v.toDataPoint()}).toTypedArray()
         val series = LineGraphSeries<DataPoint>(out)
         GraphBelowRes.addSeries(series)
