@@ -4,4 +4,6 @@
     <string name="recent">Recent:</string>
     <string name="history">History:</string>
     <string name="timestamp">Timestamp:</string>
+    <string name="readingstatus">Reading...</string>
+    <string name="title_activity_result">ResultActivity</string>
 </resources>

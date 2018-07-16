@@ -15,6 +15,7 @@ class DataContainer {
     private var mDb : GlucoseDataBase? = null
     private var done : Boolean = false
     private val lock = java.lang.Object()
+    private var raw_data = ByteArray(360)
     constructor(context : Context) {
         mWorker = DbWorkerThread("dbWorker")
         mWorker.start()
@@ -45,6 +46,9 @@ class DataContainer {
         }
     }
     fun append(raw_data: ByteArray, readingTime: Long) : Boolean {
+        synchronized(lock) {
+            this.raw_data = raw_data
+        }
         val timestamp = RawParser.timestamp(raw_data)
         // Timestamp is 2 mod 15 every time a new reading to history is done.
         val minutesSinceLast = (timestamp + 12)%15
@@ -85,7 +89,6 @@ class DataContainer {
             return history.slice(IntRange(sz - noH, sz - 1)).toList()
         }
     }
-    //TODO:Save to DB as well
     fun last() : Reading? {
         waitForDone()
         synchronized(lock) {
@@ -114,8 +117,10 @@ class DataContainer {
         mWorker.postTask(task)
         return ret
     }
+    fun dump() : ByteArray {
+        synchronized(lock) { return raw_data }
+    }
     companion object {
-        //TODO: Load from DB
         private var INSTANCE : DataContainer? = null
         fun getInstance(context : Context) : DataContainer {
             if (INSTANCE == null) {

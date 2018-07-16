@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    >
+    <TextView
+        android:id="@+id/timestamp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="@string/timestamp"
+        android:textColor="?attr/colorAccent"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/history"
+        android:layout_height="50dp"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/timestamp"
+        android:text="@string/history"
+        android:textColor="?attr/colorAccent"
+        android:textSize="24sp" />
+    <TextView
+        android:id="@+id/recent"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="start"
+        android:text="@string/recent"
+        android:textColor="?attr/colorAccent"
+        android:textSize="24sp"
+        android:layout_below="@+id/history" />
+    <TextView
+        android:id="@+id/guess"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="start"
+        android:text="@string/guess"
+        android:textColor="?attr/colorAccent"
+        android:textSize="24sp"
+        android:layout_below="@+id/recent" />
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="350dp"
+        android:layout_height="200dip"
+        android:id="@+id/GraphBelowRes"
+        android:layout_below="@+id/guess"
+    />
+
+</RelativeLayout>

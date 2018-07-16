@@ -11,18 +11,13 @@ import android.nfc.Tag
 import android.nfc.tech.NfcV
 import android.os.AsyncTask
 import android.util.Log
-import android.widget.TextView
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_read.*
 import java.io.IOException
 import java.util.*
-import com.jjoe64.graphview.series.LineGraphSeries
-import com.jjoe64.graphview.series.DataPoint
 
 
 class ReadActivity : AppCompatActivity() {
     private var nfcAdapter: NfcAdapter? = null
-    private val readingTextView: TextView? = null
     private var raw_data = ByteArray(0)
     private var dc : DataContainer? = null
 
@@ -73,39 +68,7 @@ class ReadActivity : AppCompatActivity() {
         }
     }
 
-    private fun showReadingLayout() {
-        val sb = StringBuilder(1200)
-        for (i in 0..359) {
-            sb.append(i).append(" ").append(RawParser.byte2uns(raw_data[i])).append("\n")
-        }
-        Log.i(TAG, sb.toString())
-        val now = System.currentTimeMillis()
-        dc!!.append(raw_data, now)
-        val predict = RawParser.guess(raw_data)
-        timestamp.text = String.format("%s %d", getResources().
-                getString(R.string.timestamp), RawParser.timestamp(raw_data))
-        history.text = String.format("%s %d size: %d", getResources().
-                getString(R.string.history), RawParser.history(raw_data)[31].value, dc!!.size())
-        recent.text = String.format("%s %d", getResources().
-                getString(R.string.recent), RawParser.last(raw_data))
-        guess.text = String.format("%s %d %.2f", getResources().
-                getString(R.string.guess), predict, RawParser.sensor2mmol(predict))
-        //val history = RawParser.history(raw_data)
-        //val start = now - 60000*15*31
-        val history = dc!!.get8h()
-        //TODO: Move to new activity. Change/Fix Graph lib.
-        val out = history.map({v -> v.toDataPoint()}).toTypedArray()
-        val series = LineGraphSeries<DataPoint>(out)
-        GraphBelowRes.addSeries(series)
 
-        GraphBelowRes.getGridLabelRenderer().setLabelFormatter(HourFormatter())
-
-        GraphBelowRes.viewport.setXAxisBoundsManual(true)
-        GraphBelowRes.viewport.setMinX(history[0].utcTimeStamp.toDouble());
-        GraphBelowRes.viewport.setMaxX(now.toDouble());
-        GraphBelowRes.gridLabelRenderer.numHorizontalLabels = 6
-        GraphBelowRes.gridLabelRenderer.verticalAxisTitle = "mmol/L"
-    }
 
     private inner class NfcVReaderTask : AsyncTask<Tag, Void, Tag>() {
 
@@ -117,8 +80,15 @@ class ReadActivity : AppCompatActivity() {
             if (!success) return
             success = false
             raw_data = data
-
-            showReadingLayout()
+            val sb = StringBuilder(1200)
+            for (i in 0..359) {
+                sb.append(i).append(" ").append(RawParser.byte2uns(raw_data[i])).append("\n")
+            }
+            Log.i(TAG, sb.toString())
+            val now = System.currentTimeMillis()
+            dc!!.append(raw_data, now)
+            val intent = Intent(this@ReadActivity, ResultActivity::class.java)
+            startActivity(intent)
         }
 
         override fun doInBackground(vararg params: Tag): Tag? {
