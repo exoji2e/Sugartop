@@ -1,10 +1,7 @@
 package io.exoji2e.erbil
 
 import android.content.Context
-import android.provider.ContactsContract
 import android.util.Log
-import android.widget.Toast
-import java.util.*
 
 class DataContainer {
     private val history = mutableListOf<Reading>()
@@ -86,7 +83,7 @@ class DataContainer {
         waitForDone()
         synchronized(lock) {
             val sz = history.size
-            return history.slice(IntRange(sz - noH, sz - 1)).toList()
+            return history.slice(IntRange(sz - noH - 1, sz - 1)).toList()
         }
     }
     fun last() : Reading? {

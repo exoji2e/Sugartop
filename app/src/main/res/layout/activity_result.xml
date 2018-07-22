@@ -43,11 +43,12 @@
         android:textColor="?attr/colorAccent"
         android:textSize="24sp"
         android:layout_below="@+id/recent" />
-    <com.jjoe64.graphview.GraphView
-        android:layout_width="350dp"
-        android:layout_height="200dip"
+
+    <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/GraphBelowRes"
+        android:layout_width="match_parent"
+        android:layout_height="200dip"
         android:layout_below="@+id/guess"
-    />
+        />
 
 </RelativeLayout>

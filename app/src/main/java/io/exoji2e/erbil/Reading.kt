@@ -3,8 +3,6 @@ package io.exoji2e.erbil
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import com.jjoe64.graphview.series.DataPoint
-import java.util.*
 
 data class SensorData(val value : Int, val statusCode : Byte, val b3 : Byte, val b4 : Byte, val b5 : Byte) {
     constructor(b : ByteArray) : this(RawParser.bin2int(b[1], b[0]), b[2], b[3], b[4], b[5])
@@ -24,5 +22,4 @@ data class Reading(@PrimaryKey(autoGenerate = true) val utcTimeStamp: Long,
     fun eq(s : SensorData) : Boolean {
         return s.equals(SensorData(readingValue, statusCode, b3, b4, b5))
     }
-    fun toDataPoint() : DataPoint = DataPoint(Date(utcTimeStamp), tommol())
 }
