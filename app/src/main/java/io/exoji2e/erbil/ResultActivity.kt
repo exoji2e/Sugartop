@@ -17,6 +17,7 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import java.text.DateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 
 class ResultActivity : AppCompatActivity() {
@@ -29,24 +30,32 @@ class ResultActivity : AppCompatActivity() {
         dc = DataContainer.getInstance(this)
         showLayout()
     }
+    private fun fmt(str: String, readVal: Int) =
+            String.format("%s %d %.2f", str, readVal, RawParser.sensor2mmol(readVal))
+
     private fun showLayout() {
         val raw_data = dc!!.dump()
         val predict = RawParser.guess(raw_data)
         val last = RawParser.last(raw_data)
-        timestamp.text = String.format("%s %d", getResources().
+        timestampTextV.text = String.format("%s %d", getResources().
                 getString(R.string.timestamp), RawParser.timestamp(raw_data))
-        history.text = String.format("%s %d size: %d", getResources().
-                getString(R.string.history), RawParser.history(raw_data)[31].value, dc!!.size())
-        recent.text = String.format("%s %d %.2f", getResources().
-                getString(R.string.recent), last, RawParser.sensor2mmol(last))
-        guess.text = String.format("%s %d %.2f", getResources().
-                getString(R.string.guess), predict, RawParser.sensor2mmol(predict))
 
-        val readings = dc!!.get8h() + dc!!.last()!!
+        historyTextV.text = fmt(getResources().
+                getString(R.string.history), RawParser.history(raw_data)[31].value)
+        recentTextV.text = fmt(getResources().
+                getString(R.string.recent), last)
+        guessTextV.text = fmt(getResources().
+                getString(R.string.guess), predict)
+
+        val readings = dc!!.get8h()
+        val avg = Compute.avg(readings).roundToInt()
+        avgTextV.text = fmt(getResources().getString(R.string.avg), avg)
+        val percentInside = Compute.inGoal(950.0, 1800.0, readings)*100
+        ingoalTextV.text = String.format("%s %.1f%s", getResources().getString(R.string.ingoal), percentInside, "%")
         val values = ArrayList<Entry>()
         val first = readings[0].utcTimeStamp
         values.addAll(readings.map{r -> Entry((r.utcTimeStamp - first).toFloat(), r.tommol().toFloat())})
-
+        values.add(Entry(System.currentTimeMillis() + 5*60*1000f - first, RawParser.sensor2mmol(predict).toFloat()))
         val dataSet = LineDataSet(values,"")
         dataSet.axisDependency = AxisDependency.LEFT
         dataSet.color = ColorTemplate.getHoloBlue()

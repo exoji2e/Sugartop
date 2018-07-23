@@ -10,45 +10,64 @@
     android:paddingBottom="8dp"
     >
     <TextView
-        android:id="@+id/timestamp"
+        android:id="@+id/timestampTextV"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="30dp"
         android:text="@string/timestamp"
         android:textColor="?attr/colorAccent"
-        android:textSize="24sp" />
+        android:textSize="14sp" />
 
     <TextView
-        android:id="@+id/history"
-        android:layout_height="50dp"
+        android:id="@+id/historyTextV"
+        android:layout_height="30dp"
         android:layout_width="match_parent"
-        android:layout_below="@+id/timestamp"
+        android:layout_below="@+id/timestampTextV"
         android:text="@string/history"
         android:textColor="?attr/colorAccent"
-        android:textSize="24sp" />
+        android:textSize="14sp" />
     <TextView
-        android:id="@+id/recent"
+        android:id="@+id/recentTextV"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="30dp"
         android:gravity="start"
         android:text="@string/recent"
         android:textColor="?attr/colorAccent"
-        android:textSize="24sp"
-        android:layout_below="@+id/history" />
+        android:textSize="14sp"
+        android:layout_below="@+id/historyTextV" />
     <TextView
-        android:id="@+id/guess"
+        android:id="@+id/guessTextV"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:gravity="start"
         android:text="@string/guess"
         android:textColor="?attr/colorAccent"
-        android:textSize="24sp"
-        android:layout_below="@+id/recent" />
+        android:textSize="30sp"
+        android:layout_below="@+id/recentTextV" />
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/GraphBelowRes"
         android:layout_width="match_parent"
         android:layout_height="200dip"
-        android:layout_below="@+id/guess"
+        android:layout_below="@+id/guessTextV"
         />
+    <TextView
+        android:id="@+id/avgTextV"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="30dp"
+        android:gravity="start"
+        android:text="@string/avg"
+        android:textColor="?attr/colorAccent"
+        android:textSize="24sp"
+        android:layout_below="@+id/GraphBelowRes" />
+    <TextView
+        android:id="@+id/ingoalTextV"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:gravity="start"
+        android:text="@string/ingoal"
+        android:textColor="?attr/colorAccent"
+        android:textSize="24sp"
+        android:layout_below="@+id/avgTextV" />
 
 </RelativeLayout>
