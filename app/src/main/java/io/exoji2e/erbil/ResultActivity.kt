@@ -3,14 +3,12 @@ package io.exoji2e.erbil
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_result.*
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
-
-
-import kotlinx.android.synthetic.main.activity_result.*
 import com.github.mikephil.charting.components.YAxis.AxisDependency
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
@@ -50,12 +48,12 @@ class ResultActivity : AppCompatActivity() {
         val readings = dc!!.get8h()
         val avg = Compute.avg(readings).roundToInt()
         avgTextV.text = fmt(getResources().getString(R.string.avg), avg)
-        val percentInside = Compute.inGoal(950.0, 1800.0, readings)*100
+        val percentInside = Compute.inGoal(4.0, 8.0, readings)*100
         ingoalTextV.text = String.format("%s %.1f%s", getResources().getString(R.string.ingoal), percentInside, "%")
         val values = ArrayList<Entry>()
         val first = readings[0].utcTimeStamp
         values.addAll(readings.map{r -> Entry((r.utcTimeStamp - first).toFloat(), r.tommol().toFloat())})
-        values.add(Entry(System.currentTimeMillis() + 5*60*1000f - first, RawParser.sensor2mmol(predict).toFloat()))
+        values.add(Entry((Time.now() + 5*Time.MINUTE - first).toFloat(), RawParser.sensor2mmol(predict).toFloat()))
         val dataSet = LineDataSet(values,"")
         dataSet.axisDependency = AxisDependency.LEFT
         dataSet.color = ColorTemplate.getHoloBlue()

@@ -5,7 +5,6 @@ import android.util.Log
 
 class DataContainer {
     private val history = mutableListOf<Reading>()
-    val MINUTE = 60*1000L
     val noH = 32
     val TAG = "DataContainer"
     private val mWorker : DbWorkerThread
@@ -26,14 +25,12 @@ class DataContainer {
                 } else {
                     history.addAll(glucoseData)
                     Log.d(TAG, "db contained %d items".format(history.size))
-
                 }
                 done = true
                 lock.notifyAll()
             }
         }
         mWorker.postTask(task)
-
     }
     private fun waitForDone() {
         synchronized(lock) {
@@ -49,7 +46,7 @@ class DataContainer {
         val timestamp = RawParser.timestamp(raw_data)
         // Timestamp is 2 mod 15 every time a new reading to history is done.
         val minutesSinceLast = (timestamp + 12)%15
-        val start = readingTime - MINUTE*(15*(noH - 1) + minutesSinceLast)
+        val start = readingTime - Time.MINUTE*(15*(noH - 1) + minutesSinceLast)
         val sensor_history = RawParser.history(raw_data)
         val lastStored = last()
         if(lastStored != null) {
@@ -61,30 +58,31 @@ class DataContainer {
             }
             if (match > -1) {
                 val v = sensor_history.slice(IntRange(match + 1, sensor_history.size - 1))
-                        .mapIndexed({ i: Int, sensorData: SensorData -> Reading(
-                                lastStored.utcTimeStamp + (i + 1) * 15 * MINUTE, sensorData) })
+                        .mapIndexed{ i: Int, sensorData: SensorData -> Reading(
+                                lastStored.utcTimeStamp + (i + 1) * 15 * Time.MINUTE, sensorData) }
                 if (v.isNotEmpty())
                     return push(v)
                 else
                     return true
             }
         }
-        val v = sensor_history.mapIndexed(
-                {i: Int, sensorData: SensorData -> Reading(start + i*15*MINUTE, sensorData)})
+        val v = sensor_history.mapIndexed{
+            i: Int, sensorData: SensorData -> Reading(start + i*15*Time.MINUTE, sensorData)}
         return push(v)
     }
-    fun getAll() : List<Reading> {
+    private fun get(after: Long, before : Long) : List<Reading> {
         waitForDone()
         synchronized(lock) {
-            return history.toList()
+            return history.filter{r -> r.utcTimeStamp < before && r.utcTimeStamp > after}
         }
     }
     fun get8h() : List<Reading> {
-        waitForDone()
-        synchronized(lock) {
-            val sz = history.size
-            return history.slice(IntRange(sz - noH - 1, sz - 1)).toList()
-        }
+        val now = Time.now()
+        return get(now - Time.HOUR*8L, now)
+    }
+    fun get24h() : List<Reading> {
+        val now = Time.now()
+        return get(now - Time.HOUR*24L, now)
     }
     fun last() : Reading? {
         waitForDone()
@@ -102,11 +100,13 @@ class DataContainer {
     fun push(new_history : List<Reading>) : Boolean {
         waitForDone()
         var ret = false
+        // 0-readings after sensor startup seem to have statuscode 0 and/or readingValue <= 10.
+        val toAdd = new_history.filter{r -> RawParser.byte2uns(r.statusCode) != 0 && r.readingValue > 10}
         synchronized(lock) {
-            ret = history.addAll(new_history)
+            ret = history.addAll(toAdd)
         }
         val task = Runnable {
-            for(r: Reading in new_history) {
+            for(r: Reading in toAdd) {
                 mDb?.glucoseDataDao()?.insert(r)
             }
             Log.d(TAG, "Inserted into db!")

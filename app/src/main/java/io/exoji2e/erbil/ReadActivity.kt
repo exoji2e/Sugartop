@@ -85,7 +85,7 @@ class ReadActivity : AppCompatActivity() {
                 sb.append(i).append(" ").append(RawParser.byte2uns(raw_data[i])).append("\n")
             }
             Log.i(TAG, sb.toString())
-            val now = System.currentTimeMillis()
+            val now = Time.now()
             dc!!.append(raw_data, now)
             val intent = Intent(this@ReadActivity, ResultActivity::class.java)
             startActivity(intent)
@@ -105,13 +105,13 @@ class ReadActivity : AppCompatActivity() {
                     val cmd = byteArrayOf(0x60, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, i.toByte(), 0)
                     System.arraycopy(uid, 0, cmd, 2, 8)
                     var resp: ByteArray
-                    val time = System.currentTimeMillis()
+                    val time = Time.now()
                     while (true) {
                         try {
                             resp = nfcvTag.transceive(cmd)
                             break
                         } catch (e: IOException) {
-                            if (System.currentTimeMillis() > time + 1000) {
+                            if (Time.now() > time + Time.SECOND) {
                                 Log.e(TAG, "Timeout: took more than 1 second to read nfctag")
                                 return null
                             }
