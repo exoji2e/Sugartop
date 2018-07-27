@@ -29,7 +29,6 @@ class ReadActivity : AppCompatActivity() {
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
-
         if (nfcAdapter == null) {
             Toast.makeText(this, "No NFC access.", Toast.LENGTH_LONG).show()
             finish()
@@ -41,7 +40,7 @@ class ReadActivity : AppCompatActivity() {
             Toast.makeText(this, "NFC not enabled?", Toast.LENGTH_LONG).show()
         }
 
-        handleIntent(intent)
+        onNewIntent(intent)
     }
 
     override fun onResume() {
@@ -56,16 +55,22 @@ class ReadActivity : AppCompatActivity() {
     }
 
     override fun onNewIntent(intent: Intent) {
-        handleIntent(intent)
-    }
-
-    private fun handleIntent(intent: Intent) {
         val action = intent.action
         // Switch case on intents.
         if (NfcAdapter.ACTION_TECH_DISCOVERED == action) {
             val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
             NfcVReaderTask().execute(tag)
+        } else if(intent.flags == Intent.FLAG_ACTIVITY_REORDER_TO_FRONT) {
+            super.onNewIntent(intent)
+        } else {
+            putOnTop(MainActivity::class.java)
         }
+    }
+
+    private fun putOnTop(cls: Class<*>) {
+        val reopen = Intent(this, cls)
+        reopen.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+        startActivityIfNeeded(reopen, 0)
     }
 
 
@@ -87,11 +92,13 @@ class ReadActivity : AppCompatActivity() {
             Log.i(TAG, sb.toString())
             val now = Time.now()
             dc!!.append(raw_data, now)
+            putOnTop(MainActivity::class.java)
             val intent = Intent(this@ReadActivity, ResultActivity::class.java)
             startActivity(intent)
         }
 
         override fun doInBackground(vararg params: Tag): Tag? {
+            putOnTop(ReadActivity::class.java)
             val tag = params[0]
             val nfcvTag = NfcV.get(tag)
             try {

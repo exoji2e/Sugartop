@@ -1,18 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    >
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/TextLayOut"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/RecentLayOut"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+            <TextView
+                android:id="@+id/recentText"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:gravity="start"
+                android:text="@string/recent"
+                android:textColor="?attr/colorAccent"
+                android:textSize="20sp"
+                />
+            <TextView
+                android:id="@+id/recentData"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:gravity="start"
+                android:text=""
+                android:textColor="?attr/colorAccent"
+                android:textSize="20sp"
+                android:layout_below="@+id/recentText" />
+        </RelativeLayout>
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/AvgLayOut"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:layout_toRightOf="@+id/RecentLayOut">
+            <TextView
+                android:id="@+id/avgText"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:gravity="start"
+                android:text="@string/avg"
+                android:textColor="?attr/colorAccent"
+                android:textSize="20sp"
+                />
+            <TextView
+                android:id="@+id/avgData"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:gravity="start"
+                android:text=""
+                android:textColor="?attr/colorAccent"
+                android:textSize="20sp"
+                android:layout_below="@+id/avgText" />
+        </RelativeLayout>
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/InGLayOut"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:layout_toRightOf="@+id/AvgLayOut">
+            <TextView
+                android:id="@+id/ingText"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:gravity="start"
+                android:text="@string/ingoal"
+                android:textColor="?attr/colorAccent"
+                android:textSize="20sp"
+                />
+            <TextView
+                android:id="@+id/ingData"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:gravity="start"
+                android:text=""
+                android:textColor="?attr/colorAccent"
+                android:textSize="20sp"
+                android:layout_below="@+id/ingText" />
+        </RelativeLayout>
+    </RelativeLayout>
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/graph"
+        android:layout_width="match_parent"
+        android:layout_height="200dip"
+        android:layout_below="@+id/TextLayOut" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
