@@ -18,7 +18,6 @@ import java.util.*
 
 class ReadActivity : AppCompatActivity() {
     private var nfcAdapter: NfcAdapter? = null
-    private var raw_data = ByteArray(0)
     private var dc : DataContainer? = null
 
 
@@ -81,20 +80,27 @@ class ReadActivity : AppCompatActivity() {
         private var success = false
 
         override fun onPostExecute(tag: Tag?) {
-            if (tag == null) return
-            if (!success) return
+            if (tag == null || !success) {
+                Toast.makeText(this@ReadActivity, "Failed to read sensor data.", Toast.LENGTH_LONG).show()
+                putOnTop(MainActivity::class.java)
+                return
+            }
             success = false
-            raw_data = data
-            val sb = StringBuilder(1200)
+            val sb = StringBuilder(2880) // At least enough.
             for (i in 0..359) {
-                sb.append(i).append(" ").append(RawParser.byte2uns(raw_data[i])).append("\n")
+                sb.append(i).append(" ").append(RawParser.byte2uns(data[i])).append("\n")
             }
             Log.i(TAG, sb.toString())
             val now = Time.now()
-            dc!!.append(raw_data, now)
             putOnTop(MainActivity::class.java)
-            val intent = Intent(this@ReadActivity, ResultActivity::class.java)
-            startActivity(intent)
+            if(RawParser.timestamp(data) == 0) {
+                // Save the sensor id, and time it was read, so a more accurate prediction can be made.
+                Toast.makeText(this@ReadActivity, "Sensor has not started yet.", Toast.LENGTH_LONG).show()
+            } else {
+                dc!!.append(data, now)
+                val intent = Intent(this@ReadActivity, ResultActivity::class.java)
+                startActivity(intent)
+            }
         }
 
         override fun doInBackground(vararg params: Tag): Tag? {

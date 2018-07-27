@@ -6,6 +6,7 @@ class RawParser {
 
         fun byte2uns(a: Byte) : Int = (a.toInt() + 256)%256
 
+        // TODO: should use user-function instead.
         fun sensor2mmol(v: Int) : Double = v*0.0062492 - 1.89978
 
         private fun deflatten(bytes : ByteArray) : List<SensorData> {

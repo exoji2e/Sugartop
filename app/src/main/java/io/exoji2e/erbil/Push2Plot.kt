@@ -36,7 +36,10 @@ class Push2Plot {
             return dataSet
         }
         fun setPlot(values : ArrayList<Entry>, graph : LineChart, first: Long) {
+            // Maybe do this gracefully. Toast "can't show plot with one data point"
+            if(values.size < 2) return
             val dataSet = standardLineDataSet(values, false)
+            // TODO: Move constants to user.
             val lo = ArrayList<Entry>(2)
             lo.add(Entry(values.first().x, 4f))
             lo.add(Entry(values.last().x, 4f))
