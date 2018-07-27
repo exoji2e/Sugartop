@@ -28,8 +28,8 @@ class MainActivity : AppCompatActivity() {
         values.addAll(readings.map{r -> Entry((r.utcTimeStamp - first).toFloat(), r.tommol().toFloat()) })
         Push2Plot.setPlot(values, graph, first)
         ingData.text = String.format("%.1f %s", percentInside, "%")
-        avgData.text = String.format("%.1f %s", avg, "mmol/L")
-        recentData.text = String.format("%.1f %s", recent, "mmol/L")
+        avgData.text = String.format("%.1f", avg)
+        recentData.text = String.format("%.1f", recent)
 
     }
 

@@ -16,20 +16,35 @@ import java.util.*
 class Push2Plot {
     companion object {
         private val hotPink = Color.rgb(255, 64, 129)
-        fun setPlot(values : ArrayList<Entry>, graph : LineChart, first: Long) {
-            val dataSet = LineDataSet(values,"")
+        fun standardLineDataSet(data : ArrayList<Entry>, dash : Boolean) : LineDataSet {
+            val dataSet = LineDataSet(data,"")
             dataSet.axisDependency = YAxis.AxisDependency.LEFT
-            dataSet.color = ColorTemplate.getHoloBlue()
             dataSet.valueTextColor = ColorTemplate.getHoloBlue()
-            dataSet.lineWidth = 3f
+            if(dash) {
+                dataSet.lineWidth = 1f
+                dataSet.color = Color.rgb(100, 100, 100)
+            }else {
+                dataSet.lineWidth = 3f
+                dataSet.color = ColorTemplate.getHoloBlue()
+            }
             dataSet.setDrawCircles(false)
             dataSet.setDrawValues(false)
             dataSet.fillAlpha = 65
             dataSet.fillColor = ColorTemplate.getHoloBlue()
             dataSet.highLightColor = Color.rgb(244, 117, 117)
             dataSet.setDrawCircleHole(false)
+            return dataSet
+        }
+        fun setPlot(values : ArrayList<Entry>, graph : LineChart, first: Long) {
+            val dataSet = standardLineDataSet(values, false)
+            val lo = ArrayList<Entry>(2)
+            lo.add(Entry(values.first().x, 4f))
+            lo.add(Entry(values.last().x, 4f))
+            val hi = ArrayList<Entry>(2)
+            hi.add(Entry(values.first().x, 8f))
+            hi.add(Entry(values.last().x, 8f))
 
-            graph.data = LineData(dataSet)
+            graph.data = LineData(standardLineDataSet(lo, true), standardLineDataSet(hi, true), dataSet)
             graph.legend.isEnabled = false
             graph.description.text = ""
             graph.invalidate()

@@ -2,8 +2,9 @@
     <string name="app_name">Erbil</string>
     <string name="guess">Guess:</string>
     <string name="avg">Average:</string>
-    <string name="ingoal">Inside goal:</string>
+    <string name="ingoal">Inside target:</string>
     <string name="recent">Recent:</string>
+    <string name="mmol">mmol/L</string>
     <string name="history">History:</string>
     <string name="timestamp">Timestamp:</string>
     <string name="readingstatus">Reading...</string>
