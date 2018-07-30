@@ -22,9 +22,8 @@ class ResultActivity : AppCompatActivity() {
         val raw_data = dc!!.dump()
         val predict = RawParser.guess(raw_data)
         val last = RawParser.last(raw_data)
-        timestampTextV.text = String.format("%s %d", getResources().
-                getString(R.string.timestamp), RawParser.timestamp(raw_data))
-
+        val timeStamp = RawParser.timestamp(raw_data)
+        timestampTextV.text = String.format("Time left %s %d", Time.timeLeft(timeStamp), timeStamp)
         historyTextV.text = fmt(resources.
                 getString(R.string.history), RawParser.history(raw_data)[31].value)
         recentTextV.text = fmt(resources.

@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.app.Activity
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.nfc.NfcAdapter
@@ -14,6 +15,12 @@ import android.util.Log
 import android.widget.Toast
 import java.io.IOException
 import java.util.*
+import android.os.VibrationEffect
+import android.os.Build
+import android.content.Context.VIBRATOR_SERVICE
+import android.os.Vibrator
+
+
 
 
 class ReadActivity : AppCompatActivity() {
@@ -79,12 +86,26 @@ class ReadActivity : AppCompatActivity() {
         private val data = ByteArray(360)
         private var success = false
 
+        private fun vibrate(t : Long) {
+            val v = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                v.vibrate(VibrationEffect.createOneShot(t, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                //deprecated in API 26
+                v.vibrate(t)
+            }
+        }
+
         override fun onPostExecute(tag: Tag?) {
             if (tag == null || !success) {
                 Toast.makeText(this@ReadActivity, "Failed to read sensor data.", Toast.LENGTH_LONG).show()
                 putOnTop(MainActivity::class.java)
+                success = false
                 return
             }
+
+            vibrate(100L)
+
             success = false
             val sb = StringBuilder(2880) // At least enough.
             for (i in 0..359) {
