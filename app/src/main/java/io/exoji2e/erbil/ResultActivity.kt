@@ -2,7 +2,7 @@ package io.exoji2e.erbil
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_result.*
+import kotlinx.android.synthetic.main.activity_main.*
 import com.github.mikephil.charting.data.Entry
 import java.util.*
 
@@ -11,7 +11,7 @@ class ResultActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_result)
+        setContentView(R.layout.activity_main)
         dc = DataContainer.getInstance(this)
         showLayout()
     }
@@ -23,23 +23,26 @@ class ResultActivity : AppCompatActivity() {
         val predict = RawParser.guess(raw_data)
         val last = RawParser.last(raw_data)
         val timeStamp = RawParser.timestamp(raw_data)
-        timestampTextV.text = String.format("Time left %s %d", Time.timeLeft(timeStamp), timeStamp)
-        historyTextV.text = fmt(resources.
-                getString(R.string.history), RawParser.history(raw_data)[31].value)
-        recentTextV.text = fmt(resources.
-                getString(R.string.recent), last)
-        guessTextV.text = fmt(resources.
-                getString(R.string.guess), predict)
+        TimeLeftTV.text = String.format("Time left %s %d", Time.timeLeft(timeStamp), timeStamp)
+        DebugTV.text = String.format("%s\n%s\n%s", fmt(resources.
+                getString(R.string.history), RawParser.history(raw_data)[31].value),
+                fmt(resources.
+                getString(R.string.recent), last),
+                fmt(resources.
+                getString(R.string.guess), predict))
 
         val readings = dc!!.get8h()
         val avg = Compute.avg(readings)
-        avgTextV.text = String.format("%s %.1f", resources.getString(R.string.avg), avg)
         val percentInside = Compute.inGoal(4.0, 8.0, readings)*100
-        ingoalTextV.text = String.format("%s %.1f%s", resources.getString(R.string.ingoal), percentInside, "%")
         val values = ArrayList<Entry>()
-        val first = readings[0].utcTimeStamp
-        values.addAll(readings.map{r -> Entry((r.utcTimeStamp - first).toFloat(), r.tommol().toFloat())})
-        values.add(Entry((Time.now() + 5*Time.MINUTE - first).toFloat(), RawParser.sensor2mmol(predict).toFloat()))
-        Push2Plot.setPlot(values, GraphBelowRes, first)
+        val now = Time.now()
+        val first : Long = if (readings.isEmpty()) now else readings[0].utcTimeStamp
+        values.addAll(readings.map{r -> Entry((r.utcTimeStamp - first).toFloat(), r.tommol().toFloat()) })
+        values.add(Entry((now - first).toFloat(), RawParser.sensor2mmol(last).toFloat()))
+        values.add(Entry((now + 5*Time.MINUTE - first).toFloat(), RawParser.sensor2mmol(predict).toFloat()))
+        Push2Plot.setPlot(values, graph, first)
+        ingData.text = String.format("%.1f %s", percentInside, "%")
+        avgData.text = String.format("%.1f", avg)
+        recentData.text = String.format("%.1f", RawParser.sensor2mmol(predict))
     }
 }

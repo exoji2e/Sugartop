@@ -15,7 +15,7 @@ class Time {
             else if(left < 60*24)
                 String.format("%d hours", left/60)
             else
-                String.format("%d days", left / (20 * 60))
+                String.format("%d days", left / (24 * 60))
         }
     }
 }

@@ -124,6 +124,26 @@
         android:layout_width="match_parent"
         android:layout_height="200dip"
         android:layout_below="@+id/TextLayOut" />
+    <TextView
+        android:layout_marginTop="50dp"
+        android:id="@+id/TimeLeftTV"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="start"
+        android:text=""
+        android:textColor="?attr/colorAccent"
+        android:textSize="18sp"
+        android:layout_below="@+id/graph" />
+    <TextView
+        android:id="@+id/DebugTV"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:gravity="start"
+        android:text=""
+        android:textColor="?attr/colorAccent"
+        android:textSize="14sp"
+        android:layout_below="@+id/TimeLeftTV" />
+
 
 
 </RelativeLayout>
