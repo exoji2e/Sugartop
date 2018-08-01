@@ -2,7 +2,7 @@ package io.exoji2e.erbil
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.result_layout.*
 import com.github.mikephil.charting.data.Entry
 import java.util.*
 
@@ -11,7 +11,7 @@ class ResultActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.result_layout)
         dc = DataContainer.getInstance(this)
         showLayout()
     }

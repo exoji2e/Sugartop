@@ -5,14 +5,14 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.github.mikephil.charting.data.Entry
 import java.util.ArrayList
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.result_layout.*
 
 
 class MainActivity : AppCompatActivity() {
     var dc : DataContainer? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.result_layout)
         startReadActivity()
     }
 

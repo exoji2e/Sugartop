@@ -5,7 +5,7 @@
     <uses-sdk android:minSdkVersion="10" />
 
     <uses-permission android:name="android.permission.NFC" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <uses-feature
         android:name="android.hardware.nfc"
@@ -44,6 +44,10 @@
             android:name=".ResultActivity"
             android:label="@string/title_activity_result"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".DashBoardActivity"
+            android:label="@string/title_activity_dash_board"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
