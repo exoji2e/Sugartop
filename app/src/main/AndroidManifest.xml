@@ -45,9 +45,18 @@
             android:label="@string/title_activity_result"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".DashBoardActivity"
-            android:label="@string/title_activity_dash_board"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:name=".ShareActivity"
+            android:label="@string/title_activity_share"></activity>
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="io.exoji2e.erbil.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
     </application>
 
 </manifest>
