@@ -44,5 +44,6 @@ class ResultActivity : AppCompatActivity() {
         ingData.text = String.format("%.1f %s", percentInside, "%")
         avgData.text = String.format("%.1f", avg)
         recentData.text = String.format("%.1f", RawParser.sensor2mmol(predict))
+        shareButton.hide()
     }
 }

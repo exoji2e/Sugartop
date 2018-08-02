@@ -69,7 +69,7 @@ class ReadActivity : AppCompatActivity() {
         } else if(intent.flags == Intent.FLAG_ACTIVITY_REORDER_TO_FRONT) {
             super.onNewIntent(intent)
         } else {
-            putOnTop(ShareActivity::class.java)
+            putOnTop(MainActivity::class.java)
         }
     }
 

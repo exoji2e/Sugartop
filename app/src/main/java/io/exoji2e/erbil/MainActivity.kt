@@ -3,12 +3,17 @@ package io.exoji2e.erbil
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.content.FileProvider
+import android.util.Log
+import android.view.View
 import com.github.mikephil.charting.data.Entry
 import java.util.ArrayList
 import kotlinx.android.synthetic.main.result_layout.*
+import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
+    val TAG = "MAIN"
     var dc : DataContainer? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +36,30 @@ class MainActivity : AppCompatActivity() {
         ingData.text = String.format("%.1f %s", percentInside, "%")
         avgData.text = String.format("%.1f", avg)
         recentData.text = String.format("%.1f", recent)
+        shareButton.setOnClickListener { v: View ->
+            val path = getDatabasePath("glucose.db").getAbsolutePath()
+            Log.d(TAG, path)
+            val filesdir: String = this@MainActivity.filesDir.absolutePath
+            Log.d(TAG, filesdir)
+
+            val file = File(path)
+            try {
+                val uri = FileProvider.getUriForFile(
+                        this@MainActivity,
+                        "io.exoji2e.erbil.fileprovider",
+                        file)
+                val sharingIntent = Intent(Intent.ACTION_SEND)
+                sharingIntent.setType("application/octet-stream");
+                sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                startActivity(Intent.createChooser(sharingIntent, "Share using"))
+
+            } catch (e: IllegalArgumentException) {
+                Log.e(TAG,
+                        "The selected file can't be shared: $path")
+            }
+        }
     }
 
     fun startReadActivity() {

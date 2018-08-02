@@ -44,9 +44,6 @@
             android:name=".ResultActivity"
             android:label="@string/title_activity_result"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ShareActivity"
-            android:label="@string/title_activity_share"></activity>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="io.exoji2e.erbil.fileprovider"
