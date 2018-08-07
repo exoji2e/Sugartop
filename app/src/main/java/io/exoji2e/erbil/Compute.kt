@@ -1,10 +1,8 @@
 package io.exoji2e.erbil
 
-import android.util.Log
-
 class Compute {
     companion object {
-        fun avg(data : List<Reading>) : Double {
+        fun avg(data : List<GlucoseEntry>) : Double {
             if(data.isEmpty()) return 0.0
             if(data.size == 1) return data[0].tommol()
             var sum = 0.0
@@ -14,7 +12,7 @@ class Compute {
             }
             return sum/(data.last().utcTimeStamp - data[0].utcTimeStamp)
         }
-        fun inGoal(lo: Double, hi : Double, data: List<Reading>) : Double {
+        fun inGoal(lo: Double, hi : Double, data: List<GlucoseEntry>) : Double {
             if(data.isEmpty()) return 0.0
             if(data.size == 1) {
                 val v = data[0].tommol()

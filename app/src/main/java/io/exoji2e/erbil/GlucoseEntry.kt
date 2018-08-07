@@ -35,8 +35,8 @@ data class GlucoseEntry(@PrimaryKey(autoGenerate = true) val id: Int,
 
 }
 
-@Entity(tableName = "ManualEntries")
-data class ManualEntry(@PrimaryKey(autoGenerate = true) val utcTimeStamp: Long,
+@Entity(tableName = "ManualGlucoseEntries")
+data class ManualGlucoseEntry(@PrimaryKey(autoGenerate = true) val utcTimeStamp: Long,
                        @ColumnInfo(name = "value") val value : Double)
 
 @Entity(tableName = "SensorContacts")
