@@ -85,6 +85,7 @@ class ReadActivity : AppCompatActivity() {
 
         private val data = ByteArray(360)
         private var success = false
+        private var tagId = 0L
 
         private fun vibrate(t : Long) {
             val v = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
@@ -118,7 +119,7 @@ class ReadActivity : AppCompatActivity() {
                 // Save the sensor id, and time it was read, so a more accurate prediction can be made.
                 Toast.makeText(this@ReadActivity, "Sensor has not started yet.", Toast.LENGTH_LONG).show()
             } else {
-                dc!!.append(data, now)
+                dc!!.append(data, now, tagId)
                 val intent = Intent(this@ReadActivity, ResultActivity::class.java)
                 startActivity(intent)
             }
@@ -131,9 +132,9 @@ class ReadActivity : AppCompatActivity() {
             try {
                 nfcvTag.connect()
                 val uid = tag.id
-                val sb = StringBuilder()
-                for (i in 0..7) sb.append(RawParser.byte2uns(uid[i])).append(" ")
-                Log.d(TAG, "TAGid: %s".format(sb.toString()))
+                tagId = RawParser.bin2long(uid)
+
+                Log.d(TAG, "TAGid: %d".format(tagId))
                 // Get bytes [i*8:(i+1)*8] from sensor memory and stores in data
                 for (i in 0..40) {
                     val cmd = byteArrayOf(0x60, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, i.toByte(), 0)
