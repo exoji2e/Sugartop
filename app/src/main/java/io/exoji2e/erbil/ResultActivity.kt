@@ -9,19 +9,18 @@ import com.github.mikephil.charting.data.Entry
 import java.util.*
 
 class ResultActivity : AppCompatActivity() {
-    private var dc : DataContainer? = null
+    private val dc = DataContainer.getInstance(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.result_layout)
-        dc = DataContainer.getInstance(this)
         showLayout()
     }
     private fun fmt(str: String, readVal: Int) =
             String.format("%s %d %.2f", str, readVal, RawParser.sensor2mmol(readVal))
 
     private fun showLayout() {
-        val raw_data = dc!!.dump()
+        val raw_data = dc.dump()
         val predict = RawParser.guess(raw_data)
         val last = RawParser.last(raw_data)
         val timeStamp = RawParser.timestamp(raw_data)
@@ -33,10 +32,9 @@ class ResultActivity : AppCompatActivity() {
                 fmt(resources.
                 getString(R.string.guess), predict))
         val diff = RawParser.sensor2mmol(predict) - RawParser.sensor2mmol(last)
-        val trend = if(diff > 1) "↑↑" else if(diff > 0.5) "↑" else if(diff < -1) "↓↓" else if(diff < -0.5) "↓" else "→"
+        val trend = if(diff > .5) "↑↑" else if(diff > .25) "↑" else if(diff < -.5) "↓↓" else if(diff < -.25) "↓" else "→"
 
-
-        val readings = dc!!.get8h()
+        val readings = dc.get8h()
         val avg = Compute.avg(readings)
         val percentInside = Compute.inGoal(4.0, 8.0, readings)*100
         val values = ArrayList<Entry>()

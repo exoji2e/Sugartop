@@ -13,7 +13,7 @@ import java.io.File
 
 class MainActivity : AppCompatActivity() {
     val TAG = "MAIN"
-    var dc : DataContainer? = null
+    val dc : DataContainer = DataContainer.getInstance(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_layout)
@@ -46,8 +46,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        dc = DataContainer.getInstance(this)
-        val readings = dc!!.get24h()
+        val readings = dc.get24h()
         val avg = Compute.avg(readings)
         // TODO: Move constants to user.
         val percentInside = Compute.inGoal(4.0, 8.0, readings)*100
