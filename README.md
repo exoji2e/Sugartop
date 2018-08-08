@@ -13,12 +13,19 @@ Well, I have chosen another path. Reverse Enginnering. My plan is to find out ho
 
 ### Progress:
 - [x] Read data
-- [x] View of last 8 hours
+- [x] View of last 8 and 24 hours
 - [x] Saving raw data to database
-- [ ] Enable export of database outside of phone
-- [ ] More plots of glucose data
-- [ ] Fine Grained Improvements
+- [x] Enable export of database outside of phone
+- [x] Log manual readings from glucose reader to improve calibration.
+- [x] Handle multiple sensors.
+- [x] Icons based on if glucose level is increasing or decreasing.
+- [ ] Calibration of sensor data based on glucose readings from the same time.
+- [ ] More plots of glucose data.
 - [ ] Do some proper design
+- [ ] Log insulin injections
+- [ ] Set alarms
+- [ ] Customize settings (units, target interval, etc)
+
 
 ### Warning:
 - If you actually end up using this app, it's your responsibility to take care of your diabetes. If the app does not work propely I take no responsibility, yadayada. If something is not working as intended, post an issue, or a pull request.

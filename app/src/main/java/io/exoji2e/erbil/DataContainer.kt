@@ -121,12 +121,14 @@ class DataContainer {
         val now = Time.now()
         return get(now - Time.HOUR*24L, now)
     }
-    fun last(sensorId: Long, v: List<GlucoseEntry>) : GlucoseEntry? {
+    private fun last(sensorId: Long, v: List<GlucoseEntry>) : GlucoseEntry? {
         waitForDone()
         synchronized(lock) {
             val sz = v.size - 1
+            val now = Time.now()
             for(i in 0 until v.size) {
                 if(v[sz - i].sensorId == sensorId) return v[sz - i]
+                if(now - Time.HOUR*24 > v[sz-i].utcTimeStamp) break
             }
             return null
         }

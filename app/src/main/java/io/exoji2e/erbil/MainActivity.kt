@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.FileProvider
 import android.util.Log
-import android.view.View
 import com.github.mikephil.charting.data.Entry
 import java.util.ArrayList
 import kotlinx.android.synthetic.main.main_layout.*

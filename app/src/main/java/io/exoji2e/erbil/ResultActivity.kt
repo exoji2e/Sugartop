@@ -32,6 +32,9 @@ class ResultActivity : AppCompatActivity() {
                 getString(R.string.recent), last),
                 fmt(resources.
                 getString(R.string.guess), predict))
+        val diff = RawParser.sensor2mmol(predict) - RawParser.sensor2mmol(last)
+        val trend = if(diff > 1) "↑↑" else if(diff > 0.5) "↑" else if(diff < -1) "↓↓" else if(diff < -0.5) "↓" else "→"
+
 
         val readings = dc!!.get8h()
         val avg = Compute.avg(readings)
@@ -45,7 +48,7 @@ class ResultActivity : AppCompatActivity() {
         Push2Plot.setPlot(values, graph, first)
         ingData.text = String.format("%.1f %s", percentInside, "%")
         avgData.text = String.format("%.1f", avg)
-        recentData.text = String.format("%.1f", RawParser.sensor2mmol(predict))
+        recentData.text = String.format("%.1f %s", RawParser.sensor2mmol(predict), trend)
         floatingButton.setOnClickListener{_ ->
             val intent = Intent(this, ManualActivity::class.java)
             startActivity(intent)
