@@ -1,5 +1,7 @@
 package io.exoji2e.erbil
 
+import android.content.Intent
+import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.result_layout.*
@@ -44,6 +46,9 @@ class ResultActivity : AppCompatActivity() {
         ingData.text = String.format("%.1f %s", percentInside, "%")
         avgData.text = String.format("%.1f", avg)
         recentData.text = String.format("%.1f", RawParser.sensor2mmol(predict))
-        shareButton.hide()
+        floatingButton.setOnClickListener{_ ->
+            val intent = Intent(this, ManualActivity::class.java)
+            startActivity(intent)
+        }
     }
 }

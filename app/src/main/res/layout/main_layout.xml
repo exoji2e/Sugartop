@@ -150,7 +150,7 @@
         android:layout_alignEnd="@+id/TextLayOut"
         android:layout_below="@+id/DebugTV"
         android:clickable="true"
-        app:srcCompat="@drawable/plus"
+        app:srcCompat="@drawable/ic_menu_share"
         android:gravity="center" />
 
 </RelativeLayout>

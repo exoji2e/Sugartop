@@ -140,6 +140,18 @@ class DataContainer {
     fun dump() : ByteArray {
         synchronized(lock) { return raw_data }
     }
+    fun insertIntoDb(manual : ManualGlucoseEntry) {
+        waitForDone()
+        synchronized(lock){
+            val task = Runnable{
+                mDb!!.manualEntryDao().insert(manual)
+                Log.d(TAG, "inserted manual entry into db.")
+                val v :List<ManualGlucoseEntry> = mDb!!.manualEntryDao().getAll()
+                Log.d(TAG, String.format("table size: %d", v.size))
+            }
+            mWorker.postTask(task)
+        }
+    }
     companion object {
         private var INSTANCE : DataContainer? = null
         fun getInstance(context : Context) : DataContainer {

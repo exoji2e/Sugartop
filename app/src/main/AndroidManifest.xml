@@ -44,16 +44,21 @@
             android:name=".ResultActivity"
             android:label="@string/title_activity_result"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="io.exoji2e.erbil.fileprovider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
         </provider>
 
+        <activity
+            android:name=".ManualActivity"
+            android:label="@string/title_activity_maual"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

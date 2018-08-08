@@ -8,7 +8,7 @@ import android.util.Log
 import android.view.View
 import com.github.mikephil.charting.data.Entry
 import java.util.ArrayList
-import kotlinx.android.synthetic.main.result_layout.*
+import kotlinx.android.synthetic.main.main_layout.*
 import java.io.File
 
 
@@ -17,10 +17,10 @@ class MainActivity : AppCompatActivity() {
     var dc : DataContainer? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.result_layout)
+        setContentView(R.layout.main_layout)
         startReadActivity()
-        shareButton.setOnClickListener { _ ->
-            val path = getDatabasePath("glucose.db").getAbsolutePath()
+        floatingButton.setOnClickListener { _ ->
+            val path = getDatabasePath("Erbil.db").getAbsolutePath()
             Log.d(TAG, path)
             val filesdir: String = this@MainActivity.filesDir.absolutePath
             Log.d(TAG, filesdir)
