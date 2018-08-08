@@ -28,6 +28,7 @@ class DataContainer {
                     for(g: GlucoseEntry in glucoseData) {
                         if(g.history) history.add(g)
                         else recent.add(g)
+                        lastId = Math.max(lastId, g.id)
                     }
                     history.sortBy { entry -> entry.utcTimeStamp }
                     recent.sortBy { entry -> entry.utcTimeStamp }
