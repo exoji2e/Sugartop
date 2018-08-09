@@ -32,6 +32,20 @@ data class GlucoseEntry(@PrimaryKey(autoGenerate = true) val id: Int,
             s.status == s.status &&
             history == s.history &&
             rest == s.rest
+    override fun toString() =
+            String.format("%d,%d,%d,%d,%d,%d,%d", id, value, utcTimeStamp, sensorId, status,
+                    if(history) 1 else 0,
+                    rest)
+    companion object {
+        fun headerString() = "id,value,utcTimeStamp,sensorId,status,history,rest"
+        fun fromString(s : String) : GlucoseEntry? {
+            try{
+                val v = s.split(",").map{e -> e.toLong()}
+                return GlucoseEntry(v[0].toInt(), v[1].toInt(), v[2], v[3], v[4].toInt(), v[5]==1L, v[6].toInt())
+            } catch(e:Exception){}
+            return null
+        }
+    }
 
 }
 

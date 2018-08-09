@@ -15,8 +15,7 @@ class DataContainer {
     private val lock = java.lang.Object()
     private var raw_data = ByteArray(360)
     constructor(context : Context) {
-        mWorker = DbWorkerThread("dbWorker")
-        mWorker.start()
+        mWorker = DbWorkerThread.getInstance()
         val task = Runnable {
             mDb = ErbilDataBase.getInstance(context)
             val glucoseData =

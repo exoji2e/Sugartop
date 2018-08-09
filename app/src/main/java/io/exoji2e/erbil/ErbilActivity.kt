@@ -27,15 +27,36 @@ abstract class ErbilActivity : AppCompatActivity() {
                 launchManual()
                 return true
             }
+            R.id.share_csv -> {
+                shareAsCSV()
+                return true
+            }
             else -> return super.onOptionsItemSelected(item)
         }
     }
     fun shareDB() {
         val path = getDatabasePath("Erbil.db").getAbsolutePath()
-        Log.d(TAG, path)
-        val filesdir: String = this@ErbilActivity.filesDir.absolutePath
-        Log.d(TAG, filesdir)
+        share_file(path)
+    }
+    fun shareAsCSV() {
+        val task = Runnable {
+            val v : List<GlucoseEntry> = ErbilDataBase.getInstance(this)!!.glucoseEntryDao().getAll()
+            val sb = StringBuilder(v.size*100)
+            sb.append(GlucoseEntry.headerString()).append('\n')
+            for(entry in v) {
+                sb.append(entry.toString()).append('\n')
+            }
+            val filename = Time.datetime() + "-Erbil.csv"
+            Log.d(TAG, filename)
+            val file = File(filesDir, filename)
+            file.writeText(sb.toString())
+            share_file(file.absolutePath)
+            //file.delete()
+        }
+        DbWorkerThread.getInstance().postTask(task)
 
+    }
+    private fun share_file(path: String) {
         val file = File(path)
         try {
             val uri = FileProvider.getUriForFile(

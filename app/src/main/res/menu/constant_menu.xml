@@ -9,4 +9,7 @@
         android:icon="@drawable/plus"
         android:title="Add manual reading"
         />
+    <item android:id="@+id/share_csv"
+        android:icon="@drawable/plus"
+        android:title="Share as csv" />
 </menu>

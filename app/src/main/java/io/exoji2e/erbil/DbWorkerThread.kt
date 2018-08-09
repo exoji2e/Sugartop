@@ -15,4 +15,18 @@ class DbWorkerThread(threadName: String) : HandlerThread(threadName) {
     fun postTask(task: Runnable) {
         mWorkerHandler.post(task)
     }
+    companion object {
+        var mThread : DbWorkerThread? = null
+        fun getInstance() : DbWorkerThread {
+            if(mThread == null){
+                synchronized(DbWorkerThread::class.java){
+                    if(mThread == null) {
+                        mThread = DbWorkerThread("dbWorker")
+                        mThread!!.start()
+                    }
+                }
+            }
+            return mThread!!
+        }
+    }
 }

@@ -1,5 +1,9 @@
 package io.exoji2e.erbil
 
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
+
 class Time {
     companion object {
         val SECOND = 1000L
@@ -16,6 +20,13 @@ class Time {
                 String.format("%d hours", left/60)
             else
                 String.format("%d days", left / (24 * 60))
+        }
+        fun datetime(): String {
+            val t = now()
+            val mSegmentStartTimeFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
+            val mCalendar = Calendar.getInstance()
+            mCalendar.timeInMillis = t
+            return mSegmentStartTimeFormatter.format(mCalendar.getTimeInMillis())
         }
     }
 }
