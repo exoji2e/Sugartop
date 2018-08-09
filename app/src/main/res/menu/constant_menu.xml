@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/share_db"
+    <item android:id="@+id/share"
         android:icon="@drawable/ic_menu_share"
         android:title="Share"
-        app:showAsAction="always" />
+        app:showAsAction="always">
+        <menu>
+            <item android:id="@+id/share_db"
+            android:title="Share sqlite3 db" />
+            <item android:id="@+id/share_csv"
+                android:title="Share csv" />
+    </menu>
+    </item>
     <item android:id="@+id/manual"
         android:icon="@drawable/plus"
         android:title="Add manual reading"
         />
-    <item android:id="@+id/share_csv"
-        android:icon="@drawable/plus"
-        android:title="Share as csv" />
 </menu>
