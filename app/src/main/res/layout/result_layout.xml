@@ -143,14 +143,4 @@
         android:textSize="14sp"
         android:layout_below="@+id/TimeLeftTV" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingButton"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_alignEnd="@+id/TextLayOut"
-        android:layout_below="@+id/DebugTV"
-        android:clickable="true"
-        app:srcCompat="@drawable/plus"
-        android:gravity="center" />
-
 </RelativeLayout>

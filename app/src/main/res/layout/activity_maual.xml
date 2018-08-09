@@ -1,15 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ManualActivity">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ManualActivity"
+    tools:showIn="@layout/activity_maual">
 
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter manual glucose reading"
+        android:textSize="30sp"
+        android:visibility="visible" />
 
+    <EditText
+        android:id="@+id/glucoseinput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:textSize="40sp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/description"
+        android:paddingRight="40dp"/>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@drawable/save_alt"
+        app:layout_constraintTop_toTopOf="@+id/glucoseinput"
+        app:layout_constraintRight_toRightOf="@+id/glucoseinput"
+        />
 
-    <include layout="@layout/content_manual" />
-
-
-
-</android.support.design.widget.CoordinatorLayout>
+</android.support.constraint.ConstraintLayout>

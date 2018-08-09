@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 
-import kotlinx.android.synthetic.main.content_manual.*
+import kotlinx.android.synthetic.main.activity_maual.*
 import android.view.inputmethod.InputMethodManager
 
 
