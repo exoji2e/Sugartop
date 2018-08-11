@@ -25,13 +25,10 @@ import android.os.Vibrator
 
 class ReadActivity : AppCompatActivity() {
     private var nfcAdapter: NfcAdapter? = null
-    private var dc : DataContainer? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_read)
-        dc = DataContainer.getInstance(this)
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
@@ -115,14 +112,13 @@ class ReadActivity : AppCompatActivity() {
             Log.i(TAG, sb.toString())
             val now = Time.now()
             putOnTop(MainActivity::class.java)
-            if(RawParser.timestamp(data) == 0) {
-                // Save the sensor id, and time it was read, so a more accurate prediction can be made.
-                Toast.makeText(this@ReadActivity, "Sensor has not started yet.", Toast.LENGTH_LONG).show()
-            } else {
-                dc!!.append(data, now, tagId)
-                val intent = Intent(this@ReadActivity, ResultActivity::class.java)
-                startActivity(intent)
+            val task = Runnable {
+                val dc = DataContainer.getInstance(this@ReadActivity)
+                dc.append(data, now, tagId)
             }
+            DbWorkerThread.getInstance().postTask(task)
+            val intent = Intent(this@ReadActivity, ResultActivity::class.java)
+            startActivity(intent)
         }
 
         override fun doInBackground(vararg params: Tag): Tag? {

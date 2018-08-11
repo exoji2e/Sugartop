@@ -23,6 +23,7 @@ class DbWorkerThread(threadName: String) : HandlerThread(threadName) {
                     if(mThread == null) {
                         mThread = DbWorkerThread("dbWorker")
                         mThread!!.start()
+                        mThread!!.onLooperPrepared()
                     }
                 }
             }

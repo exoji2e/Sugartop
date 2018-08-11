@@ -8,36 +8,32 @@ class DataContainer {
     private val history = mutableListOf<GlucoseEntry>()
     val noH = 32
     val TAG = "DataContainer"
-    private val mWorker = DbWorkerThread.getInstance()
     private var mDb : ErbilDataBase? = null
     private var done : Boolean = false
     private var lastId : Int = -1
     private val lock = java.lang.Object()
     private var raw_data = ByteArray(360)
     constructor(context : Context) {
-        val task = Runnable {
-            mDb = ErbilDataBase.getInstance(context)
-            val glucoseData =
-                    mDb?.glucoseEntryDao()?.getAll()
-            synchronized(lock){
-                if (glucoseData == null || glucoseData.isEmpty()) {
-                    Log.d(TAG, "No data in db")
-                } else {
-                    for(g: GlucoseEntry in glucoseData) {
-                        if(g.history) history.add(g)
-                        else recent.add(g)
-                        lastId = Math.max(lastId, g.id)
-                    }
-                    history.sortBy { entry -> entry.utcTimeStamp }
-                    recent.sortBy { entry -> entry.utcTimeStamp }
-                    Log.d(TAG, "history contained %d items".format(history.size))
-                    Log.d(TAG, "recent contained %d items".format(recent.size))
+        mDb = ErbilDataBase.getInstance(context)
+        val glucoseData =
+                mDb?.glucoseEntryDao()?.getAll()
+        synchronized(lock){
+            if (glucoseData == null || glucoseData.isEmpty()) {
+                Log.d(TAG, "No data in db")
+            } else {
+                for(g: GlucoseEntry in glucoseData) {
+                    if(g.history) history.add(g)
+                    else recent.add(g)
+                    lastId = Math.max(lastId, g.id)
                 }
-                done = true
-                lock.notifyAll()
+                history.sortBy { entry -> entry.utcTimeStamp }
+                recent.sortBy { entry -> entry.utcTimeStamp }
+                Log.d(TAG, "history contained %d items".format(history.size))
+                Log.d(TAG, "recent contained %d items".format(recent.size))
             }
+            done = true
+            lock.notifyAll()
         }
-        mWorker.postTask(task)
     }
     private fun waitForDone() {
         synchronized(lock) {
@@ -69,12 +65,14 @@ class DataContainer {
     }
 
     fun insert(v: List<GlucoseEntry>) {
+        waitForDone()
         synchronized(lock){
             if(history.size + recent.size != 0) return
             for(g in v) {
                 if(g.history) history.add(g)
                 else recent.add(g)
                 mDb?.glucoseEntryDao()?.insert(g)
+                lastId = Math.max(lastId, g.id)
             }
         }
         Log.d(TAG, String.format("inserted %d vales into database", v.size))
@@ -82,18 +80,15 @@ class DataContainer {
 
     private fun extend(v: List<GlucoseReading>, into: MutableList<GlucoseEntry>) {
         synchronized(lock) {
-            val toExtend = v.filter {g: GlucoseReading -> g.status != 0 && g.value > 10}
-                    .mapIndexed{i: Int, g: GlucoseReading -> GlucoseEntry(g, lastId + 1 + i)}
+            val toExtend = v.filter { g: GlucoseReading -> g.status != 0 && g.value > 10 }
+                    .mapIndexed { i: Int, g: GlucoseReading -> GlucoseEntry(g, lastId + 1 + i) }
             lastId += toExtend.size
             into.addAll(toExtend)
-            val task = Runnable {
-                for(r: GlucoseEntry in toExtend) {
-                    mDb?.glucoseEntryDao()?.insert(r)
-                }
-                Log.d(TAG, "Inserted into db!")
+            for (r: GlucoseEntry in toExtend) {
+                mDb?.glucoseEntryDao()?.insert(r)
             }
-            mWorker.postTask(task)
         }
+        Log.d(TAG, "Inserted into db!")
     }
 
     // Inspects last entry from the same sensor and filters out all that are already logged.
@@ -154,14 +149,11 @@ class DataContainer {
     }
     fun insertIntoDb(manual : ManualGlucoseEntry) {
         waitForDone()
-        synchronized(lock){
-            val task = Runnable{
-                mDb!!.manualEntryDao().insert(manual)
-                Log.d(TAG, "inserted manual entry into db.")
-                val v :List<ManualGlucoseEntry> = mDb!!.manualEntryDao().getAll()
-                Log.d(TAG, String.format("table size: %d", v.size))
-            }
-            mWorker.postTask(task)
+        synchronized(lock) {
+            mDb!!.manualEntryDao().insert(manual)
+            Log.d(TAG, "inserted manual entry into db.")
+            val v: List<ManualGlucoseEntry> = mDb!!.manualEntryDao().getAll()
+            Log.d(TAG, String.format("table size: %d", v.size))
         }
     }
     companion object {

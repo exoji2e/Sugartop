@@ -13,8 +13,9 @@ import java.io.InputStreamReader
 
 class MainActivity : ErbilActivity() {
     override val TAG = "MAIN"
-    val dc: DataContainer = DataContainer.getInstance(this)
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.result_layout)
         when {
             intent?.action == Intent.ACTION_SEND -> {
                 val task = Runnable {
@@ -38,28 +39,32 @@ class MainActivity : ErbilActivity() {
                     dc.insert(entries)
                 }
                 DbWorkerThread.getInstance().postTask(task)
+                onResume()
+                return
             }
         }
-
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.result_layout)
         startReadActivity()
     }
 
     override fun onResume() {
         super.onResume()
-        val readings = dc.get24h()
-        val avg = Compute.avg(readings)
-        // TODO: Move constants to user.
-        val percentInside = Compute.inGoal(4.0, 8.0, readings) * 100
-        val values = ArrayList<Entry>()
-        val first: Long = if (readings.isEmpty()) 0L else readings[0].utcTimeStamp
-        val recent: Double = if (readings.isEmpty()) 0.0 else readings.last().tommol()
-        values.addAll(readings.map { r -> Entry((r.utcTimeStamp - first).toFloat(), r.tommol().toFloat()) })
-        if (readings.size > 1) Push2Plot.setPlot(values, graph, first)
-        ingData.text = String.format("%.1f %s", percentInside, "%")
-        avgData.text = String.format("%.1f", avg)
-        recentData.text = String.format("%.1f", recent)
+        val task = Runnable {
+            val dc = DataContainer.getInstance(this)
+            val readings = dc.get24h()
+            val avg = Compute.avg(readings)
+            // TODO: Move constants to user.
+            val percentInside = Compute.inGoal(4.0, 8.0, readings) * 100
+            val values = ArrayList<Entry>()
+            val first: Long = if (readings.isEmpty()) 0L else readings[0].utcTimeStamp
+            val recent: Double = if (readings.isEmpty()) 0.0 else readings.last().tommol()
+            values.addAll(readings.map { r -> Entry((r.utcTimeStamp - first).toFloat(), r.tommol().toFloat()) })
+            if (readings.size > 1) Push2Plot.setPlot(values, graph, first)
+            ingData.text = String.format("%.1f %s", percentInside, "%")
+            avgData.text = String.format("%.1f", avg)
+            recentData.text = String.format("%.1f", recent)
+        }
+        DbWorkerThread.getInstance().postTask(task)
+
     }
 
     private fun startReadActivity() {
