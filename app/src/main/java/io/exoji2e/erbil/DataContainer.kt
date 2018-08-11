@@ -8,14 +8,13 @@ class DataContainer {
     private val history = mutableListOf<GlucoseEntry>()
     val noH = 32
     val TAG = "DataContainer"
-    private val mWorker : DbWorkerThread
+    private val mWorker = DbWorkerThread.getInstance()
     private var mDb : ErbilDataBase? = null
     private var done : Boolean = false
     private var lastId : Int = -1
     private val lock = java.lang.Object()
     private var raw_data = ByteArray(360)
     constructor(context : Context) {
-        mWorker = DbWorkerThread.getInstance()
         val task = Runnable {
             mDb = ErbilDataBase.getInstance(context)
             val glucoseData =
@@ -67,6 +66,18 @@ class DataContainer {
         extend(history_prepared, history)
         Log.d(TAG, String.format("recent_size %d", recent.size))
         Log.d(TAG, String.format("histroy_size %d", history.size))
+    }
+
+    fun insert(v: List<GlucoseEntry>) {
+        synchronized(lock){
+            if(history.size + recent.size != 0) return
+            for(g in v) {
+                if(g.history) history.add(g)
+                else recent.add(g)
+                mDb?.glucoseEntryDao()?.insert(g)
+            }
+        }
+        Log.d(TAG, String.format("inserted %d vales into database", v.size))
     }
 
     private fun extend(v: List<GlucoseReading>, into: MutableList<GlucoseEntry>) {
@@ -135,7 +146,7 @@ class DataContainer {
     fun size() : Int {
         waitForDone()
         synchronized(lock) {
-            return history.size
+            return history.size + recent.size
         }
     }
     fun dump() : ByteArray {

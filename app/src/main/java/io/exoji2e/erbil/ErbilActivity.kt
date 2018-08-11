@@ -1,15 +1,18 @@
 package io.exoji2e.erbil
 
+import android.app.Activity
 import android.content.Intent
+import android.os.ParcelFileDescriptor
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import java.io.File
+import java.io.*
 
 abstract class ErbilActivity : AppCompatActivity() {
     abstract val TAG : String
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.constant_menu, menu)
@@ -31,9 +34,11 @@ abstract class ErbilActivity : AppCompatActivity() {
                 shareAsCSV()
                 return true
             }
+
             else -> return super.onOptionsItemSelected(item)
         }
     }
+
     fun shareDB() {
         val path = getDatabasePath("Erbil.db").getAbsolutePath()
         share_file(path)
@@ -51,11 +56,11 @@ abstract class ErbilActivity : AppCompatActivity() {
             val file = File(filesDir, filename)
             file.writeText(sb.toString())
             share_file(file.absolutePath)
-            //file.delete()
+            file.deleteOnExit()
         }
         DbWorkerThread.getInstance().postTask(task)
-
     }
+
     private fun share_file(path: String) {
         val file = File(path)
         try {
