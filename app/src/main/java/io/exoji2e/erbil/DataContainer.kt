@@ -131,7 +131,9 @@ class DataContainer {
     private fun get(after: Long, before : Long) : List<GlucoseEntry> {
         waitForDone()
         synchronized(lock) {
-            return history.filter{r -> r.utcTimeStamp < before && r.utcTimeStamp > after}
+            return (history.filter{r -> r.utcTimeStamp < before && r.utcTimeStamp > after} +
+                    recent.filter{r -> r.utcTimeStamp < before && r.utcTimeStamp > after})
+                    .sortedBy { g -> g.utcTimeStamp }
         }
     }
     fun get8h() : List<GlucoseEntry> {
