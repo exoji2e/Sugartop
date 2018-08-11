@@ -1,8 +1,6 @@
 package io.exoji2e.erbil
 
-import android.app.Activity
 import android.content.Intent
-import android.os.ParcelFileDescriptor
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -40,7 +38,7 @@ abstract class ErbilActivity : AppCompatActivity() {
     }
 
     fun shareDB() {
-        val path = getDatabasePath("Erbil.db").getAbsolutePath()
+        val path = getDatabasePath(ErbilDataBase.NAME).getAbsolutePath()
         share_file(path)
     }
     fun shareAsCSV() {

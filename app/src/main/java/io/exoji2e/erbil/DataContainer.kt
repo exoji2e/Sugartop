@@ -48,6 +48,7 @@ class DataContainer {
         }
         val timestamp = RawParser.timestamp(raw_data)
         if(timestamp == 0) {
+            mDb?.sensorContactDao()?.insert(SensorContact(0, readingTime, sensorId, 0, 0))
             return
         }
         // Timestamp is 2 mod 15 every time a new reading to history is done.
@@ -56,10 +57,11 @@ class DataContainer {
         val now_history = RawParser.history(raw_data)
         val now_recent = RawParser.recent(raw_data)
 
-        val recent_prepared = prepare(now_recent, sensorId, recent, 1, readingTime - 16*Time.MINUTE)
-        extend(recent_prepared, recent)
-        val history_prepared = prepare(now_history, sensorId, history, 15, start)
-        extend(history_prepared, history)
+        val recent_prepared = prepare(now_recent, sensorId, recent, 1*Time.MINUTE, readingTime - 16*Time.MINUTE, true)
+        val history_prepared = prepare(now_history, sensorId, history, 15*Time.MINUTE, start, minutesSinceLast != 14)
+        val added = extend(recent_prepared, recent) + extend(history_prepared, history)
+        mDb?.sensorContactDao()?.insert(SensorContact(0, readingTime, sensorId, timestamp, added))
+
         Log.d(TAG, String.format("recent_size %d", recent.size))
         Log.d(TAG, String.format("histroy_size %d", history.size))
     }
@@ -78,7 +80,7 @@ class DataContainer {
         Log.d(TAG, String.format("inserted %d vales into database", v.size))
     }
 
-    private fun extend(v: List<GlucoseReading>, into: MutableList<GlucoseEntry>) {
+    private fun extend(v: List<GlucoseReading>, into: MutableList<GlucoseEntry>) : Int {
         synchronized(lock) {
             val toExtend = v.filter { g: GlucoseReading -> g.status != 0 && g.value > 10 }
                     .mapIndexed { i: Int, g: GlucoseReading -> GlucoseEntry(g, lastId + 1 + i) }
@@ -87,12 +89,18 @@ class DataContainer {
             for (r: GlucoseEntry in toExtend) {
                 mDb?.glucoseEntryDao()?.insert(r)
             }
+            Log.d(TAG, "Inserted into db!")
+            return toExtend.size
         }
-        Log.d(TAG, "Inserted into db!")
     }
 
     // Inspects last entry from the same sensor and filters out all that are already logged.
-    private fun prepare(chunks : List<SensorChunk>, sensorId : Long, into: List<GlucoseEntry>, dt : Int, start : Long) : List<GlucoseReading> {
+    private fun prepare(chunks : List<SensorChunk>,
+                        sensorId : Long,
+                        into: List<GlucoseEntry>,
+                        dt : Long,
+                        start : Long,
+                        certain : Boolean) : List<GlucoseReading> {
         val lastRecent = last(sensorId, into)
         if(lastRecent != null) {
             var match = -1
@@ -102,15 +110,23 @@ class DataContainer {
                 }
             }
             if(match > -1) {
-                return chunks.slice(IntRange(match + 1, chunks.size - 1))
-                        .mapIndexed { i: Int, chunk: SensorChunk ->
+                val range = IntRange(match + 1, chunks.size - 1)
+                if(!certain)
+                    return chunks.slice(range)
+                            .mapIndexed { i: Int, chunk: SensorChunk ->
                             GlucoseReading(chunk,
-                                    lastRecent.utcTimeStamp + (i + 1) * dt * Time.MINUTE, sensorId)
+                                    lastRecent.utcTimeStamp + (i + 1) * dt, sensorId)
                         }
+                else {
+                    return chunks.mapIndexed { i: Int, chunk: SensorChunk ->
+                        GlucoseReading(chunk,
+                                start + i * dt, sensorId)
+                    }.slice(range)
+                }
             }
         }
         return chunks.mapIndexed { i: Int, chunk: SensorChunk ->
-            GlucoseReading(chunk, start + i * 15 * Time.MINUTE, sensorId) }
+            GlucoseReading(chunk, start + i * dt, sensorId) }
     }
     private fun get(after: Long, before : Long) : List<GlucoseEntry> {
         waitForDone()

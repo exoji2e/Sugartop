@@ -17,7 +17,6 @@ import java.io.IOException
 import java.util.*
 import android.os.VibrationEffect
 import android.os.Build
-import android.content.Context.VIBRATOR_SERVICE
 import android.os.Vibrator
 
 

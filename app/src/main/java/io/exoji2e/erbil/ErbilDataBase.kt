@@ -13,6 +13,7 @@ abstract class ErbilDataBase : RoomDatabase() {
     abstract fun sensorContactDao(): SensorContactDao
 
     companion object {
+        val NAME = "Erbil.db"
         private var INSTANCE: ErbilDataBase? = null
 
         fun getInstance(context: Context): ErbilDataBase? {
@@ -22,7 +23,7 @@ abstract class ErbilDataBase : RoomDatabase() {
                         INSTANCE = Room.databaseBuilder(
                                 context.getApplicationContext(),
                                 ErbilDataBase::class.java,
-                                "Erbil.db")
+                                NAME)
                                 .build()
                     }
                 }
