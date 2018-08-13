@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_dashboard"
+        android:title="Dashboard"
+        android:icon="@drawable/monitor_dashboard" />
+    <item android:id="@+id/action_history"
+        android:title="History"
+        android:icon="@drawable/calendar_text" />
+    <item android:id="@+id/action_recent"
+        android:title="Recent"
+        android:icon="@drawable/clock_outline" />
+</menu>

@@ -13,9 +13,10 @@ import java.io.InputStreamReader
 
 class MainActivity : ErbilActivity() {
     override val TAG = "MAIN"
+    override fun getNavigationMenuItemId() = R.id.action_dashboard
+    override fun getContentViewId() = R.layout.result_layout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.result_layout)
         when {
             intent?.action == Intent.ACTION_SEND -> {
                 val task = Runnable {
@@ -64,15 +65,10 @@ class MainActivity : ErbilActivity() {
             recentData.text = String.format("%.1f", recent)
         }
         DbWorkerThread.getInstance().postTask(task)
-
     }
 
     private fun startReadActivity() {
         val intent = Intent(this, ReadActivity::class.java)
         startActivity(intent)
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-
     }
 }

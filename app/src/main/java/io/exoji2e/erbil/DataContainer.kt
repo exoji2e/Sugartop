@@ -12,7 +12,7 @@ class DataContainer {
     private var done : Boolean = false
     private var lastId : Int = -1
     private val lock = java.lang.Object()
-    private var raw_data = ByteArray(360)
+    private var lastTimeStamp : Int = 0
     constructor(context : Context) {
         mDb = ErbilDataBase.getInstance(context)
         val glucoseData =
@@ -43,9 +43,7 @@ class DataContainer {
         }
     }
     fun append(raw_data: ByteArray, readingTime: Long, sensorId : Long) {
-        synchronized(lock) {
-            this.raw_data = raw_data
-        }
+
         val timestamp = RawParser.timestamp(raw_data)
         if(timestamp == 0) {
             mDb?.sensorContactDao()?.insert(SensorContact(0, readingTime, sensorId, 0, 0))
@@ -61,7 +59,7 @@ class DataContainer {
         val history_prepared = prepare(now_history, sensorId, history, 15*Time.MINUTE, start, minutesSinceLast != 14)
         val added = extend(recent_prepared, recent) + extend(history_prepared, history)
         mDb?.sensorContactDao()?.insert(SensorContact(0, readingTime, sensorId, timestamp, added))
-
+        lastTimeStamp = timestamp
         Log.d(TAG, String.format("recent_size %d", recent.size))
         Log.d(TAG, String.format("histroy_size %d", history.size))
     }
@@ -144,6 +142,21 @@ class DataContainer {
         val now = Time.now()
         return get(now - Time.HOUR*24L, now)
     }
+    fun guess() : GlucoseReading? {
+        waitForDone()
+        synchronized(lock){
+            if(recent.size < 5) return null
+            val last = recent.last()
+            //TODO: handle multiple sensors
+            val guess_val = last.value*2 - recent[recent.size-5].value
+            return GlucoseReading(guess_val,
+                    last.utcTimeStamp + 5*Time.MINUTE,
+                    last.sensorId,last.status, false, 0)
+        }
+    }
+    fun lastTimeStamp() : Int {
+        synchronized(lock){return lastTimeStamp}
+    }
     private fun last(sensorId: Long, v: List<GlucoseEntry>) : GlucoseEntry? {
         waitForDone()
         synchronized(lock) {
@@ -162,9 +175,7 @@ class DataContainer {
             return history.size + recent.size
         }
     }
-    fun dump() : ByteArray {
-        synchronized(lock) { return raw_data }
-    }
+
     fun insertIntoDb(manual : ManualGlucoseEntry) {
         waitForDone()
         synchronized(lock) {

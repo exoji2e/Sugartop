@@ -14,6 +14,7 @@ data class SensorChunk(val value: Int, val status: Int, val history: Boolean, va
 data class GlucoseReading(val value: Int, val utcTimeStamp: Long, val sensorId: Long, val status: Int, val history: Boolean, val rest: Int) {
     constructor(s: SensorChunk, utcTimeStamp: Long, sensorId: Long):
             this(s.value, utcTimeStamp, sensorId, s.status, s.history, s.rest)
+    fun tommol() : Double = RawParser.sensor2mmol(value)
 }
 
 @Entity(tableName = "GlucoseEntries")
