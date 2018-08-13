@@ -15,7 +15,8 @@ class RawParser {
         }
 
         // TODO: should use user-function instead.
-        fun sensor2mmol(v: Int) : Double = v*0.0062492 - 1.89978
+        //fun sensor2mmol(v: Int) : Double = v*0.0062492 - 1.89978
+        fun sensor2mmol(v: Int) : Double = v*0.00567 -  0.04605
 
         private fun chunk(bytes: ByteArray, history: Boolean) : List<SensorChunk> {
             return bytes
