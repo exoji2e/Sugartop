@@ -44,7 +44,10 @@ class MainActivity : ErbilActivity() {
                 return
             }
         }
-        startReadActivity()
+        if(!started){
+            started = true
+            putOnTop(ReadActivity::class.java)
+        }
     }
 
     override fun onResume() {
@@ -66,9 +69,7 @@ class MainActivity : ErbilActivity() {
         }
         DbWorkerThread.getInstance().postTask(task)
     }
-
-    private fun startReadActivity() {
-        val intent = Intent(this, ReadActivity::class.java)
-        startActivity(intent)
+    companion object {
+        var started = false
     }
 }

@@ -20,11 +20,11 @@ abstract class ErbilActivity : AppCompatActivity() {
         navigation.setOnNavigationItemSelectedListener {item ->
                 when(item.itemId) {
                     R.id.action_dashboard -> {
-                        startActivity(Intent(this, MainActivity::class.java))
+                        putOnTop(MainActivity::class.java)
                         true
                     }
                     R.id.action_recent -> {
-                        startActivity(Intent(this, ResultActivity::class.java))
+                        putOnTop(ResultActivity::class.java)
                         true
                     }
                     else -> {
@@ -32,6 +32,11 @@ abstract class ErbilActivity : AppCompatActivity() {
                     }
                 }
         }
+    }
+    fun putOnTop(cls: Class<*>) {
+        val reopen = Intent(this, cls)
+        reopen.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+        startActivityIfNeeded(reopen, 0)
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater

@@ -62,20 +62,16 @@ class ReadActivity : AppCompatActivity() {
         if (NfcAdapter.ACTION_TECH_DISCOVERED == action) {
             val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
             NfcVReaderTask().execute(tag)
-        } else if(intent.flags == Intent.FLAG_ACTIVITY_REORDER_TO_FRONT) {
-            super.onNewIntent(intent)
-        } else {
+        }  else {
             putOnTop(MainActivity::class.java)
         }
     }
 
-    private fun putOnTop(cls: Class<*>) {
+    fun putOnTop(cls: Class<*>) {
         val reopen = Intent(this, cls)
         reopen.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
         startActivityIfNeeded(reopen, 0)
     }
-
-
 
     private inner class NfcVReaderTask : AsyncTask<Tag, Void, Tag>() {
 
@@ -110,14 +106,14 @@ class ReadActivity : AppCompatActivity() {
             }
             Log.i(TAG, sb.toString())
             val now = Time.now()
+            //TODO: Fix this ugly mess of reordering activities. Maybe read-activity shouldnt be a separate activity?
             putOnTop(MainActivity::class.java)
             val task = Runnable {
                 val dc = DataContainer.getInstance(this@ReadActivity)
                 dc.append(data, now, tagId)
             }
             DbWorkerThread.getInstance().postTask(task)
-            val intent = Intent(this@ReadActivity, ResultActivity::class.java)
-            startActivity(intent)
+            putOnTop(ResultActivity::class.java)
         }
 
         override fun doInBackground(vararg params: Tag): Tag? {

@@ -13,6 +13,11 @@ class ResultActivity : ErbilActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        onResume()
+    }
+
+    override fun onResume() {
+        super.onResume()
         showLayout()
     }
 
