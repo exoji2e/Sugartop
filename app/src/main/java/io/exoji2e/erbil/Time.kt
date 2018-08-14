@@ -11,14 +11,17 @@ class Time {
         fun now() : Long = System.currentTimeMillis()
         fun timeLeft(timeStamp: Int) : String {
             val left = 21328 - timeStamp
+            val days = left/(24*60)
+            val hours = (left/60)%24
+            val minutes = left%60
             return if(left < 0)
                 "Finished"
             else if(left < 60)
-                String.format("%d minutes", left)
+                String.format("%d%s", minutes, "m")
             else if(left < 60*24)
-                String.format("%d hours", left/60)
+                String.format("%d%s:%d%s", hours, "h", minutes, "m")
             else
-                String.format("%d days", left / (24 * 60))
+                String.format("%d%s:%d%s", days, "d", hours, "h")
         }
         fun datetime(): String {
             val t = now()
