@@ -3,6 +3,7 @@ package io.exoji2e.erbil
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.ShareCompat
+import android.util.Log
 import android.widget.Toast
 import com.github.mikephil.charting.data.Entry
 import java.util.ArrayList
@@ -12,7 +13,7 @@ import java.io.InputStreamReader
 
 
 class MainActivity : ErbilActivity() {
-    override val TAG = "MAIN"
+    override val TAG = "MAIN-Activity"
     override fun getNavigationMenuItemId() = R.id.action_dashboard
     override fun getContentViewId() = R.layout.result_layout
 

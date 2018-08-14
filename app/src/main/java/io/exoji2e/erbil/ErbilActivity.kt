@@ -45,6 +45,7 @@ abstract class ErbilActivity : AppCompatActivity() {
                     }
                 }
         }
+        onNewIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
