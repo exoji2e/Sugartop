@@ -12,7 +12,13 @@ class Compute {
             }
             return sum/(data.last().utcTimeStamp - data[0].utcTimeStamp)
         }
-        fun inGoal(lo: Double, hi : Double, data: List<GlucoseEntry>) : Double {
+        fun inGoal(lo: Double, hi : Double, data: List<GlucoseEntry>) : String {
+            val v = _inGoal(lo, hi, data)*100
+            val res = String.format("%.1f", v)
+            val ret =  if(res.equals("100.0")) "100" else res
+            return String.format("%s %s", ret, "%")
+        }
+        private fun _inGoal(lo: Double, hi : Double, data: List<GlucoseEntry>) : Double {
             if(data.isEmpty()) return 0.0
             if(data.size == 1) {
                 val v = data[0].tommol()

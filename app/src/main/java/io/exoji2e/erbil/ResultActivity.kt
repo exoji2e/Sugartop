@@ -36,14 +36,13 @@ class ResultActivity : ErbilActivity() {
             val trend = if (diff > .5) "↑↑" else if (diff > .25) "↑" else if (diff < -.5) "↓↓" else if (diff < -.25) "↓" else "→"
 
             val avg = Compute.avg(readings)
-            val percentInside = Compute.inGoal(4.0, 8.0, readings) * 100
             val values = ArrayList<Entry>()
             val now = Time.now()
             val first: Long = if (readings.isEmpty()) now else readings[0].utcTimeStamp
             values.addAll(readings.map { r -> Entry((r.utcTimeStamp - first).toFloat(), r.tommol().toFloat()) })
             values.add(Entry((predict.utcTimeStamp - first).toFloat(), predict.tommol().toFloat()))
             Push2Plot.setPlot(values, graph, first)
-            ingData.text = String.format("%.1f %s", percentInside, "%")
+            ingData.text = Compute.inGoal(4.0, 8.0, readings)
             avgData.text = String.format("%.1f", avg)
             recentData.text = String.format("%.1f %s", RawParser.sensor2mmol(predict.value), trend)
         }
