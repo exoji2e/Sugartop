@@ -10,12 +10,6 @@ class ResultActivity : ErbilActivity() {
     override fun getNavigationMenuItemId() = R.id.action_recent
     override fun getContentViewId() = R.layout.result_layout
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        onResume()
-    }
-
     override fun onResume() {
         super.onResume()
         showLayout()

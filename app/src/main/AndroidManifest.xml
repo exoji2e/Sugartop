@@ -34,14 +34,12 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:mimeType="text/csv"/>
             </intent-filter>
-        </activity>
-        <activity android:name=".ReadActivity">
             <intent-filter>
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
             <meta-data
                 android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/nfc" />
