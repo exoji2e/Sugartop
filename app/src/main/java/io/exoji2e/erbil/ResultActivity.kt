@@ -36,11 +36,14 @@ class ResultActivity : ErbilActivity() {
             val trend = if (diff > .5) "↑↑" else if (diff > .25) "↑" else if (diff < -.5) "↓↓" else if (diff < -.25) "↓" else "→"
 
             val avg = Compute.avg(readings)
-            val values = ArrayList<Entry>()
-            val now = Time.now()
-            val first: Long = if (readings.isEmpty()) now else readings[0].utcTimeStamp
-            values.addAll(readings.map { r -> Entry((r.utcTimeStamp - first).toFloat(), r.tommol().toFloat()) })
-            values.add(Entry((predict.utcTimeStamp - first).toFloat(), predict.tommol().toFloat()))
+            val first: Long = readings[0].utcTimeStamp
+            val values = readings
+                    .groupBy { g -> g.sensorId }
+                    .mapValues{(id, glucs) ->
+                        glucs.map{r -> Entry((r.utcTimeStamp - first).toFloat(), r.tommol().toFloat()) }
+                                .toMutableList()}
+            values[predict.sensorId]?.add(Entry((predict.utcTimeStamp - first).toFloat(), predict.tommol().toFloat()))
+
             Push2Plot.setPlot(values, graph, first)
             ingData.text = Compute.inGoal(4.0, 8.0, readings)
             avgData.text = String.format("%.1f", avg)

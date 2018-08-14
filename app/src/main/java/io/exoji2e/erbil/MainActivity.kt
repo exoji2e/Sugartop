@@ -57,10 +57,15 @@ class MainActivity : ErbilActivity() {
             val readings = dc.get24h()
             val avg = Compute.avg(readings)
             // TODO: Move constants to user.
-            val values = ArrayList<Entry>()
+            //val values = ArrayList<Entry>()
             val first: Long = if (readings.isEmpty()) 0L else readings[0].utcTimeStamp
             val recent: Double = if (readings.isEmpty()) 0.0 else readings.last().tommol()
-            values.addAll(readings.map { r -> Entry((r.utcTimeStamp - first).toFloat(), r.tommol().toFloat()) })
+            val values = readings
+                    .groupBy { g -> g.sensorId }
+                    .mapValues{(id, glucs) ->
+                        glucs.map{r -> Entry((r.utcTimeStamp - first).toFloat(), r.tommol().toFloat()) }
+                                .toMutableList()}
+            //values.addAll(readings.map { r -> Entry((r.utcTimeStamp - first).toFloat(), r.tommol().toFloat()) })
             if (readings.size > 1) Push2Plot.setPlot(values, graph, first)
             ingData.text = Compute.inGoal(4.0, 8.0, readings)
             avgData.text = String.format("%.1f", avg)
