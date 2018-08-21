@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/save_alt"
+        app:srcCompat="@drawable/ic_save_alt"
         app:layout_constraintTop_toTopOf="@+id/glucoseinput"
         app:layout_constraintRight_toRightOf="@+id/glucoseinput"
         />

@@ -2,8 +2,9 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/share"
-        android:icon="@drawable/ic_menu_share"
+        android:icon="@drawable/ic_share"
         android:title="Share"
+
         app:showAsAction="always">
         <menu>
             <item android:id="@+id/share_db"
@@ -13,7 +14,7 @@
     </menu>
     </item>
     <item android:id="@+id/manual"
-        android:icon="@drawable/plus"
+        android:icon="@drawable/ic_plus"
         android:title="Add manual reading"
         />
 </menu>
