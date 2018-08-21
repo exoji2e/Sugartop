@@ -1,9 +1,7 @@
 package io.exoji2e.erbil
 
-import android.os.Bundle
 import kotlinx.android.synthetic.main.result_layout.*
 import com.github.mikephil.charting.data.Entry
-import java.util.*
 
 class ResultActivity : ErbilActivity() {
     override val TAG = "ResultActivity"
@@ -30,15 +28,7 @@ class ResultActivity : ErbilActivity() {
             val trend = if (diff > .5) "↑↑" else if (diff > .25) "↑" else if (diff < -.5) "↓↓" else if (diff < -.25) "↓" else "→"
 
             val avg = Compute.avg(readings)
-            val first: Long = readings[0].utcTimeStamp
-            val values = readings
-                    .groupBy { g -> g.sensorId }
-                    .mapValues{(id, glucs) ->
-                        glucs.map{r -> Entry((r.utcTimeStamp - first).toFloat(), r.tommol().toFloat()) }
-                                .toMutableList()}
-            values[predict.sensorId]?.add(Entry((predict.utcTimeStamp - first).toFloat(), predict.tommol().toFloat()))
-
-            Push2Plot.setPlot(values, graph, first)
+            Push2Plot._setPlot(readings.map{g -> g.toReading()} + predict, graph, Time.now() - Time.HOUR*8, Time.now() + 5*Time.MINUTE)
             ingData.text = Compute.inGoal(4.0, 8.0, readings)
             avgData.text = String.format("%.1f", avg)
             recentData.text = String.format("%.1f %s", RawParser.sensor2mmol(predict.value), trend)

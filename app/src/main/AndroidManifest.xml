@@ -46,7 +46,9 @@
         <activity
             android:name=".ResultActivity"
             android:theme="@style/AppTheme" />
-
+        <activity
+            android:name=".HistoryActivity"
+            android:theme="@style/AppTheme" />
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="io.exoji2e.erbil.fileprovider"

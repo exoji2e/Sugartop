@@ -126,7 +126,7 @@ class DataContainer {
         return chunks.mapIndexed { i: Int, chunk: SensorChunk ->
             GlucoseReading(chunk, start + i * dt, sensorId) }
     }
-    private fun get(after: Long, before : Long) : List<GlucoseEntry> {
+     fun get(after: Long, before : Long) : List<GlucoseEntry> {
         waitForDone()
         synchronized(lock) {
             return (history.filter{r -> r.utcTimeStamp < before && r.utcTimeStamp > after} +

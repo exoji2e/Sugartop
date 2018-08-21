@@ -8,6 +8,7 @@ class Time {
         val SECOND = 1000L
         val MINUTE = 60L*SECOND
         val HOUR = 60L*MINUTE
+        val DAY = 24L*HOUR
         fun now() : Long = System.currentTimeMillis()
         fun timeLeft(timeStamp: Int) : String {
             val left = 21328 - timeStamp
@@ -24,11 +25,40 @@ class Time {
                 String.format("%d%s:%d%s", days, "d", hours, "h")
         }
         fun datetime(): String {
-            val t = now()
+            return datetime(now())
+        }
+        fun datetime(t : Long): String {
             val mSegmentStartTimeFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
             val mCalendar = Calendar.getInstance()
             mCalendar.timeInMillis = t
             return mSegmentStartTimeFormatter.format(mCalendar.getTimeInMillis())
         }
+        fun date(t: Long) : String {
+            val mSegmentStartTimeFormatter = SimpleDateFormat("yyyy-MM-dd")
+            val mCalendar = Calendar.getInstance()
+            mCalendar.timeInMillis = t
+            return mSegmentStartTimeFormatter.format(mCalendar.getTimeInMillis())
+        }
+        fun date_as_int() : Int {
+            val date_str = date(now())
+            val (y, m, d) = date_str.split("-").map{i -> i.toInt()}
+            return d + m*31 + (y-1970)*31*12
+        }
+        fun floor_day(t : Long) : Long {
+            val mSegmentStartTimeFormatter = SimpleDateFormat("HH:mm:ss")
+            val mCalendar = Calendar.getInstance()
+            mCalendar.timeInMillis = t
+            val time_str = mSegmentStartTimeFormatter.format(mCalendar.getTimeInMillis())
+            val (h, m, s) = time_str.split(":").map{i -> i.toInt()}
+            return t - h* HOUR - m* MINUTE - s * SECOND
+        }
+        fun date_as_string(daysSince: Int) : String {
+            return date(now() - daysSince*DAY)
+        }
+        fun limits(v : Int) : Pair<Long, Long> {
+            val start = floor_day(Time.now() - v*DAY)
+            return Pair(start, start + DAY)
+        }
+
     }
 }

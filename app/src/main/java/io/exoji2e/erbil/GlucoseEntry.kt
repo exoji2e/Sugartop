@@ -27,6 +27,8 @@ data class GlucoseEntry(@PrimaryKey(autoGenerate = true) val id: Int,
                         @ColumnInfo(name = "rest") val rest: Int) {
     constructor(s: GlucoseReading, id: Int):
             this(id, s.value, s.utcTimeStamp, s.sensorId, s.status, s.history, s.rest)
+    fun toReading() : GlucoseReading = GlucoseReading(value, utcTimeStamp, sensorId, status, history, rest)
+
     fun tommol() : Double = RawParser.sensor2mmol(value)
     fun eq(s: SensorChunk) =
             value == s.value &&

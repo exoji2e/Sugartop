@@ -40,6 +40,10 @@ abstract class ErbilActivity : AppCompatActivity() {
                         putOnTop(ResultActivity::class.java)
                         true
                     }
+                    R.id.action_history ->{
+                        putOnTop(HistoryActivity::class.java)
+                        true
+                    }
                     else -> {
                         true
                     }

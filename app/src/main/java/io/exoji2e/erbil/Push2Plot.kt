@@ -39,58 +39,65 @@ class Push2Plot {
             dataSet.setDrawCircleHole(false)
             return dataSet
         }
-        fun setPlot(values : Map<Long, List<Entry>>, graph : LineChart, first: Long) {
-            // Maybe do this gracefully. Toast "can't show plot with one data point"
-            //if(values.size < 2) return
+        fun setPlot(entries : List<GlucoseEntry>, graph : LineChart, start: Long, end : Long) {
+            _setPlot(entries.map{g -> g.toReading()}, graph, start, end)
+        }
+
+        fun _setPlot(entries : List<GlucoseReading>, graph : LineChart, start: Long, end : Long) {
+            val values = entries
+                    .groupBy { g -> g.sensorId }
+                    .mapValues{(id, glucs) ->
+                        glucs.map{r -> Entry((r.utcTimeStamp).toFloat(), r.tommol().toFloat()) }
+                                .toMutableList()}
             val sets = mutableListOf<LineDataSet>()
-            var (minx, maxx) = Pair(1e18f, -1e18f)
             for ((_, li) in values) {
                 sets.add(standardLineDataSet(li, false, ColorTemplate.getHoloBlue()))
-                minx = Math.min(minx, li.first().x)
-                maxx = Math.max(maxx, li.last().x)
             }
             // TODO: Move constants to user.
             val lo = mutableListOf<Entry>()
-            lo.add(Entry(minx, 4f))
-            lo.add(Entry(maxx, 4f))
+            lo.add(Entry(start.toFloat(), 4f))
+            lo.add(Entry(end.toFloat(), 4f))
             val hi = mutableListOf<Entry>()
-            hi.add(Entry(minx, 8f))
-            hi.add(Entry(maxx, 8f))
+            hi.add(Entry(start.toFloat(), 8f))
+            hi.add(Entry(end.toFloat(), 8f))
             sets.add(standardLineDataSet(lo, true, gray))
             sets.add(standardLineDataSet(hi, true, gray))
 
-            graph.data = LineData(sets as List<ILineDataSet>?)
-            graph.legend.isEnabled = false
-            graph.description.text = ""
-            graph.invalidate()
-
-            val xAxis = graph.getXAxis()
-            xAxis.position = XAxis.XAxisPosition.BOTTOM
-            xAxis.textSize = 12f
-            xAxis.setDrawAxisLine(false)
-            xAxis.setDrawGridLines(true)
-            xAxis.textColor = hotPink
-            xAxis.setLabelCount(5, true)
-            xAxis.valueFormatter = object : IAxisValueFormatter {
-                private val mCalendar = Calendar.getInstance()
-                override fun getFormattedValue(value: Float, axis: AxisBase): String {
-                    mCalendar.setTimeInMillis(value.toLong() + first)
-                    val hhmm = DateFormat.getTimeInstance(DateFormat.SHORT).format(mCalendar.getTimeInMillis())
-                    return hhmm
+            synchronized(graph) {
+                graph.data = LineData(sets as List<ILineDataSet>?)
+                graph.legend.isEnabled = false
+                graph.description.text = ""
+                graph.invalidate()
+                val xAxis = graph.getXAxis()
+                xAxis.position = XAxis.XAxisPosition.BOTTOM
+                xAxis.textSize = 12f
+                xAxis.setDrawAxisLine(false)
+                xAxis.setDrawGridLines(true)
+                xAxis.textColor = hotPink
+                xAxis.setLabelCount(5, true)
+                xAxis.valueFormatter = object : IAxisValueFormatter {
+                    private val mCalendar = Calendar.getInstance()
+                    override fun getFormattedValue(value: Float, axis: AxisBase): String {
+                        mCalendar.setTimeInMillis(value.toLong())
+                        val hhmm = DateFormat.getTimeInstance(DateFormat.SHORT).format(mCalendar.getTimeInMillis())
+                        return hhmm
+                    }
                 }
+                xAxis.axisMinimum = start.toFloat()
+                xAxis.axisMaximum = end.toFloat()
+
+                val leftAxis = graph.getAxisLeft()
+                leftAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART)
+                leftAxis.setDrawGridLines(true)
+                leftAxis.granularity = 4f
+                leftAxis.axisMinimum = 2f
+                leftAxis.axisMaximum = 17f
+                leftAxis.textSize = 12f
+                leftAxis.textColor = hotPink
+
+                val rightAxis = graph.getAxisRight()
+                rightAxis.isEnabled = false
             }
-
-            val leftAxis = graph.getAxisLeft()
-            leftAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART)
-            leftAxis.setDrawGridLines(true)
-            leftAxis.granularity = 4f
-            leftAxis.axisMinimum = 2f
-            leftAxis.axisMaximum = 17f
-            leftAxis.textSize = 12f
-            leftAxis.textColor = hotPink
-
-            val rightAxis = graph.getAxisRight()
-            rightAxis.isEnabled = false
         }
     }
 }

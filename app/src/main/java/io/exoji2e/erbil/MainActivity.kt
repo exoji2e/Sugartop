@@ -21,7 +21,6 @@ class MainActivity : ErbilActivity() {
         super.onNewIntent(intent)
         if(intent.action == Intent.ACTION_SEND) {
             val task = Runnable {
-                // This seems dangerous, maybe I'll get a deadlock here?
                 val dc = DataContainer.getInstance(this)
                 // Should maybe support merging later on?
                 if(dc.size() != 0){
@@ -52,12 +51,7 @@ class MainActivity : ErbilActivity() {
             // TODO: Move constants to user.
             val first: Long = if (readings.isEmpty()) 0L else readings[0].utcTimeStamp
             val recent: Double = if (readings.isEmpty()) 0.0 else readings.last().tommol()
-            val values = readings
-                    .groupBy { g -> g.sensorId }
-                    .mapValues{(id, glucs) ->
-                        glucs.map{r -> Entry((r.utcTimeStamp - first).toFloat(), r.tommol().toFloat()) }
-                                .toMutableList()}
-            if (readings.size > 1) Push2Plot.setPlot(values, graph, first)
+            if (readings.size > 1) Push2Plot.setPlot(readings, graph, Time.now() - Time.DAY, Time.now())
             ingData.text = Compute.inGoal(4.0, 8.0, readings)
             avgData.text = String.format("%.1f", avg)
             recentData.text = String.format("%.1f", recent)
