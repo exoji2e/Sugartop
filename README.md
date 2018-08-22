@@ -2,9 +2,9 @@
 
 Freestyle Libre is a wearable sensor that measures the glucose level through the blood plasma.
 
-As a diabetic one is currently offered two options or retrieving the data from the wearable sensor: 
+As a diabetic one is currently offered two options of retrieving the data from the wearable sensor: 
 
-1. Always bring an extra device with dimentions of a really old mobile phone, that is buggy and runs out of battery. 
+1. Always carry an extra device with dimentions of a really old mobile phone, that is buggy and runs out of battery. 
 2. Use your mobile phone, but accept some really shitty user agreements where you don't own your data.
 
 Well, I have chosen another path. Reverse Enginnering. My plan is to find out how the sensor works, and build an android app that extracts and stores the data _locally_.  
@@ -21,10 +21,11 @@ Well, I have chosen another path. Reverse Enginnering. My plan is to find out ho
 - [x] Icons based on if glucose level is increasing or decreasing.
 - [ ] Calibration of sensor data based on glucose readings from the same time.
 - [ ] More plots of glucose data.
-- [ ] Do some proper design
 - [ ] Log insulin injections
-- [ ] Set alarms
 - [ ] Customize settings (units, target interval, etc)
+- [ ] Design a logo
+- [ ] Upload app to Google Play
+- [ ] Set alarms
 
 
 ### Warning:
