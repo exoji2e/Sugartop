@@ -1,7 +1,5 @@
 package io.exoji2e.erbil
 
-import android.support.design.widget.Snackbar
-
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
@@ -10,11 +8,9 @@ import android.support.v4.app.FragmentStatePagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.github.mikephil.charting.data.Entry
 
 import kotlinx.android.synthetic.main.activity_history.*
 import kotlinx.android.synthetic.main.fragment_history.*
-import kotlinx.android.synthetic.main.fragment_history.view.*
 
 class HistoryActivity : ErbilActivity() {
     var NUM_ITEMS = Time.date_as_int()

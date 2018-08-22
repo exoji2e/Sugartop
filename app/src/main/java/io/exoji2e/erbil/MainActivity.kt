@@ -1,12 +1,8 @@
 package io.exoji2e.erbil
 
 import android.content.Intent
-import android.os.Bundle
 import android.support.v4.app.ShareCompat
-import android.util.Log
 import android.widget.Toast
-import com.github.mikephil.charting.data.Entry
-import java.util.ArrayList
 import kotlinx.android.synthetic.main.result_layout.*
 import java.io.BufferedReader
 import java.io.InputStreamReader

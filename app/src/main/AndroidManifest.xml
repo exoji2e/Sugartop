@@ -44,7 +44,7 @@
                 android:resource="@xml/nfc" />
         </activity>
         <activity
-            android:name=".ResultActivity"
+            android:name=".RecentActivity"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".HistoryActivity"

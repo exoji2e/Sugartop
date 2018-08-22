@@ -37,7 +37,7 @@ abstract class ErbilActivity : AppCompatActivity() {
                         true
                     }
                     R.id.action_recent -> {
-                        putOnTop(ResultActivity::class.java)
+                        putOnTop(RecentActivity::class.java)
                         true
                     }
                     R.id.action_history ->{
@@ -204,7 +204,7 @@ abstract class ErbilActivity : AppCompatActivity() {
                 dc.append(data, now, tagId)
             }
             DbWorkerThread.getInstance().postTask(task)
-            putOnTop(ResultActivity::class.java)
+            putOnTop(RecentActivity::class.java)
         }
 
         override fun doInBackground(vararg params: Tag): Tag? {

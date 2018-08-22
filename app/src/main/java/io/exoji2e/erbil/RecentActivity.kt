@@ -1,10 +1,9 @@
 package io.exoji2e.erbil
 
 import kotlinx.android.synthetic.main.result_layout.*
-import com.github.mikephil.charting.data.Entry
 
-class ResultActivity : ErbilActivity() {
-    override val TAG = "ResultActivity"
+class RecentActivity : ErbilActivity() {
+    override val TAG = "RecentActivity"
     override fun getNavigationMenuItemId() = R.id.action_recent
     override fun getContentViewId() = R.layout.result_layout
 

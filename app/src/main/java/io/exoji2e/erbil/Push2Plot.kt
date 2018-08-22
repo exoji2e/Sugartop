@@ -43,10 +43,10 @@ class Push2Plot {
             _setPlot(entries.map{g -> g.toReading()}, graph, start, end)
         }
 
-        fun _setPlot(entries : List<GlucoseReading>, graph : LineChart, start: Long, end : Long) {
+        fun _setPlot(entries : List<GlucoseReading>, graph : LineChart, start: Long, end : Long) : Unit {
             val values = entries
                     .groupBy { g -> g.sensorId }
-                    .mapValues{(id, glucs) ->
+                    .mapValues{(_, glucs) ->
                         glucs.map{r -> Entry((r.utcTimeStamp).toFloat(), r.tommol().toFloat()) }
                                 .toMutableList()}
             val sets = mutableListOf<LineDataSet>()
@@ -74,7 +74,7 @@ class Push2Plot {
                 xAxis.setDrawAxisLine(false)
                 xAxis.setDrawGridLines(true)
                 xAxis.textColor = hotPink
-                xAxis.setLabelCount(5, true)
+                xAxis.setLabelCount(6, false)
                 xAxis.valueFormatter = object : IAxisValueFormatter {
                     private val mCalendar = Calendar.getInstance()
                     override fun getFormattedValue(value: Float, axis: AxisBase): String {
@@ -83,8 +83,6 @@ class Push2Plot {
                         return hhmm
                     }
                 }
-                xAxis.axisMinimum = start.toFloat()
-                xAxis.axisMaximum = end.toFloat()
 
                 val leftAxis = graph.getAxisLeft()
                 leftAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART)
@@ -96,6 +94,9 @@ class Push2Plot {
                 leftAxis.textColor = hotPink
 
                 val rightAxis = graph.getAxisRight()
+                rightAxis.setDrawGridLines(false)
+                rightAxis.setLabelCount(0, true)
+
                 rightAxis.isEnabled = false
             }
         }
