@@ -1,11 +1,11 @@
 package io.exoji2e.erbil
 
-import kotlinx.android.synthetic.main.result_layout.*
+import kotlinx.android.synthetic.main.recent_layout.*
 
 class RecentActivity : ErbilActivity() {
     override val TAG = "RecentActivity"
     override fun getNavigationMenuItemId() = R.id.action_recent
-    override fun getContentViewId() = R.layout.result_layout
+    override fun getContentViewId() = R.layout.recent_layout
 
     override fun onResume() {
         super.onResume()
@@ -21,7 +21,9 @@ class RecentActivity : ErbilActivity() {
 
             val last = readings.last().value
             val timeStamp = dc.lastTimeStamp()
-            TimeLeftTV.text = String.format("Time left %s %d", Time.timeLeft(timeStamp), timeStamp)
+            val (left, unit) = Time.timeLeft(timeStamp)
+            TimeLeftData.text = left
+            TimeLeftUnit.text = unit
 
             val diff = RawParser.sensor2mmol(predict.value) - RawParser.sensor2mmol(last)
             val trend = if (diff > .5) "↑↑" else if (diff > .25) "↑" else if (diff < -.5) "↓↓" else if (diff < -.25) "↓" else "→"

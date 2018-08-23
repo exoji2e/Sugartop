@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    >
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/TextLayOut"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/recentData"
+            android:layout_width="200dp"
+            android:layout_height="70dp"
+            android:gravity="start"
+            android:text=""
+            android:textColor="?attr/colorAccent"
+            android:textSize="48sp" />
+        <TextView
+            android:id="@+id/recentUnit"
+            android:layout_width="150dp"
+            android:layout_height="70dp"
+            android:gravity="center_vertical"
+            android:text="@string/mmol"
+            android:textColor="?attr/colorAccent"
+            android:textSize="24sp"
+            android:layout_toEndOf="@+id/recentData" />
+        </RelativeLayout>
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/graph"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_below="@+id/TextLayOut"
+        android:layout_marginBottom="50dp"/>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/TextLayOut2"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:layout_below="@+id/graph">
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/AvgLayOut"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+            <TextView
+                android:id="@+id/avgText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="start"
+                android:text="@string/avg"
+                android:textColor="?attr/colorAccent"
+                android:textSize="14sp"
+                />
+            <TextView
+                android:id="@+id/avgData"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="start"
+                android:text=""
+                android:textColor="?attr/colorAccent"
+                android:textSize="30sp"
+                android:layout_below="@+id/avgText" />
+            <TextView
+                android:id="@+id/avgUnit"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="start"
+                android:text="@string/mmol"
+                android:textColor="?attr/colorAccent"
+                android:textSize="14sp"
+                android:layout_below="@+id/avgData" />
+        </RelativeLayout>
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/InGLayOut"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:gravity="center_horizontal"
+            android:layout_toRightOf="@+id/AvgLayOut">
+            <TextView
+                android:id="@+id/ingText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="start"
+                android:text="@string/ingoal"
+                android:textColor="?attr/colorAccent"
+                android:textSize="14sp"
+                />
+            <TextView
+                android:id="@+id/ingData"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="start"
+                android:text=""
+                android:textColor="?attr/colorAccent"
+                android:textSize="30sp"
+                android:layout_below="@+id/ingText" />
+        </RelativeLayout>
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/TimeLeftLayOut"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:layout_alignParentRight="true">
+            <TextView
+                android:id="@+id/TimeLeftText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:text="Time Left:"
+                android:textColor="?attr/colorAccent"
+                android:textSize="14sp"
+                />
+            <TextView
+                android:id="@+id/TimeLeftData"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text=""
+                android:textColor="?attr/colorAccent"
+                android:textSize="30sp"
+                android:layout_below="@+id/TimeLeftText" />
+            <TextView
+                android:id="@+id/TimeLeftUnit"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:text=""
+                android:textColor="?attr/colorAccent"
+                android:textSize="14sp"
+                android:layout_below="@+id/TimeLeftData" />
+        </RelativeLayout>
+    </RelativeLayout>
+<include
+    layout="@layout/element_bottom_navigation"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:layout_alignParentBottom="true"></include>
+</RelativeLayout>
