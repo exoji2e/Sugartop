@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    tools:context=".MainActivity$PlaceholderFragment">
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/graph"
+        android:layout_width="match_parent"
+        android:layout_height="250dp" />
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/TextLayOut"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:layout_below="@+id/graph">
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/AvgLayOut"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+            <TextView
+                android:id="@+id/avgText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="start"
+                android:text="@string/avg"
+                android:textColor="?attr/colorAccent"
+                android:textSize="14sp"
+                />
+            <TextView
+                android:id="@+id/avgData"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="start"
+                android:text=""
+                android:textColor="?attr/colorAccent"
+                android:textSize="30sp"
+                android:layout_below="@+id/avgText" />
+            <TextView
+                android:id="@+id/avgUnit"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="start"
+                android:text="@string/mmol"
+                android:textColor="?attr/colorAccent"
+                android:textSize="14sp"
+                android:layout_below="@+id/avgData" />
+        </RelativeLayout>
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/InGLayOut"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:layout_toRightOf="@+id/AvgLayOut">
+            <TextView
+                android:id="@+id/ingText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="start"
+                android:text="@string/ingoal"
+                android:textColor="?attr/colorAccent"
+                android:textSize="14sp" />
+            <TextView
+                android:id="@+id/ingData"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="start"
+                android:text=""
+                android:textColor="?attr/colorAccent"
+                android:textSize="30sp"
+                android:layout_below="@+id/ingText" />
+        </RelativeLayout>
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/Readings"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:layout_toRightOf="@+id/InGLayOut">
+            <TextView
+                android:id="@+id/readingsText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="start"
+                android:text="Readings:"
+                android:textColor="?attr/colorAccent"
+                android:textSize="14sp"
+                />
+            <TextView
+                android:id="@+id/readingsData"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="start"
+                android:text=""
+                android:textColor="?attr/colorAccent"
+                android:textSize="30sp"
+                android:layout_below="@+id/readingsText" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

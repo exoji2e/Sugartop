@@ -9,6 +9,7 @@ import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.NfcV
 import android.os.*
+import android.support.v4.app.ShareCompat
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -60,6 +61,20 @@ abstract class ErbilActivity : AppCompatActivity() {
                 action == NfcAdapter.ACTION_TAG_DISCOVERED) {
             val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
             NfcVReaderTask().execute(tag)
+        }
+        if(action == Intent.ACTION_SEND) {
+            val task = Runnable {
+                Log.d(TAG, "received-send-intent")
+                val dc = DataContainer.getInstance(this)
+                // Should maybe support merging later on?
+                if(dc.size() != 0){
+                    Toast.makeText(this, "Database not empty, aborting import.", Toast.LENGTH_LONG).show()
+                    return@Runnable
+                }
+                val intentReader = ShareCompat.IntentReader.from(this)
+                dc.insert(read(intentReader))
+            }
+            DbWorkerThread.getInstance().postTask(task)
         }
     }
 
@@ -161,6 +176,18 @@ abstract class ErbilActivity : AppCompatActivity() {
     private fun launchManual() {
         val intent = Intent(this, ManualActivity::class.java)
         startActivity(intent)
+    }
+    private fun read(intentReader: ShareCompat.IntentReader) : List<GlucoseEntry> {
+        val s = intentReader.stream
+        val br = BufferedReader(InputStreamReader(contentResolver.openInputStream(s)))
+        var lines = br.readLines()
+        val entries = mutableListOf<GlucoseEntry>()
+        for (line in lines) {
+            val entry = GlucoseEntry.fromString(line)
+            if(entry != null)
+                entries.add(entry)
+        }
+        return entries
     }
     private inner class NfcVReaderTask : AsyncTask<Tag, Void, Tag>() {
 

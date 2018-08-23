@@ -58,7 +58,7 @@ class DataContainer {
         val recent_prepared = prepare(now_recent, sensorId, recent, 1*Time.MINUTE, readingTime - 16*Time.MINUTE, true)
         val history_prepared = prepare(now_history, sensorId, history, 15*Time.MINUTE, start, minutesSinceLast != 14)
         val added = extend(recent_prepared, recent) + extend(history_prepared, history)
-        mDb?.sensorContactDao()?.insert(SensorContact(0, readingTime, sensorId, timestamp, added))
+        mDb?.sensorContactDao()?.insert(SensorContact(0, sensorId, readingTime, timestamp, added))
         lastTimeStamp = timestamp
         Log.d(TAG, String.format("recent_size %d", recent.size))
         Log.d(TAG, String.format("histroy_size %d", history.size))
