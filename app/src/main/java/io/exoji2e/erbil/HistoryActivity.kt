@@ -52,12 +52,9 @@ class HistoryActivity : ErbilActivity() {
 
             val (start, end) = Time.limits(day)
             val task = Runnable {
-                try {
-                    val dc = DataContainer.getInstance(context!!)
-                    val readings = dc.get(start, end)
-                    Push2Plot.setPlot(readings, graph, start, end)
-                } catch(e: Exception) {}
-
+                val dc = DataContainer.getInstance(context!!)
+                val readings = dc.get(start, end)
+                graph.post{Push2Plot.setPlot(readings, graph, start, end)}
             }
             DbWorkerThread.getInstance().postTask(task)
             return rootView
