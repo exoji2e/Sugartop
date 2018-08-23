@@ -13,7 +13,8 @@ Well, I have chosen another path. Reverse Enginnering. My plan is to find out ho
 
 ### Progress:
 - [x] Read data
-- [x] View of last 8 and 24 hours
+- [x] View of last 8 and 24 hours, last week and month
+- [x] View of entire history
 - [x] Saving raw data to database
 - [x] Enable export of database outside of phone
 - [x] Log manual readings from glucose reader to improve calibration.
