@@ -1,6 +1,5 @@
 package io.exoji2e.erbil
 
-import android.graphics.Color
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
@@ -10,31 +9,23 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
-import com.github.mikephil.charting.utils.ColorTemplate
 import java.text.DateFormat
 import java.util.*
 
 class Push2Plot {
     companion object {
-        private val hotPink = Color.rgb(255, 64, 129)
-        private val gray = Color.rgb(100, 100, 100)
         fun standardLineDataSet(data : List<Entry>, dash : Boolean, color : Int) : LineDataSet {
             val dataSet = LineDataSet(data,"")
             dataSet.axisDependency = YAxis.AxisDependency.LEFT
-            dataSet.valueTextColor = ColorTemplate.getHoloBlue()
             dataSet.color = color
             if(dash) {
                 dataSet.lineWidth = 1f
-                //dataSet.color = Color.rgb(100, 100, 100)
             }else {
                 dataSet.lineWidth = 3f
-                //dataSet.color = ColorTemplate.getHoloBlue()
             }
             dataSet.setDrawCircles(false)
             dataSet.setDrawValues(false)
             dataSet.fillAlpha = 65
-            dataSet.fillColor = ColorTemplate.getHoloBlue()
-            dataSet.highLightColor = Color.rgb(244, 117, 117)
             dataSet.setDrawCircleHole(false)
             return dataSet
         }
@@ -49,27 +40,23 @@ class Push2Plot {
                         glucs.map{r -> Entry((r.utcTimeStamp).toFloat(), r.tommol().toFloat()) }
                                 .toMutableList()}
             val sets = mutableListOf<LineDataSet>()
-            for ((_, li) in values) {
-                sets.add(standardLineDataSet(li, false, ColorTemplate.getHoloBlue()))
+            for ((i, li) in values.toList().withIndex()) {
+                sets.add(standardLineDataSet(li.second, false, Color.lineColor(i)))
             }
             // TODO: Move constants to user.
-            val lo = mutableListOf<Entry>()
-            lo.add(Entry(start.toFloat(), 4f))
-            lo.add(Entry(end.toFloat(), 4f))
-            val hi = mutableListOf<Entry>()
-            hi.add(Entry(start.toFloat(), 8f))
-            hi.add(Entry(end.toFloat(), 8f))
-            sets.add(standardLineDataSet(lo, true, gray))
-            sets.add(standardLineDataSet(hi, true, gray))
+            val lo = arrayListOf(Entry(start.toFloat(), 4f), Entry(end.toFloat(), 4f))
+            val hi = arrayListOf(Entry(start.toFloat(), 8f), Entry(end.toFloat(), 8f))
+            sets.add(standardLineDataSet(lo, true, Color.gray))
+            sets.add(standardLineDataSet(hi, true, Color.gray))
             graph.data = LineData(sets as List<ILineDataSet>?)
             graph.legend.isEnabled = false
             graph.description.text = ""
-            val xAxis = graph.getXAxis()
+            val xAxis = graph.xAxis
             xAxis.position = XAxis.XAxisPosition.BOTTOM
             xAxis.textSize = 12f
             xAxis.setDrawAxisLine(false)
             xAxis.setDrawGridLines(true)
-            xAxis.textColor = hotPink
+            xAxis.textColor = Color.black
             xAxis.setLabelCount(6, false)
             xAxis.valueFormatter = object : IAxisValueFormatter {
                 private val mCalendar = Calendar.getInstance()
@@ -86,8 +73,8 @@ class Push2Plot {
             leftAxis.granularity = 4f
             leftAxis.axisMinimum = 2f
             leftAxis.axisMaximum = 17f
-            leftAxis.textSize = 12f
-            leftAxis.textColor = hotPink
+            leftAxis.textSize = 16f
+            leftAxis.textColor = Color.black
 
             val rightAxis = graph.getAxisRight()
             rightAxis.setDrawGridLines(false)
