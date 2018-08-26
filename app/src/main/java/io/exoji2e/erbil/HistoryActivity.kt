@@ -54,7 +54,8 @@ class HistoryActivity : ErbilActivity() {
             val task = Runnable {
                 val dc = DataContainer.getInstance(context!!)
                 val readings = dc.get(start, end)
-                graph.post{Push2Plot.setPlot(readings, graph, start, end)}
+                if(graph!=null)
+                    graph.post{Push2Plot.setPlot(readings, graph, start, end)}
             }
             DbWorkerThread.getInstance().postTask(task)
             return rootView

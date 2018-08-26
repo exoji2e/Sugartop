@@ -131,7 +131,7 @@ class DataContainer {
         synchronized(lock) {
             return (history.filter{r -> r.utcTimeStamp < before && r.utcTimeStamp > after} +
                     recent.filter{r -> r.utcTimeStamp < before && r.utcTimeStamp > after})
-                    .sortedBy { g -> g.utcTimeStamp }
+                    .sortedBy { g -> g.utcTimeStamp }.filter{g -> g.status == 200 || g.tommol() < 20.0}
         }
     }
     fun get8h() : List<GlucoseEntry> {

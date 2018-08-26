@@ -51,7 +51,7 @@ class MainActivity : ErbilActivity() {
                 val readings = dc.get(start, end)
                 val avg = Compute.avg(readings)
                 // TODO: Move constants to user.
-                graph.post{Push2Plot.setPlot(readings, graph, start, end)}
+                if(graph!=null) graph.post{Push2Plot.setPlot(readings, graph, start, end)}
                 ingData.text = Compute.inGoal(4.0, 8.0, readings)
                 avgData.text = String.format("%.1f", avg)
                 readingsData.text = ErbilDataBase.getInstance(context!!)!!.sensorContactDao().getAll().filter { s -> s.utcTimeStamp in start..end }.size.toString()

@@ -29,7 +29,7 @@ class RecentActivity : ErbilActivity() {
             val trend = if (diff > .5) "↑↑" else if (diff > .25) "↑" else if (diff < -.5) "↓↓" else if (diff < -.25) "↓" else "→"
 
             val avg = Compute.avg(readings)
-            graph.post{Push2Plot._setPlot(readings.map{g -> g.toReading()} + predict, graph, Time.now() - Time.HOUR*8, Time.now() + 5*Time.MINUTE)}
+            if(graph!=null) graph.post{Push2Plot._setPlot(readings.map{g -> g.toReading()} + predict, graph, Time.now() - Time.HOUR*8, Time.now() + 5*Time.MINUTE)}
             ingData.text = Compute.inGoal(4.0, 8.0, readings)
             avgData.text = String.format("%.1f", avg)
             recentData.text = String.format("%.1f %s", RawParser.sensor2mmol(predict.value), trend)
