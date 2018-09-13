@@ -47,9 +47,16 @@ class Push2Plot {
                         glucs.map{r -> Entry((r.utcTimeStamp).toFloat(), r.tommol().toFloat()) }
                                 .toMutableList()}
             val sets = mutableListOf<LineDataSet>()
+            var max = 17f
+            var min = 2f
             for ((i, li) in values.toList().withIndex()) {
+                val vmax = li.second.maxBy{v -> v.y}?.y
+                val vmin = li.second.minBy{v -> v.y}?.y
+                if(vmax != null) max = Math.max(max, vmax)
+                if(vmin != null) min = Math.min(min, vmin)
                 sets.add(standardLineDataSet(li.second, false, Color.lineColor(i)))
             }
+
             val scatter = ScatterData(scatter(manual.map{ m -> Entry(m.utcTimeStamp.toFloat(), m.value.toFloat())}))
             // TODO: Move constants to user.
             val lo = arrayListOf(Entry(start.toFloat(), 4f), Entry(end.toFloat(), 4f))
@@ -58,7 +65,13 @@ class Push2Plot {
             sets.add(standardLineDataSet(hi, true, Color.gray))
             val combData = CombinedData()
             combData.setData(LineData(sets as List<ILineDataSet>?))
-            if(manual.isNotEmpty()) combData.setData(scatter)
+            if(manual.isNotEmpty()){
+                combData.setData(scatter)
+                val mmin = manual.minBy { m -> m.value }?.value?.toFloat()
+                val mmax = manual.maxBy { m -> m.value }?.value?.toFloat()
+                if(mmin != null) min = Math.min(min, mmin)
+                if(mmax != null) max = Math.max(max, mmax)
+            }
             graph.data = combData
             graph.legend.isEnabled = false
             graph.description.text = ""
@@ -82,9 +95,9 @@ class Push2Plot {
             leftAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART)
             leftAxis.setDrawGridLines(true)
             leftAxis.granularity = 4f
-            leftAxis.axisMinimum = 2f
-            leftAxis.axisMaximum = 17f
-            leftAxis.textSize = 16f
+            leftAxis.axisMinimum = Math.max(min, 0f)
+            leftAxis.axisMaximum = Math.min(max, 25f)
+            leftAxis.textSize = 12f
             leftAxis.textColor = Color.black
 
             val rightAxis = graph.getAxisRight()
