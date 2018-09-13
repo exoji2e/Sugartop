@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".HistoryActivity$PlaceholderFragment">
 
-    <com.github.mikephil.charting.charts.LineChart
+    <com.github.mikephil.charting.charts.CombinedChart
         android:id="@+id/graph"
         android:layout_width="match_parent"
         android:layout_height="250dp" />

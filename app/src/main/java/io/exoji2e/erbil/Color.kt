@@ -4,6 +4,7 @@ import android.graphics.Color as C
 class Color {
     companion object {
         val gray = C.rgb(100, 100, 100)
+        val white = C.rgb(255, 255, 255)
         val hotPink = C.rgb(255, 64, 129)
         val black = C.rgb(0, 0 , 0)
         val colors = intArrayOf(C.rgb(193, 37, 82), C.rgb(42, 109, 130),

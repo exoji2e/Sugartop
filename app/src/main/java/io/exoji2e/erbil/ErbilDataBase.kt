@@ -16,19 +16,19 @@ abstract class ErbilDataBase : RoomDatabase() {
         val NAME = "Erbil.db"
         private var INSTANCE: ErbilDataBase? = null
 
-        fun getInstance(context: Context): ErbilDataBase? {
-            if (INSTANCE == null) {
-                synchronized(ErbilDataBase::class) {
-                    if (INSTANCE == null) {
-                        INSTANCE = Room.databaseBuilder(
-                                context.getApplicationContext(),
-                                ErbilDataBase::class.java,
-                                NAME)
-                                .build()
-                    }
+        fun getInstance(context: Context): ErbilDataBase {
+            synchronized(ErbilDataBase::class) {
+                if (INSTANCE == null) {
+                    INSTANCE = Room.databaseBuilder(
+                            context.getApplicationContext(),
+                            ErbilDataBase::class.java,
+                            NAME)
+                            .build()
                 }
+                return INSTANCE!!
             }
-            return INSTANCE
+
+
         }
 
         fun destroyInstance() {

@@ -1,14 +1,13 @@
 package io.exoji2e.erbil
 
-import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.charts.CombinedChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet
 import java.text.DateFormat
 import java.util.*
 
@@ -25,15 +24,23 @@ class Push2Plot {
             }
             dataSet.setDrawCircles(false)
             dataSet.setDrawValues(false)
-            dataSet.fillAlpha = 65
             dataSet.setDrawCircleHole(false)
             return dataSet
         }
-        fun setPlot(entries : List<GlucoseEntry>, graph : LineChart, start: Long, end : Long) {
-            _setPlot(entries.map{g -> g.toReading()}, graph, start, end)
+        fun setPlot(entries : List<GlucoseEntry>, manual : List<ManualGlucoseEntry>, graph : CombinedChart, start: Long, end : Long) {
+            _setPlot(entries.map{g -> g.toReading()}, manual, graph, start, end)
         }
 
-        fun _setPlot(entries : List<GlucoseReading>, graph : LineChart, start: Long, end : Long) : Unit {
+        fun scatter(data : List<Entry>) : ScatterDataSet {
+            val dataSet = ScatterDataSet(data, "")
+            dataSet.color = Color.hotPink
+            dataSet.axisDependency = YAxis.AxisDependency.LEFT
+            return dataSet
+        }
+        fun _setPlot(entries : List<GlucoseReading>, graph : CombinedChart, start: Long, end : Long) : Unit {
+            _setPlot(entries, mutableListOf<ManualGlucoseEntry>(), graph, start, end)
+        }
+        fun _setPlot(entries : List<GlucoseReading>, manual : List<ManualGlucoseEntry>, graph : CombinedChart, start: Long, end : Long) : Unit {
             val values = entries
                     .groupBy { g -> g.sensorId }
                     .mapValues{(_, glucs) ->
@@ -43,12 +50,16 @@ class Push2Plot {
             for ((i, li) in values.toList().withIndex()) {
                 sets.add(standardLineDataSet(li.second, false, Color.lineColor(i)))
             }
+            val scatter = ScatterData(scatter(manual.map{ m -> Entry(m.utcTimeStamp.toFloat(), m.value.toFloat())}))
             // TODO: Move constants to user.
             val lo = arrayListOf(Entry(start.toFloat(), 4f), Entry(end.toFloat(), 4f))
             val hi = arrayListOf(Entry(start.toFloat(), 8f), Entry(end.toFloat(), 8f))
             sets.add(standardLineDataSet(lo, true, Color.gray))
             sets.add(standardLineDataSet(hi, true, Color.gray))
-            graph.data = LineData(sets as List<ILineDataSet>?)
+            val combData = CombinedData()
+            combData.setData(LineData(sets as List<ILineDataSet>?))
+            if(manual.isNotEmpty()) combData.setData(scatter)
+            graph.data = combData
             graph.legend.isEnabled = false
             graph.description.text = ""
             val xAxis = graph.xAxis
