@@ -7,7 +7,6 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
-import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet
 import java.text.DateFormat
 import java.util.*
 
@@ -37,9 +36,7 @@ class Push2Plot {
             dataSet.axisDependency = YAxis.AxisDependency.LEFT
             return dataSet
         }
-        fun _setPlot(entries : List<GlucoseReading>, graph : CombinedChart, start: Long, end : Long) : Unit {
-            _setPlot(entries, mutableListOf<ManualGlucoseEntry>(), graph, start, end)
-        }
+
         fun _setPlot(entries : List<GlucoseReading>, manual : List<ManualGlucoseEntry>, graph : CombinedChart, start: Long, end : Long) : Unit {
             val values = entries
                     .groupBy { g -> g.sensorId }
@@ -82,6 +79,8 @@ class Push2Plot {
             xAxis.setDrawGridLines(true)
             xAxis.textColor = Color.black
             xAxis.setLabelCount(6, false)
+            xAxis.axisMinimum = start.toFloat()
+            xAxis.axisMaximum = end.toFloat()
             xAxis.valueFormatter = object : IAxisValueFormatter {
                 private val mCalendar = Calendar.getInstance()
                 override fun getFormattedValue(value: Float, axis: AxisBase): String {
