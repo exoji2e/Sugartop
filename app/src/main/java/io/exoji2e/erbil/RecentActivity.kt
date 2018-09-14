@@ -24,7 +24,7 @@ class RecentActivity : ErbilActivity() {
 
             val toPlot = if(predict == null) readings.map { g -> g.toReading() } else readings.map { g -> g.toReading() } + predict
             val timeStamp = dc.lastTimeStamp()
-            val (left, unit) = Time.timeLeft(timeStamp)
+            val (above, left, unit) = Time.timeLeft(timeStamp)
 
             var recentText = "-"
             if(readings.isNotEmpty() && predict != null) {
@@ -40,11 +40,12 @@ class RecentActivity : ErbilActivity() {
 
             val avg = Compute.avg(readings)
 
-            if(graph!=null && ingData != null && avgData != null && recentData != null) {
+            if(graph!=null && ingData != null && avgData != null && recentData != null && TimeLeftText != null && TimeLeftData != null && TimeLeftUnit != null) {
                 graph.post { Push2Plot._setPlot(toPlot, manual, graph, Time.now() - Time.HOUR * 8, Time.now() + 5 * Time.MINUTE) }
                 ingData.text = Compute.inGoal(4.0, 8.0, readings)
                 avgData.text = String.format("%.1f", avg)
                 recentData.text = recentText
+                TimeLeftText.text = above
                 TimeLeftData.text = left
                 TimeLeftUnit.text = unit
             }

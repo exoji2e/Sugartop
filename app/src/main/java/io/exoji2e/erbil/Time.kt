@@ -10,19 +10,19 @@ class Time {
         val HOUR = 60L*MINUTE
         val DAY = 24L*HOUR
         fun now() : Long = System.currentTimeMillis()
-        fun timeLeft(timeStamp: Int) : Pair<String,String> {
-            val left = 21328 - timeStamp
+        fun timeLeft(timeStamp: Int) : Triple<String,String,String> {
+            val left = 14*24*60 - timeStamp
             val days = left/(24*60)
             val hours = (left/60)%24
             val minutes = left%60
             return if(left < 0)
-                Pair("Finished","")
+                Triple("Finished", String.format("%d",-left), "minutes ago")
             else if(left < 60)
-                Pair(minutes.toString(), "minutes")
+                Triple("Time Left", minutes.toString(), "minutes")
             else if(left < 60*24)
-                Pair(String.format("%d:%d", hours, minutes), "hours:minutes")
+                Triple("Time Left", String.format("%d:%d", hours, minutes), "hours:minutes")
             else
-                Pair(String.format("%d:%d", days, hours), "days:hours")
+                Triple("Time Left", String.format("%d:%d", days, hours), "days:hours")
         }
         fun datetime(): String {
             return datetime(now())
