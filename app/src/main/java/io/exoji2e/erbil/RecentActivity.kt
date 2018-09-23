@@ -28,10 +28,10 @@ class RecentActivity : ErbilActivity() {
 
             var recentText = "-"
             if(readings.isNotEmpty() && predict != null) {
-                val diff = RawParser.sensor2mmol(predict.value) - RawParser.sensor2mmol(readings.last().value)
+                val diff = predict.tommol() - readings.last().tommol()
                 val trend = if (diff > .5) "↑↑" else if (diff > .25) "↑" else if (diff < -.5) "↓↓" else if (diff < -.25) "↓" else "→"
                 if (Time.now() - readings.last().utcTimeStamp < Time.HOUR)
-                    recentText = String.format("%.1f %s", RawParser.sensor2mmol(predict.value), trend)
+                    recentText = String.format("%.1f %s", predict.tommol(), trend)
             }
             if(recentText.equals("-") && manual.isNotEmpty()) {
                 if(Time.now() - manual.last().utcTimeStamp < Time.HOUR)

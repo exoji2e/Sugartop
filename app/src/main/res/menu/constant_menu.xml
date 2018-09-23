@@ -8,13 +8,14 @@
         app:showAsAction="always">
         <menu>
             <item android:id="@+id/share_db"
-            android:title="Share sqlite3 db" />
+                android:title="Share sqlite3 db" />
             <item android:id="@+id/share_csv"
                 android:title="Share csv" />
     </menu>
     </item>
     <item android:id="@+id/manual"
         android:icon="@drawable/ic_plus"
-        android:title="Add manual reading"
-        />
+        android:title="Add manual reading" />
+    <item android:id="@+id/calibrate"
+        android:title="Calibrate most recent sensor" />
 </menu>

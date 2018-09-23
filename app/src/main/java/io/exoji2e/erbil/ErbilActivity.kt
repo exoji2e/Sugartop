@@ -126,7 +126,10 @@ abstract class ErbilActivity : AppCompatActivity() {
                 shareAsCSV()
                 return true
             }
-
+            R.id.calibrate -> {
+                launchCalibrate()
+                return true
+            }
             else -> return super.onOptionsItemSelected(item)
         }
     }
@@ -175,6 +178,10 @@ abstract class ErbilActivity : AppCompatActivity() {
     }
     private fun launchManual() {
         val intent = Intent(this, ManualActivity::class.java)
+        startActivity(intent)
+    }
+    private fun launchCalibrate() {
+        val intent = Intent(this, CalibrateActivity::class.java)
         startActivity(intent)
     }
     private fun read(intentReader: ShareCompat.IntentReader) : List<GlucoseEntry> {
