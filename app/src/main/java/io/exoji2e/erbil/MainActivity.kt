@@ -48,16 +48,16 @@ class MainActivity : ErbilActivity() {
 
             val task = Runnable {
                 val dc = DataContainer.getInstance(context!!)
+                val sd = SensorData.instance(context!!)
                 val readings = dc.get(start, end)
-                val avg = Compute.avg(readings)
+                val avg = Compute.avg(readings, sd)
                 val manual = ErbilDataBase.getInstance(context!!).manualEntryDao().getAll().filter{entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
-
                 // TODO: Move constants to user.
                 if(graph!=null && ingData != null && avgData != null && readingsData != null) {
-                    graph.post{Push2Plot.setPlot(readings, manual, graph, start, end)}
-                    ingData.text = Compute.inGoal(4.0, 8.0, readings)
+                    graph.post{Push2Plot.setPlot(readings, manual, graph, start, end, sd)}
+                    ingData.text = Compute.inGoal(4.0, 8.0, readings, sd)
                     avgData.text = String.format("%.1f", avg)
-                    readingsData.text = ErbilDataBase.getInstance(context!!)!!.sensorContactDao().getAll().filter { s -> s.utcTimeStamp in start..end }.size.toString()
+                    readingsData.text = ErbilDataBase.getInstance(context!!).sensorContactDao().getAll().filter { s -> s.utcTimeStamp in start..end }.size.toString()
                 }
             }
             DbWorkerThread.getInstance().postTask(task)

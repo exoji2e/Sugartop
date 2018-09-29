@@ -1,10 +1,20 @@
 package io.exoji2e.erbil
 
+import android.arch.persistence.room.ColumnInfo
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import android.content.Context
 
 class SensorData {
     val map = HashMap<Long, Pair<Double,Double>>()
     val default = Pair(-0.04605, 0.00567)
+    var sensorCalibrationDao: SensorCalibrationDao
+    constructor(context: Context) {
+        sensorCalibrationDao = ErbilDataBase.getInstance(context).sensorCalibrationDao()
+        for(s in sensorCalibrationDao.getAll()) {
+            map[s.sensorId] = Pair(s.first, s.second)
+        }
+    }
     fun get(sensorId : Long) : Pair<Double, Double> {
         if(sensorId in map) return map[sensorId]!!
         return default
@@ -49,20 +59,23 @@ class SensorData {
     }
     fun save(sensorId : Long, p : Pair<Double, Double>) {
         map.put(sensorId, p)
+        sensorCalibrationDao.insert(SensorCalibration(sensorId, p.first, p.second))
     }
-
     companion object {
         var sData : SensorData? = null
-        fun instance() : SensorData {
+        fun instance(context : Context) : SensorData {
             synchronized(SensorData::class.java){
                 if(sData == null){
-                    sData = SensorData()
+                    sData = SensorData(context)
                     return sData!!
                 } else {
                     return sData!!
                 }
             }
-
         }
     }
 }
+@Entity(tableName = "SensorCalibrations")
+data class SensorCalibration(@PrimaryKey(autoGenerate = false) val sensorId: Long,
+                             @ColumnInfo(name = "first") val first : Double,
+                             @ColumnInfo(name = "second") val second : Double)

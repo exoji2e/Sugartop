@@ -1,5 +1,6 @@
 package io.exoji2e.erbil
 
+import android.content.Context
 import com.github.mikephil.charting.charts.CombinedChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
@@ -26,8 +27,8 @@ class Push2Plot {
             dataSet.setDrawCircleHole(false)
             return dataSet
         }
-        fun setPlot(entries : List<GlucoseEntry>, manual : List<ManualGlucoseEntry>, graph : CombinedChart, start: Long, end : Long) {
-            _setPlot(entries.map{g -> g.toReading()}, manual, graph, start, end)
+        fun setPlot(entries : List<GlucoseEntry>, manual : List<ManualGlucoseEntry>, graph : CombinedChart, start: Long, end : Long, sd : SensorData) {
+            _setPlot(entries.map{g -> g.toReading()}, manual, graph, start, end, sd)
         }
 
         fun scatter(data : List<Entry>) : ScatterDataSet {
@@ -37,11 +38,11 @@ class Push2Plot {
             return dataSet
         }
 
-        fun _setPlot(entries : List<GlucoseReading>, manual : List<ManualGlucoseEntry>, graph : CombinedChart, start: Long, end : Long) : Unit {
+        fun _setPlot(entries : List<GlucoseReading>, manual : List<ManualGlucoseEntry>, graph : CombinedChart, start: Long, end : Long, sd : SensorData) : Unit {
             val values = entries
                     .groupBy { g -> g.sensorId }
                     .mapValues{(_, glucs) ->
-                        glucs.map{r -> Entry((r.utcTimeStamp).toFloat(), r.tommol().toFloat()) }
+                        glucs.map{r -> Entry((r.utcTimeStamp).toFloat(), r.tommol(sd).toFloat()) }
                                 .toMutableList()}
             val sets = mutableListOf<LineDataSet>()
             var max = 17f

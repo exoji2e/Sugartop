@@ -140,7 +140,7 @@ abstract class ErbilActivity : AppCompatActivity() {
     }
     fun shareAsCSV() {
         val task = Runnable {
-            val v : List<GlucoseEntry> = ErbilDataBase.getInstance(this)!!.glucoseEntryDao().getAll()
+            val v : List<GlucoseEntry> = ErbilDataBase.getInstance(this).glucoseEntryDao().getAll()
             val sb = StringBuilder(v.size*100)
             sb.append(GlucoseEntry.headerString()).append('\n')
             for(entry in v) {
@@ -206,7 +206,7 @@ abstract class ErbilActivity : AppCompatActivity() {
             val v = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 if(double) {
-                    val wave = LongArray(4, { i -> t })
+                    val wave = LongArray(4, { _ -> t })
                     v.vibrate(VibrationEffect.createWaveform(wave, -1))
                 } else {
                     v.vibrate(VibrationEffect.createOneShot(t, VibrationEffect.DEFAULT_AMPLITUDE))

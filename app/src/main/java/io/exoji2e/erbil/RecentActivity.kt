@@ -15,6 +15,7 @@ class RecentActivity : ErbilActivity() {
     private fun showLayout() {
         val task = Runnable {
             val dc = DataContainer.getInstance(this)
+            val sd = SensorData.instance(this)
 
             val predict = dc.guess()
             val readings = dc.get8h()
@@ -28,21 +29,21 @@ class RecentActivity : ErbilActivity() {
 
             var recentText = "-"
             if(readings.isNotEmpty() && predict != null) {
-                val diff = predict.tommol() - readings.last().tommol()
+                val diff = predict.tommol(sd) - readings.last().tommol(sd)
                 val trend = if (diff > .5) "↑↑" else if (diff > .25) "↑" else if (diff < -.5) "↓↓" else if (diff < -.25) "↓" else "→"
                 if (Time.now() - readings.last().utcTimeStamp < Time.HOUR)
-                    recentText = String.format("%.1f %s", predict.tommol(), trend)
+                    recentText = String.format("%.1f %s", predict.tommol(sd), trend)
             }
             if(recentText.equals("-") && manual.isNotEmpty()) {
                 if(Time.now() - manual.last().utcTimeStamp < Time.HOUR)
                     recentText = String.format("%.1f", manual.last().value)
             }
 
-            val avg = Compute.avg(readings)
+            val avg = Compute.avg(readings, sd)
 
             if(graph!=null && ingData != null && avgData != null && recentData != null && TimeLeftText != null && TimeLeftData != null && TimeLeftUnit != null) {
-                graph.post { Push2Plot._setPlot(toPlot, manual, graph, Time.now() - Time.HOUR * 8, Time.now() + 5 * Time.MINUTE) }
-                ingData.text = Compute.inGoal(4.0, 8.0, readings)
+                graph.post { Push2Plot._setPlot(toPlot, manual, graph, Time.now() - Time.HOUR * 8, Time.now() + 5 * Time.MINUTE, sd) }
+                ingData.text = Compute.inGoal(4.0, 8.0, readings, sd)
                 avgData.text = String.format("%.1f", avg)
                 recentData.text = recentText
                 TimeLeftText.text = above

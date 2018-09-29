@@ -3,6 +3,7 @@ package io.exoji2e.erbil
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
+import android.content.Context
 
 data class SensorChunk(val value: Int, val status: Int, val history: Boolean, val rest: Int) {
     constructor(b : ByteArray, history : Boolean) :
@@ -14,7 +15,7 @@ data class SensorChunk(val value: Int, val status: Int, val history: Boolean, va
 data class GlucoseReading(val value: Int, val utcTimeStamp: Long, val sensorId: Long, val status: Int, val history: Boolean, val rest: Int) {
     constructor(s: SensorChunk, utcTimeStamp: Long, sensorId: Long):
             this(s.value, utcTimeStamp, sensorId, s.status, s.history, s.rest)
-    fun tommol() : Double = SensorData.instance().sensor2mmol(value, sensorId)
+    fun tommol(sd: SensorData) : Double = sd.sensor2mmol(value, sensorId)
 }
 
 @Entity(tableName = "GlucoseEntries")
@@ -29,7 +30,7 @@ data class GlucoseEntry(@PrimaryKey(autoGenerate = true) val id: Int,
             this(id, s.value, s.utcTimeStamp, s.sensorId, s.status, s.history, s.rest)
     fun toReading() : GlucoseReading = GlucoseReading(value, utcTimeStamp, sensorId, status, history, rest)
 
-    fun tommol() : Double = SensorData.instance().sensor2mmol(value, sensorId)
+    fun tommol(sd: SensorData) : Double = sd.sensor2mmol(value, sensorId)
     fun eq(s: SensorChunk) =
             value == s.value &&
             s.status == s.status &&

@@ -55,8 +55,9 @@ class HistoryActivity : ErbilActivity() {
                 val dc = DataContainer.getInstance(context!!)
                 val readings = dc.get(start, end)
                 val manual = ErbilDataBase.getInstance(context!!).manualEntryDao().getAll().filter{entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
+                val sd = SensorData.instance(context!!)
                 if(graph!=null)
-                    graph.post{Push2Plot.setPlot(readings, manual, graph, start, end)}
+                    graph.post{Push2Plot.setPlot(readings, manual, graph, start, end, sd)}
             }
             DbWorkerThread.getInstance().postTask(task)
             return rootView

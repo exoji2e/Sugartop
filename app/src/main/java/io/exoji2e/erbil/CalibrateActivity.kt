@@ -18,7 +18,7 @@ class CalibrateActivity : AppCompatActivity() {
         val task = Runnable {
             val guess = DataContainer.getInstance(this).guess()
             if (guess == null) finish()
-            val inst = SensorData.instance()
+            val inst = SensorData.instance(this)
             val id = guess!!.sensorId
             val p = inst.recalibrate(id, this)
             put(inst.default, DefaultData)
@@ -29,11 +29,17 @@ class CalibrateActivity : AppCompatActivity() {
                 finish()
             }
             DefaultFAB.setOnClickListener { _ ->
-                inst.save(id, inst.default)
+                val task = Runnable {
+                    inst.save(id, inst.default)
+                }
+                DbWorkerThread.getInstance().postTask(task)
                 finish()
             }
             RecalibratedFAB.setOnClickListener { _ ->
-                inst.save(id, p)
+                val task = Runnable {
+                    inst.save(id, p)
+                }
+                DbWorkerThread.getInstance().postTask(task)
                 finish()
             }
 
