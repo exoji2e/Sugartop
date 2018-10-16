@@ -147,14 +147,24 @@ class DataContainer {
         synchronized(lock){
             if(recent.size < 5) return null
             val last = recent.last()
-            //TODO: handle multiple sensors
-            val guess_val = last.value*2 - recent[recent.size-5].value
-            return GlucoseReading(guess_val,
-                    last.utcTimeStamp + 5*Time.MINUTE,
-                    last.sensorId,last.status, false, 0)
+            if(last.status != 200) return null
+            var i = recent.size - 1
+            while (i >= 0) {
+                val entry = recent[i]
+                if(entry.sensorId == last.sensorId && entry.status == 200  && entry.utcTimeStamp <= last.utcTimeStamp - 5*Time.MINUTE) {
+                    val guess_val = last.value * 2 - entry.value
+                    return GlucoseReading(guess_val,
+                            last.utcTimeStamp + 5 * Time.MINUTE,
+                            last.sensorId, last.status, false, 0)
+                }
+                i -= 1
+            }
+            return null
+
         }
     }
     fun lastTimeStamp() : Int {
+        waitForDone()
         synchronized(lock){return lastTimeStamp}
     }
     private fun last(sensorId: Long, v: List<GlucoseEntry>) : GlucoseEntry? {
