@@ -28,6 +28,12 @@ class HistoryActivity : ErbilActivity() {
         container.setCurrentItem(NUM_ITEMS - 1, false)
     }
 
+    override fun onResume() {
+        super.onResume()
+        NUM_ITEMS = Time.date_as_int()
+        mSectionsPagerAdapter.notifyDataSetChanged()
+    }
+
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
         override fun getItem(position: Int): Fragment {
             return PlaceholderFragment.newInstance(position)
