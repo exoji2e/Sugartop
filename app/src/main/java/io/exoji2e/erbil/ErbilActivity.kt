@@ -9,12 +9,14 @@ import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.NfcV
 import android.os.*
+import android.support.design.widget.Snackbar
 import android.support.v4.app.ShareCompat
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import java.io.*
 import kotlinx.android.synthetic.main.element_bottom_navigation.*
@@ -24,6 +26,7 @@ import java.util.*
 abstract class ErbilActivity : AppCompatActivity() {
     abstract val TAG : String
     private lateinit var nfcAdapter: NfcAdapter
+    private val REQUEST_MANUAL = 0;
     internal abstract fun getNavigationMenuItemId(): Int
     internal abstract fun getContentViewId(): Int
 
@@ -178,7 +181,25 @@ abstract class ErbilActivity : AppCompatActivity() {
     }
     private fun launchManual() {
         val intent = Intent(this, ManualActivity::class.java)
-        startActivity(intent)
+        startActivityForResult(intent, REQUEST_MANUAL)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_MANUAL && resultCode == Activity.RESULT_OK) {
+            val value = data!!.getDoubleExtra("value", 0.0)
+            val time = data.getLongExtra("time", 0)
+            val str = data.getStringExtra("text")
+            val sb = Snackbar.make(window.decorView, str, Snackbar.LENGTH_LONG)
+            val entry = ManualGlucoseEntry(time, value)
+            sb.setAction(R.string.undo, View.OnClickListener {_ ->
+                DbWorkerThread.getInstance().postTask(Runnable {
+                    ErbilDataBase.getInstance(this).manualEntryDao().deleteRecord(entry)
+                })
+                val sb2 = Snackbar.make(window.decorView, "Removed last inserted manual entry", Snackbar.LENGTH_SHORT)
+                sb2.show()
+            })
+            sb.show()
+        }
     }
     private fun launchCalibrate() {
         val intent = Intent(this, CalibrateActivity::class.java)

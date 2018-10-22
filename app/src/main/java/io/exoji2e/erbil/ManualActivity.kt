@@ -1,7 +1,10 @@
 package io.exoji2e.erbil
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 
@@ -25,12 +28,13 @@ class ManualActivity : AppCompatActivity() {
                 DbWorkerThread.getInstance().postTask(Runnable{
                     DataContainer.getInstance(this).insertIntoDb(entry)
                 })
-
-                Toast.makeText(this, String.format("inserted %.1f into database", v), Toast.LENGTH_LONG).show()
+                val str = String.format("Saved measurement: %.1f mmol/L", v)
+                setResult(Activity.RESULT_OK,
+                        Intent().putExtra("text", str).putExtra("value", entry.value).putExtra("time", entry.utcTimeStamp))
+                finish()
             } else {
                 Toast.makeText(this, "Value not inside range [1, 25]", Toast.LENGTH_LONG).show()
             }
-            finish()
         }
     }
 
