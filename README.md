@@ -11,6 +11,8 @@ Well, I have chosen another path. Reverse Enginnering. My plan is to find out ho
 
 > Erbil aims to increase accessibility of bloodsugar data for diabetics using a Free Style Libre sensor. If you want another view of your bloodsugar data: Code it up, and have a live-view using this app.
 
+![](/screens/recent.jpg)
+
 ### Progress:
 - [x] Read data
 - [x] View of last 8 and 24 hours, last week and month
@@ -20,7 +22,7 @@ Well, I have chosen another path. Reverse Enginnering. My plan is to find out ho
 - [x] Log manual readings from glucose reader to improve calibration.
 - [x] Handle multiple sensors.
 - [x] Icons based on if glucose level is increasing or decreasing.
-- [ ] Calibration of sensor data based on glucose readings from the same time.
+- [x] Calibration of sensor data based on glucose readings from the same time.
 - [ ] More plots of glucose data.
 - [ ] Log insulin injections
 - [ ] Customize settings (units, target interval, etc)
