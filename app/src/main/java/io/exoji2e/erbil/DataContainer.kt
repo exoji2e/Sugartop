@@ -55,8 +55,8 @@ class DataContainer {
         val now_history = RawParser.history(raw_data)
         val now_recent = RawParser.recent(raw_data)
 
-        val recent_prepared = prepare(now_recent, sensorId, recent, 1*Time.MINUTE, readingTime - 16*Time.MINUTE, true)
-        val history_prepared = prepare(now_history, sensorId, history, 15*Time.MINUTE, start, minutesSinceLast != 14)
+        val recent_prepared = prepare(now_recent, sensorId, recent, 1*Time.MINUTE, readingTime - 16*Time.MINUTE, timestamp < Time.DURATION_MINUTES)
+        val history_prepared = prepare(now_history, sensorId, history, 15*Time.MINUTE, start, minutesSinceLast != 14 && timestamp < Time.DURATION_MINUTES)
         val added = extend(recent_prepared, recent) + extend(history_prepared, history)
         mDb?.sensorContactDao()?.insert(SensorContact(0, sensorId, readingTime, timestamp, added))
         lastTimeStamp = timestamp

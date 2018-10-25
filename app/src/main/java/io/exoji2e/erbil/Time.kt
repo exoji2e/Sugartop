@@ -9,9 +9,10 @@ class Time {
         val MINUTE = 60L*SECOND
         val HOUR = 60L*MINUTE
         val DAY = 24L*HOUR
+        val DURATION_MINUTES = 20160
         fun now() : Long = System.currentTimeMillis()
         fun timeLeft(timeStamp: Int) : Triple<String,String,String> {
-            val left = 14*24*60 - timeStamp
+            val left = DURATION_MINUTES - timeStamp
             val days = left/(24*60)
             val hours = (left/60)%24
             val minutes = left%60
