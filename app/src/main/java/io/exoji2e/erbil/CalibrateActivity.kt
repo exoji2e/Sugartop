@@ -1,15 +1,13 @@
 package io.exoji2e.erbil
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.view.MenuItem
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_calibrate.*
 
 
 
-class CalibrateActivity : AppCompatActivity() {
-
+class CalibrateActivity : SimpleActivity() {
+    override val TAG = "CalibrateActivity"
     private fun put(p : Pair<Double, Double>, t: TextView) {
         t.text = String.format("%.3f; %.5f", p.first, p.second)
     }
@@ -48,18 +46,6 @@ class CalibrateActivity : AppCompatActivity() {
         // List all sensors (in a scrolled view?
         // make all sensors buttons
         // if button pressed launch a new activity with sensor, where it shows current, default and calibrated glucose curves.
-        val bar = getSupportActionBar()
-        if(bar!=null) bar.setDisplayHomeAsUpEnabled(true)
-    }
-
-    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        when (menuItem.getItemId()) {
-            android.R.id.home -> {
-                onBackPressed()
-                return true
-            }
-            else -> return super.onOptionsItemSelected(menuItem)
-        }
     }
 
 }

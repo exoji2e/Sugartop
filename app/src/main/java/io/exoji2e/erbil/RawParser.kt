@@ -1,5 +1,7 @@
 package io.exoji2e.erbil
 
+import android.util.Log
+
 class RawParser {
     companion object {
         fun bin2int(a: Byte, b: Byte) : Int = (byte2uns(a) shl 8) or byte2uns(b)
@@ -28,30 +30,31 @@ class RawParser {
         // spanning the last 8 hours (4 samples per hour). index 27 of data tells us where in the
         // buffer, the next value will be written. The buffer starts at index 124.
         fun history(data: ByteArray): List<SensorChunk> {
-            val (iH, startH) = Pair(data[27], 124)
-            val flat_history = data.sliceArray(IntRange(startH + iH*6, startH + 32*6 - 1)).
-                    plus(data.sliceArray(IntRange(startH, startH + iH*6 - 1)))
-            return chunk(flat_history, true)
+            try {
+                val (iH, startH) = Pair(data[27], 124)
+                val flat_history = data.sliceArray(IntRange(startH + iH * 6, startH + 32 * 6 - 1))
+                        .plus(data.sliceArray(IntRange(startH, startH + iH * 6 - 1)))
+                return chunk(flat_history, true)
+            }catch(e:Exception) {
+                Log.e("RAWPARSER", e.toString())
+                return listOf()
+            }
         }
 
         // Similar to history, but only stores 16 values, from the last 16 minutes.
         fun recent(data: ByteArray): List<SensorChunk> {
-            val (iR, startR) = Pair(data[26], 28)
-            val flat_recent = data.sliceArray(IntRange(startR + iR*6, startR + 16*6 - 1)).
-                    plus(data.sliceArray(IntRange(startR, startR + iR*6 - 1)))
-            return chunk(flat_recent, false)
+            try {
+
+                val (iR, startR) = Pair(data[26], 28)
+                val flat_recent = data.sliceArray(IntRange(startR + iR*6, startR + 16*6 - 1))
+                        .plus(data.sliceArray(IntRange(startR, startR + iR*6 - 1)))
+                return chunk(flat_recent, false)
+            }catch(e:Exception) {
+                Log.e("RAWPARSER", e.toString())
+                return listOf()
+            }
         }
 
-        fun last(data: ByteArray) : Int {
-            val recent = recent(data)
-            return recent[15].value
-        }
-        fun guess(data: ByteArray) : Int {
-            val recent = recent(data)
-            val now = recent[15].value
-            val prev = recent[10].value
-            return now*2 - prev
-        }
         fun timestamp(data: ByteArray) : Int {
             return bin2int(data[317], data[316])
         }

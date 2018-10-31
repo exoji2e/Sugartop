@@ -1,12 +1,10 @@
 package io.exoji2e.erbil
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import kotlinx.android.synthetic.main.dashboard_layout.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 
