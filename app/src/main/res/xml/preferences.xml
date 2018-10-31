@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:title="Glucose unit"
+        android:summary="%s"
+        android:key="unit"
+        android:defaultValue="@string/mmol"
+        android:entries="@array/unitArray"
+        android:entryValues="@array/unitArray"/>
+</PreferenceScreen>

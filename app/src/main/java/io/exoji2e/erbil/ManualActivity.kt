@@ -6,11 +6,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.view.MenuItem
 import android.widget.Toast
 
 import kotlinx.android.synthetic.main.activity_manual.*
 import android.view.inputmethod.InputMethodManager
-
 
 class ManualActivity : AppCompatActivity() {
 
@@ -35,6 +35,18 @@ class ManualActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Value not inside range [1, 25]", Toast.LENGTH_LONG).show()
             }
+        }
+        val bar = getSupportActionBar()
+        if(bar!=null) bar.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        when (menuItem.getItemId()) {
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(menuItem)
         }
     }
 

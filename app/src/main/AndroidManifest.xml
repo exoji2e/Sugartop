@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.exoji2e.erbil">
 
-    <uses-sdk android:minSdkVersion="10" />
+    <uses-sdk android:minSdkVersion="19" />
 
     <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -29,16 +29,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.SEND"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:mimeType="text/csv"/>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:mimeType="text/csv" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+
             <meta-data
                 android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/nfc" />
@@ -49,6 +52,7 @@
         <activity
             android:name=".HistoryActivity"
             android:theme="@style/AppTheme" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="io.exoji2e.erbil.fileprovider"
@@ -61,10 +65,16 @@
 
         <activity
             android:name=".ManualActivity"
-            android:theme="@style/AppTheme"></activity>
+            android:label="@string/title_activity_manual"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".CalibrateActivity"
-            android:theme="@style/AppTheme"></activity>
+            android:label="@string/title_activity_calibrate"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:theme="@style/AppTheme.SettingsTheme"
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings" />
     </application>
 
 </manifest>

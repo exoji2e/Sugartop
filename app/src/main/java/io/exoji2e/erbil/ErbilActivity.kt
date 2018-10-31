@@ -133,6 +133,10 @@ abstract class ErbilActivity : AppCompatActivity() {
                 launchCalibrate()
                 return true
             }
+            R.id.settings -> {
+                launchSettings()
+                return true
+            }
             else -> return super.onOptionsItemSelected(item)
         }
     }
@@ -182,6 +186,10 @@ abstract class ErbilActivity : AppCompatActivity() {
     private fun launchManual() {
         val intent = Intent(this, ManualActivity::class.java)
         startActivityForResult(intent, REQUEST_MANUAL)
+    }
+    private fun launchSettings() {
+        val intent = Intent(this, SettingsActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

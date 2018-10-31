@@ -11,8 +11,10 @@
                 android:title="Share sqlite3 db" />
             <item android:id="@+id/share_csv"
                 android:title="Share csv" />
-    </menu>
+        </menu>
     </item>
+    <item android:id="@+id/settings"
+        android:title="Settings" />
     <item android:id="@+id/manual"
         android:icon="@drawable/ic_plus"
         android:title="Add manual reading" />

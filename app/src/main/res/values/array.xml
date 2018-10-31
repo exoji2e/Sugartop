@@ -1,0 +1,6 @@
+<resources>
+    <string-array name="unitArray">
+        <item>@string/mmol</item>
+        <item>@string/mg</item>
+    </string-array>
+</resources>

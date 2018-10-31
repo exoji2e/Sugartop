@@ -12,6 +12,10 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+    <style name="AppTheme.SettingsTheme" parent="AppTheme">
+        <item name="preferenceTheme">@style/AppTheme</item>
+        <item name="windowActionBar">true</item>
+    </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
