@@ -1,4 +1,4 @@
-package io.exoji2e.erbil
+package io.exoji2e.erbil.activities
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -7,6 +7,9 @@ import android.support.v4.app.FragmentStatePagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.exoji2e.erbil.*
+import io.exoji2e.erbil.database.DbWorkerThread
+import io.exoji2e.erbil.database.ErbilDataBase
 
 import kotlinx.android.synthetic.main.activity_history.*
 import kotlinx.android.synthetic.main.fragment_history.*
@@ -60,10 +63,10 @@ class HistoryActivity : ErbilActivity() {
             val task = Runnable {
                 val dc = DataContainer.getInstance(context!!)
                 val readings = dc.get(start, end)
-                val manual = ErbilDataBase.getInstance(context!!).manualEntryDao().getAll().filter{entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
+                val manual = ErbilDataBase.getInstance(context!!).manualEntryDao().getAll().filter{ entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
                 val sd = SensorData.instance(context!!)
                 if(graph!=null)
-                    graph.post{Push2Plot.setPlot(readings, manual, graph, start, end, sd)}
+                    graph.post{ Push2Plot.setPlot(readings, manual, graph, start, end, sd) }
             }
             DbWorkerThread.getInstance().postTask(task)
             return rootView

@@ -1,4 +1,4 @@
-package io.exoji2e.erbil
+package io.exoji2e.erbil.database
 
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
@@ -6,7 +6,7 @@ import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.migration.Migration
-
+import io.exoji2e.erbil.*
 
 
 @Database(entities = arrayOf(GlucoseEntry::class, SensorContact::class, ManualGlucoseEntry::class, SensorCalibration::class), version = 2)

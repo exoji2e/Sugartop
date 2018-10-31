@@ -1,9 +1,10 @@
-package io.exoji2e.erbil
+package io.exoji2e.erbil.database
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
+import io.exoji2e.erbil.database.SensorContact
 
 @Dao
 interface SensorContactDao {

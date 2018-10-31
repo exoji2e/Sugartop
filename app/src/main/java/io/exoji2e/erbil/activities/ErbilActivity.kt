@@ -1,4 +1,4 @@
-package io.exoji2e.erbil
+package io.exoji2e.erbil.activities
 
 import android.app.Activity
 import android.app.PendingIntent
@@ -18,6 +18,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import io.exoji2e.erbil.*
+import io.exoji2e.erbil.database.DbWorkerThread
+import io.exoji2e.erbil.database.ErbilDataBase
+import io.exoji2e.erbil.database.GlucoseEntry
+import io.exoji2e.erbil.database.ManualGlucoseEntry
 import java.io.*
 import kotlinx.android.synthetic.main.element_bottom_navigation.*
 import java.util.*
@@ -199,7 +204,7 @@ abstract class ErbilActivity : AppCompatActivity() {
             val str = data.getStringExtra("text")
             val sb = Snackbar.make(window.decorView, str, Snackbar.LENGTH_LONG)
             val entry = ManualGlucoseEntry(time, value)
-            sb.setAction(R.string.undo, View.OnClickListener {_ ->
+            sb.setAction(R.string.undo, View.OnClickListener { _ ->
                 DbWorkerThread.getInstance().postTask(Runnable {
                     ErbilDataBase.getInstance(this).manualEntryDao().deleteRecord(entry)
                 })

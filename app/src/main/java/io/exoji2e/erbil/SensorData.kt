@@ -4,6 +4,8 @@ import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import android.content.Context
+import io.exoji2e.erbil.database.ErbilDataBase
+import io.exoji2e.erbil.database.SensorCalibrationDao
 
 class SensorData {
     val map = HashMap<Long, Pair<Double,Double>>()

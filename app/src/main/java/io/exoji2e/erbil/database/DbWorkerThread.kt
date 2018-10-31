@@ -1,4 +1,4 @@
-package io.exoji2e.erbil
+package io.exoji2e.erbil.database
 
 import android.os.Handler
 import android.os.HandlerThread

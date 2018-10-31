@@ -1,6 +1,5 @@
 package io.exoji2e.erbil
 
-import android.content.Context
 import com.github.mikephil.charting.charts.CombinedChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
@@ -8,6 +7,9 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import io.exoji2e.erbil.database.GlucoseEntry
+import io.exoji2e.erbil.database.GlucoseReading
+import io.exoji2e.erbil.database.ManualGlucoseEntry
 import java.text.DateFormat
 import java.util.*
 

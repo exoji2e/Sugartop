@@ -1,5 +1,7 @@
 package io.exoji2e.erbil
 
+import io.exoji2e.erbil.database.GlucoseEntry
+
 class Compute {
     companion object {
         fun avg(data : List<GlucoseEntry>, sd: SensorData) : Double {

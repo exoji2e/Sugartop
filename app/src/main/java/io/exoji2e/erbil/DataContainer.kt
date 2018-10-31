@@ -2,6 +2,7 @@ package io.exoji2e.erbil
 
 import android.content.Context
 import android.util.Log
+import io.exoji2e.erbil.database.*
 
 class DataContainer {
     private val recent = mutableListOf<GlucoseEntry>()
@@ -112,8 +113,8 @@ class DataContainer {
                 if(!certain)
                     return chunks.slice(range)
                             .mapIndexed { i: Int, chunk: SensorChunk ->
-                            GlucoseReading(chunk,
-                                    lastRecent.utcTimeStamp + (i + 1) * dt, sensorId)
+                                GlucoseReading(chunk,
+                                        lastRecent.utcTimeStamp + (i + 1) * dt, sensorId)
                         }
                 else {
                     return chunks.mapIndexed { i: Int, chunk: SensorChunk ->
@@ -124,7 +125,8 @@ class DataContainer {
             }
         }
         return chunks.mapIndexed { i: Int, chunk: SensorChunk ->
-            GlucoseReading(chunk, start + i * dt, sensorId) }
+            GlucoseReading(chunk, start + i * dt, sensorId)
+        }
     }
      fun get(after: Long, before : Long) : List<GlucoseEntry> {
         waitForDone()

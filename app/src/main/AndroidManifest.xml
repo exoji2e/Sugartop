@@ -22,7 +22,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,10 +47,10 @@
                 android:resource="@xml/nfc" />
         </activity>
         <activity
-            android:name=".RecentActivity"
+            android:name=".activities.RecentActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".HistoryActivity"
+            android:name=".activities.HistoryActivity"
             android:theme="@style/AppTheme" />
 
         <provider
@@ -64,16 +64,16 @@
         </provider>
 
         <activity
-            android:name=".ManualActivity"
+            android:name=".activities.ManualActivity"
             android:label="@string/title_activity_manual"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".CalibrateActivity"
+            android:name=".activities.CalibrateActivity"
             android:label="@string/title_activity_calibrate"
             android:theme="@style/AppTheme" />
         <activity
             android:theme="@style/AppTheme.SettingsTheme"
-            android:name=".SettingsActivity"
+            android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings" />
     </application>
 

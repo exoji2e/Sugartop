@@ -9,7 +9,7 @@
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
     android:fitsSystemWindows="true"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
     >
 
     <android.support.v4.view.ViewPager

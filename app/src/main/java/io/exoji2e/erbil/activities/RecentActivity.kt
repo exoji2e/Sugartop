@@ -1,5 +1,8 @@
-package io.exoji2e.erbil
+package io.exoji2e.erbil.activities
 
+import io.exoji2e.erbil.*
+import io.exoji2e.erbil.database.DbWorkerThread
+import io.exoji2e.erbil.database.ErbilDataBase
 import kotlinx.android.synthetic.main.recent_layout.*
 
 class RecentActivity : ErbilActivity() {
@@ -19,9 +22,9 @@ class RecentActivity : ErbilActivity() {
 
             val predict = dc.guess()
             val readings = dc.get8h()
-            val start = Time.now() - Time.HOUR*8
-            val end = start + Time.HOUR*8 + Time.MINUTE*5
-            val manual = ErbilDataBase.getInstance(this).manualEntryDao().getAll().filter{entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
+            val start = Time.now() - Time.HOUR *8
+            val end = start + Time.HOUR *8 + Time.MINUTE *5
+            val manual = ErbilDataBase.getInstance(this).manualEntryDao().getAll().filter{ entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
 
             val toPlot = if(predict == null) readings.map { g -> g.toReading() } else readings.map { g -> g.toReading() } + predict
             val timeStamp = dc.lastTimeStamp()

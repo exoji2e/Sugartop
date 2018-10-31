@@ -1,9 +1,10 @@
-package io.exoji2e.erbil
+package io.exoji2e.erbil.database
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import android.content.Context
+import io.exoji2e.erbil.RawParser
+import io.exoji2e.erbil.SensorData
 
 data class SensorChunk(val value: Int, val status: Int, val history: Boolean, val rest: Int) {
     constructor(b : ByteArray, history : Boolean) :
@@ -45,7 +46,7 @@ data class GlucoseEntry(@PrimaryKey(autoGenerate = true) val id: Int,
         fun fromString(s : String) : GlucoseEntry? {
             try{
                 val v = s.split(",").map{e -> e.toLong()}
-                return GlucoseEntry(v[0].toInt(), v[1].toInt(), v[2], v[3], v[4].toInt(), v[5]==1L, v[6].toInt())
+                return GlucoseEntry(v[0].toInt(), v[1].toInt(), v[2], v[3], v[4].toInt(), v[5] == 1L, v[6].toInt())
             } catch(e:Exception){}
             return null
         }

@@ -1,4 +1,4 @@
-package io.exoji2e.erbil
+package io.exoji2e.erbil.activities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity

@@ -1,7 +1,11 @@
-package io.exoji2e.erbil
+package io.exoji2e.erbil.activities
 
 import android.os.Bundle
 import android.widget.TextView
+import io.exoji2e.erbil.DataContainer
+import io.exoji2e.erbil.R
+import io.exoji2e.erbil.SensorData
+import io.exoji2e.erbil.database.DbWorkerThread
 import kotlinx.android.synthetic.main.activity_calibrate.*
 
 

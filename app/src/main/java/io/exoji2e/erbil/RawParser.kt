@@ -1,6 +1,7 @@
 package io.exoji2e.erbil
 
 import android.util.Log
+import io.exoji2e.erbil.database.SensorChunk
 
 class RawParser {
     companion object {
@@ -23,7 +24,7 @@ class RawParser {
         private fun chunk(bytes: ByteArray, history: Boolean) : List<SensorChunk> {
             return bytes
                     .toList()
-                    .windowed(6, 6,false, {list -> SensorChunk(list.toByteArray(), history)})
+                    .windowed(6, 6,false, {list -> SensorChunk(list.toByteArray(), history) })
         }
 
         // each sample contains 6 bytes. History consists of 32 samples in a cyclical buffer

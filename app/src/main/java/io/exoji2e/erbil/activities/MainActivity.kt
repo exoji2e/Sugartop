@@ -1,10 +1,13 @@
-package io.exoji2e.erbil
+package io.exoji2e.erbil.activities
 
 import android.os.Bundle
 import android.support.v4.app.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.exoji2e.erbil.*
+import io.exoji2e.erbil.database.DbWorkerThread
+import io.exoji2e.erbil.database.ErbilDataBase
 import kotlinx.android.synthetic.main.dashboard_layout.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 
@@ -49,10 +52,10 @@ class MainActivity : ErbilActivity() {
                 val sd = SensorData.instance(context!!)
                 val readings = dc.get(start, end)
                 val avg = Compute.avg(readings, sd)
-                val manual = ErbilDataBase.getInstance(context!!).manualEntryDao().getAll().filter{entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
+                val manual = ErbilDataBase.getInstance(context!!).manualEntryDao().getAll().filter{ entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
                 // TODO: Move constants to user.
                 if(graph!=null && ingData != null && avgData != null && readingsData != null) {
-                    graph.post{Push2Plot.setPlot(readings, manual, graph, start, end, sd)}
+                    graph.post{ Push2Plot.setPlot(readings, manual, graph, start, end, sd) }
                     ingData.text = Compute.inGoal(4.0, 8.0, readings, sd)
                     avgData.text = String.format("%.1f", avg)
                     readingsData.text = ErbilDataBase.getInstance(context!!).sensorContactDao().getAll().filter { s -> s.utcTimeStamp in start..end }.size.toString()
@@ -65,7 +68,7 @@ class MainActivity : ErbilActivity() {
 
         companion object {
             private val ARG_SECTION_NUMBER = "section_number"
-            val durations = longArrayOf(Time.DAY, Time.DAY*7, Time.DAY*31)
+            val durations = longArrayOf(Time.DAY, Time.DAY *7, Time.DAY *31)
 
             fun newInstance(sectionNumber: Int): PlaceholderFragment {
                 val fragment = PlaceholderFragment()
