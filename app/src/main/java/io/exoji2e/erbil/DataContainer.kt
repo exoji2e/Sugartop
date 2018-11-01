@@ -133,7 +133,7 @@ class DataContainer {
         synchronized(lock) {
             return (history.filter{r -> r.utcTimeStamp < before && r.utcTimeStamp > after} +
                     recent.filter{r -> r.utcTimeStamp < before && r.utcTimeStamp > after})
-                    .sortedBy { g -> g.utcTimeStamp }.filter{g -> g.status == 200 || g.value < 5000} //5000 corresponds to 28 mmol/L with default calibration.
+                    .sortedWith(compareBy({ it.utcTimeStamp }, { it.history }))
         }
     }
     fun get8h() : List<GlucoseEntry> {

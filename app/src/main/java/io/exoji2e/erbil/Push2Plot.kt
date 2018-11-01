@@ -43,18 +43,23 @@ class Push2Plot {
         fun _setPlot(entries : List<GlucoseReading>, manual : List<ManualGlucoseEntry>, graph : CombinedChart, start: Long, end : Long, sd : SensorData) : Unit {
             val values = entries
                     .groupBy { g -> g.sensorId }
-                    .mapValues{(_, glucs) ->
-                        glucs.map{r -> Entry((r.utcTimeStamp).toFloat(), r.tommol(sd).toFloat()) }
-                                .toMutableList()}
             val sets = mutableListOf<LineDataSet>()
             var max = 17f
             var min = 2f
-            for ((i, li) in values.toList().withIndex()) {
-                val vmax = li.second.maxBy{v -> v.y}?.y
-                val vmin = li.second.minBy{v -> v.y}?.y
+            for ((c, li) in values.toList().withIndex()) {
+                val gr = li.second
+                val out = arrayListOf<Entry>()
+                for(i in 0 until gr.size){
+                    val th = gr[i]
+                    if(i>0 && gr[i - 1].utcTimeStamp + Time.MINUTE > th.utcTimeStamp) continue
+                    if(th.status == 200 || th.value < 5000) //5000 corresponds to 28 mmol/L with default calibration.
+                        out.add(Entry((th.utcTimeStamp - start).toFloat(), th.tommol(sd).toFloat()))
+                }
+                val vmax = out.maxBy{v -> v.y}?.y
+                val vmin = out.minBy{v -> v.y}?.y
                 if(vmax != null) max = Math.max(max, vmax)
                 if(vmin != null) min = Math.min(min, vmin)
-                sets.add(standardLineDataSet(li.second, false, Color.lineColor(i)))
+                sets.add(standardLineDataSet(out, false, Color.lineColor(c)))
             }
 
             val scatter = ScatterData(scatter(manual.map{ m -> Entry(m.utcTimeStamp.toFloat(), m.value.toFloat())}))
@@ -82,12 +87,12 @@ class Push2Plot {
             xAxis.setDrawGridLines(true)
             xAxis.textColor = Color.black
             xAxis.setLabelCount(6, false)
-            xAxis.axisMinimum = start.toFloat()
-            xAxis.axisMaximum = end.toFloat()
+            xAxis.axisMinimum = 0f
+            xAxis.axisMaximum = (end-start).toFloat()
             xAxis.valueFormatter = object : IAxisValueFormatter {
                 private val mCalendar = Calendar.getInstance()
                 override fun getFormattedValue(value: Float, axis: AxisBase): String {
-                    mCalendar.setTimeInMillis(value.toLong())
+                    mCalendar.setTimeInMillis(value.toLong() + start)
                     val hhmm = DateFormat.getTimeInstance(DateFormat.SHORT).format(mCalendar.getTimeInMillis())
                     return hhmm
                 }
