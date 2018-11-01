@@ -62,7 +62,7 @@ class Push2Plot {
                 sets.add(standardLineDataSet(out, false, Color.lineColor(c)))
             }
 
-            val scatter = ScatterData(scatter(manual.map{ m -> Entry(m.utcTimeStamp.toFloat(), m.value.toFloat())}))
+            val scatter = ScatterData(scatter(manual.map{ m -> Entry((m.utcTimeStamp - start).toFloat(), m.value.toFloat())}))
             // TODO: Move constants to user.
             val lo = arrayListOf(Entry(start.toFloat(), 4f), Entry(end.toFloat(), 4f))
             val hi = arrayListOf(Entry(start.toFloat(), 8f), Entry(end.toFloat(), 8f))
