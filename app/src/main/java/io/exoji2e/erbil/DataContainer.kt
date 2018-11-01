@@ -140,29 +140,38 @@ class DataContainer {
         val now = Time.now()
         return get(now - Time.HOUR*8L, now)
     }
-    fun get24h() : List<GlucoseEntry> {
-        val now = Time.now()
-        return get(now - Time.HOUR*24L, now)
+
+    private fun last() : Pair<GlucoseEntry, Int>? {
+        var i = recent.size - 1
+        while (i >= 0){
+            val last = recent[i]
+            i -= 1
+            if (last.status == 200) return Pair(last, i)
+        }
+        return null
     }
-    fun guess() : GlucoseReading? {
+    fun guess() : Pair<GlucoseReading, GlucoseReading>? {
         waitForDone()
         synchronized(lock){
-            if(recent.size < 5) return null
-            val last = recent.last()
-            if(last.status != 200) return null
-            var i = recent.size - 1
+            val ret = last()
+            if(ret == null) return null
+            var i = ret.second
+            val last = ret.first
+            val last_as_reading = GlucoseReading(last.value, last.utcTimeStamp, last.sensorId, last.status, false, 0)
+            var out = Pair(last_as_reading, last_as_reading)
             while (i >= 0) {
                 val entry = recent[i]
-                if(entry.sensorId == last.sensorId && entry.status == 200  && entry.utcTimeStamp <= last.utcTimeStamp - 5*Time.MINUTE) {
-                    val guess_val = last.value * 2 - entry.value
-                    return GlucoseReading(guess_val,
-                            last.utcTimeStamp + 5 * Time.MINUTE,
-                            last.sensorId, last.status, false, 0)
+                if(entry.utcTimeStamp + Time.MINUTE*5 < last.utcTimeStamp) return out
+                if(entry.sensorId == last.sensorId && entry.status == 200) {
+                    val guess = last.value * 2 - entry.value
+                    val time = last.utcTimeStamp * 2 - entry.utcTimeStamp
+                    out = Pair(last_as_reading, GlucoseReading(guess,
+                            time,
+                            last.sensorId, last.status, false, 0))
                 }
                 i -= 1
             }
-            return null
-
+            return out
         }
     }
     fun lastTimeStamp() : Int {

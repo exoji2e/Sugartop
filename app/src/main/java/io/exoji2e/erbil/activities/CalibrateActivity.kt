@@ -22,7 +22,7 @@ class CalibrateActivity : SimpleActivity() {
             val guess = DataContainer.getInstance(this).guess()
             if (guess == null) finish()
             val inst = SensorData.instance(this)
-            val id = guess!!.sensorId
+            val id = guess!!.first.sensorId
             val p = inst.recalibrate(id, this)
             put(inst.default, DefaultData)
             put(p, RecalibratedData)

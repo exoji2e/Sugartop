@@ -20,22 +20,23 @@ class RecentActivity : ErbilActivity() {
             val dc = DataContainer.getInstance(this)
             val sd = SensorData.instance(this)
 
-            val predict = dc.guess()
+            val guess = dc.guess()
             val readings = dc.get8h()
             val start = Time.now() - Time.HOUR *8
             val end = start + Time.HOUR *8 + Time.MINUTE *5
             val manual = ErbilDataBase.getInstance(this).manualEntryDao().getAll().filter{ entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
 
-            val toPlot = if(predict == null) readings.map { g -> g.toReading() } else readings.map { g -> g.toReading() } + predict
+            val toPlot = if(guess == null) readings.map { g -> g.toReading() } else readings.map { g -> g.toReading() } + guess.second
             val timeStamp = dc.lastTimeStamp()
             val (above, left, unit) = Time.timeLeft(timeStamp)
 
             var recentText = "-"
-            if(readings.isNotEmpty() && predict != null) {
-                val diff = predict.tommol(sd) - readings.last().tommol(sd)
+            if(readings.isNotEmpty() && guess != null) {
+
+                val diff = guess.second.tommol(sd) - guess.first.tommol(sd)
                 val trend = if (diff > .5) "↑↑" else if (diff > .25) "↑" else if (diff < -.5) "↓↓" else if (diff < -.25) "↓" else "→"
                 if (Time.now() - readings.last().utcTimeStamp < Time.HOUR)
-                    recentText = String.format("%.1f %s", predict.tommol(sd), trend)
+                    recentText = String.format("%.1f %s", guess.second.tommol(sd), trend)
             }
             if(recentText.equals("-") && manual.isNotEmpty()) {
                 if(Time.now() - manual.last().utcTimeStamp < Time.HOUR)
