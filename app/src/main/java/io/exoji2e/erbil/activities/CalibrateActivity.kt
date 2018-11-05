@@ -5,10 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.CheckBox
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import io.exoji2e.erbil.DataContainer
 import io.exoji2e.erbil.R
 import io.exoji2e.erbil.SensorData
@@ -18,6 +15,7 @@ import io.exoji2e.erbil.database.GlucoseEntry
 import io.exoji2e.erbil.database.ManualGlucoseEntry
 import kotlinx.android.synthetic.main.activity_calibrate.*
 import kotlinx.android.synthetic.main.manual_checkbox_entry.view.*
+import kotlinx.android.synthetic.main.save_calibration.view.*
 
 
 class CalibrateActivity : SimpleActivity() {
@@ -30,9 +28,9 @@ class CalibrateActivity : SimpleActivity() {
     var P = Pair(0.0, 0.0)
     private fun recalib() {
         P = SensorData.recalibrate(s.toList())
-        if(RecalibratedData != null && RecalibratedFAB != null) {
-            put(P, RecalibratedData)
-            RecalibratedFAB.setOnClickListener { _ ->
+        if(calibrated_save != null) {
+            put(P, calibrated_save.data)
+            calibrated_save.fab.setOnClickListener { _ ->
                 val task = Runnable {
                     val inst = SensorData.instance(this)
                     inst.save(id, P)
@@ -59,26 +57,35 @@ class CalibrateActivity : SimpleActivity() {
             val adapter = ManualEntryAdapter(pairs)
             checkbox_list.post{checkbox_list.adapter = adapter}
             P = inst.recalibrate(id, this)
-            put(SensorData.default, DefaultData)
-            put(P, RecalibratedData)
-            put(inst.get(id), CurrData)
 
-            CurrFAB.setOnClickListener { _ ->
-                finish()
-            }
-            DefaultFAB.setOnClickListener { _ ->
-                val task = Runnable {
-                    inst.save(id, SensorData.default)
+            current_save.post{
+                current_save.text.text = "Current"
+                put(inst.get(id), current_save.data)
+                current_save.fab.setOnClickListener { _ ->
+                    finish()
                 }
-                DbWorkerThread.getInstance().postTask(task)
-                finish()
             }
-            RecalibratedFAB.setOnClickListener { _ ->
-                val task = Runnable {
-                    inst.save(id, P)
+            default_save.post{
+                default_save.text.text = "Default"
+                put(SensorData.default, default_save.data)
+                default_save.fab.setOnClickListener { _ ->
+                    val task = Runnable {
+                        inst.save(id, SensorData.default)
+                    }
+                    DbWorkerThread.getInstance().postTask(task)
+                    finish()
                 }
-                DbWorkerThread.getInstance().postTask(task)
-                finish()
+            }
+            calibrated_save.post {
+                calibrated_save.text.text = "Recalibrated"
+                put(P, calibrated_save.data)
+                calibrated_save.fab.setOnClickListener { _ ->
+                    val task = Runnable {
+                        inst.save(id, P)
+                    }
+                    DbWorkerThread.getInstance().postTask(task)
+                    finish()
+                }
             }
         }
         DbWorkerThread.getInstance().postTask(task)
