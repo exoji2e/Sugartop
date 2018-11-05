@@ -1,115 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/TextLayOut2"
+    android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="300dp"
+    android:layout_height="match_parent"
     android:paddingLeft="8dp"
     android:paddingRight="8dp"
     android:paddingTop="8dp"
     android:paddingBottom="8dp">
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/CurrLayout"
-        android:layout_width="120dp"
-        android:layout_height="match_parent"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp">
-        <TextView
-            android:id="@+id/CurrText"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:gravity="start"
-            android:text="Current"
-            android:textColor="?attr/colorAccent"
-            android:textSize="18sp"
-            />
-        <TextView
-            android:id="@+id/CurrData"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="start"
-            android:text=""
-            android:textColor="?attr/colorAccent"
-            android:textSize="14sp"
-            android:layout_below="@+id/CurrText" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/CalibrationLayout">
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/CurrFAB"
-            android:layout_width="wrap_content"
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/CurrLayout"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@drawable/ic_save_alt"
-            android:layout_below="@+id/CurrData" />
-
-
-    </RelativeLayout>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/RecalibratedLayout"
-        android:layout_width="120dp"
-        android:layout_height="match_parent"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:gravity="center_horizontal"
-        android:layout_toRightOf="@+id/CurrLayout">
-        <TextView
-            android:id="@+id/RecalibratedText"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:gravity="start"
-            android:text="Recalibrated"
-            android:textColor="?attr/colorAccent"
-            android:textSize="18sp" />
-        <TextView
-            android:id="@+id/RecalibratedData"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="start"
-            android:text=""
-            android:textColor="?attr/colorAccent"
-            android:textSize="14sp"
-            android:layout_below="@+id/RecalibratedText" />
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/RecalibratedFAB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@drawable/ic_save_alt"
-            android:layout_below="@+id/RecalibratedData" />
-    </RelativeLayout>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/DefaultLayout"
-        android:layout_width="120dp"
-        android:layout_height="match_parent"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:layout_alignParentRight="true">
-        <TextView
-            android:id="@+id/DefaultText"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:text="Default"
-            android:textColor="?attr/colorAccent"
-            android:textSize="18sp" />
-        <TextView
-            android:id="@+id/DefaultData"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text=""
-            android:textColor="?attr/colorAccent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+            <TextView
+                android:id="@+id/CurrText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="start"
+                android:text="Current"
+                android:textColor="?attr/colorAccent"
+                android:textSize="18sp"
+                />
+            <TextView
+                android:id="@+id/CurrData"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="start"
+                android:text=""
+                android:textColor="?attr/colorAccent"
                 android:textSize="14sp"
-            android:layout_below="@+id/DefaultText" />
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/DefaultFAB"
-            android:layout_width="wrap_content"
+                android:layout_below="@+id/CurrText" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/CurrFAB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fab_margin"
+                app:srcCompat="@drawable/ic_save_alt"
+                android:layout_below="@+id/CurrData" />
+
+
+        </RelativeLayout>
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/RecalibratedLayout"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@drawable/ic_save_alt"
-            android:layout_below="@+id/DefaultData" />
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:gravity="center_horizontal"
+            android:layout_toRightOf="@+id/CurrLayout">
+            <TextView
+                android:id="@+id/RecalibratedText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="start"
+                android:text="Recalibrated"
+                android:textColor="?attr/colorAccent"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/RecalibratedData"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="start"
+                android:text=""
+                android:textColor="?attr/colorAccent"
+                android:textSize="14sp"
+                android:layout_below="@+id/RecalibratedText" />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/RecalibratedFAB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fab_margin"
+                app:srcCompat="@drawable/ic_save_alt"
+                android:layout_below="@+id/RecalibratedData" />
+        </RelativeLayout>
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/DefaultLayout"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:layout_alignParentRight="true">
+            <TextView
+                android:id="@+id/DefaultText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:text="Default"
+                android:textColor="?attr/colorAccent"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/DefaultData"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text=""
+                android:textColor="?attr/colorAccent"
+                    android:textSize="14sp"
+                android:layout_below="@+id/DefaultText" />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/DefaultFAB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fab_margin"
+                app:srcCompat="@drawable/ic_save_alt"
+                android:layout_below="@+id/DefaultData" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/ListLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:layout_below="@+id/CalibrationLayout">
+        <ListView
+            android:id="@+id/checkbox_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </RelativeLayout>
 </RelativeLayout>

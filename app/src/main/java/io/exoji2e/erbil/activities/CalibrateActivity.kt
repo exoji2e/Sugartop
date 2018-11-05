@@ -1,13 +1,23 @@
 package io.exoji2e.erbil.activities
 
 import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.CheckBox
 import android.widget.TextView
+import android.widget.Toast
 import io.exoji2e.erbil.DataContainer
 import io.exoji2e.erbil.R
 import io.exoji2e.erbil.SensorData
+import io.exoji2e.erbil.Time
 import io.exoji2e.erbil.database.DbWorkerThread
+import io.exoji2e.erbil.database.GlucoseEntry
+import io.exoji2e.erbil.database.ManualGlucoseEntry
 import kotlinx.android.synthetic.main.activity_calibrate.*
-
+import kotlinx.android.synthetic.main.manual_checkbox_entry.view.*
 
 
 class CalibrateActivity : SimpleActivity() {
@@ -15,17 +25,42 @@ class CalibrateActivity : SimpleActivity() {
     private fun put(p : Pair<Double, Double>, t: TextView) {
         t.text = String.format("%.3f; %.5f", p.first, p.second)
     }
+    val s : MutableSet<Pair<ManualGlucoseEntry, GlucoseEntry>> = mutableSetOf()
+    var id = 0L
+    var P = Pair(0.0, 0.0)
+    private fun recalib() {
+        P = SensorData.recalibrate(s.toList())
+        if(RecalibratedData != null && RecalibratedFAB != null) {
+            put(P, RecalibratedData)
+            RecalibratedFAB.setOnClickListener { _ ->
+                val task = Runnable {
+                    val inst = SensorData.instance(this)
+                    inst.save(id, P)
+                }
+                DbWorkerThread.getInstance().postTask(task)
+                finish()
+            }
+        }
+
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calibrate)
         val task = Runnable {
             val guess = DataContainer.getInstance(this).guess()
-            if (guess == null) finish()
+            if (guess == null) {
+                Toast.makeText(this, "No sensor found to calibrate!", Toast.LENGTH_SHORT)
+                finish()
+            }
             val inst = SensorData.instance(this)
-            val id = guess!!.first.sensorId
-            val p = inst.recalibrate(id, this)
-            put(inst.default, DefaultData)
-            put(p, RecalibratedData)
+            id = guess!!.first.sensorId
+            val pairs = inst.get_calibration_pts(id, this).sortedBy{p -> -p.first.utcTimeStamp}.toMutableList()
+            s.addAll(pairs)
+            val adapter = ManualEntryAdapter(pairs)
+            checkbox_list.post{checkbox_list.adapter = adapter}
+            P = inst.recalibrate(id, this)
+            put(SensorData.default, DefaultData)
+            put(P, RecalibratedData)
             put(inst.get(id), CurrData)
 
             CurrFAB.setOnClickListener { _ ->
@@ -33,23 +68,66 @@ class CalibrateActivity : SimpleActivity() {
             }
             DefaultFAB.setOnClickListener { _ ->
                 val task = Runnable {
-                    inst.save(id, inst.default)
+                    inst.save(id, SensorData.default)
                 }
                 DbWorkerThread.getInstance().postTask(task)
                 finish()
             }
             RecalibratedFAB.setOnClickListener { _ ->
                 val task = Runnable {
-                    inst.save(id, p)
+                    inst.save(id, P)
                 }
                 DbWorkerThread.getInstance().postTask(task)
                 finish()
             }
         }
         DbWorkerThread.getInstance().postTask(task)
+
         // List all sensors (in a scrolled view?
         // make all sensors buttons
         // if button pressed launch a new activity with sensor, where it shows current, default and calibrated glucose curves.
     }
+    inner class ManualEntryAdapter(L : MutableList<Pair<ManualGlucoseEntry, GlucoseEntry>>):
+            ArrayAdapter<Pair<ManualGlucoseEntry, GlucoseEntry>>(this, R.layout.manual_checkbox_entry, R.id.value, L) {
+        val L = L.toList()
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+
+            if(parent == null) {
+                    Log.d(TAG, "parent is null")
+                return super.getView(position, convertView, parent)
+            }
+            val view = if(convertView == null){
+                LayoutInflater.from(this@CalibrateActivity).inflate(R.layout.manual_checkbox_entry, parent, false);
+            } else
+                convertView
+            view.check.setOnClickListener { v  ->
+                val c = v as CheckBox
+                //isChecked has already changed
+                if(c.isChecked){
+                    s.add(getItem(position))
+                } else{
+                    s.remove(getItem(position))
+                }
+                recalib()
+                refresh()
+            }
+            val p = getItem(position)
+            view.value.text = String.format("%.1f", p.first.value)
+            view.calib_value.text = String.format("%.1f", SensorData.sensor2mmol(p.second.value, P))
+            view.default_value.text = String.format("%.1f", SensorData.sensor2mmol(p.second.value))
+            view.time.text = Time.datetime(p.first.utcTimeStamp)
+
+            //Log.d(TAG, view.label.text.toString())
+            return view
+        }
+        fun refresh() {
+            // Should find other way of reloading layout.
+            clear()
+            notifyDataSetChanged()
+            addAll(L)
+            notifyDataSetChanged()
+        }
+    }
 
 }
+
