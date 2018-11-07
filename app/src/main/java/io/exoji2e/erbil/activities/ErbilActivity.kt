@@ -79,8 +79,11 @@ abstract class ErbilActivity : AppCompatActivity() {
                     Toast.makeText(this, "Database not empty, aborting import.", Toast.LENGTH_LONG).show()
                     return@Runnable
                 }
+                Toast.makeText(this, "Importing data...", Toast.LENGTH_LONG).show()
                 val intentReader = ShareCompat.IntentReader.from(this)
                 dc.insert(read(intentReader))
+                Toast.makeText(this, "Import successful!", Toast.LENGTH_LONG).show()
+
             }
             DbWorkerThread.getInstance().postTask(task)
         }

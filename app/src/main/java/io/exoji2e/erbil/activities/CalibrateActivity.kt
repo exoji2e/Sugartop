@@ -46,12 +46,14 @@ class CalibrateActivity : SimpleActivity() {
         setContentView(R.layout.activity_calibrate)
         val task = Runnable {
             val guess = DataContainer.getInstance(this).guess()
-            if (guess == null) {
-                Toast.makeText(this, "No sensor found to calibrate!", Toast.LENGTH_SHORT)
+            try {
+                id = guess!!.first.sensorId
+            }catch(e:NullPointerException){
+                Toast.makeText(this, "No sensor found to calibrate!", Toast.LENGTH_SHORT).show()
                 finish()
+                return@Runnable
             }
             val inst = SensorData.instance(this)
-            id = guess!!.first.sensorId
             val pairs = inst.get_calibration_pts(id, this).sortedBy{p -> -p.first.utcTimeStamp}.toMutableList()
             s.addAll(pairs)
             val adapter = ManualEntryAdapter(pairs)
