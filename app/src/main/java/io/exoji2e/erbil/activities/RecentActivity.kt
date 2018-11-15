@@ -21,9 +21,12 @@ class RecentActivity : ErbilActivity() {
             val sd = SensorData.instance(this)
 
             val guess = dc.guess()
-            val readings = dc.get8h()
-            val start = Time.now() - Time.HOUR *8
-            val end = start + Time.HOUR *8 + Time.MINUTE *5
+            val now = Time.now()
+            val guess_time = now + Time.MINUTE * 5
+            val end = Time.floor_hour(guess_time + Time.HOUR)
+            val start = end - Time.HOUR * 8
+
+            val readings = dc.get(start, end).filter{th -> th.status == 200 && (th.value < 5000 && th.value > 10)}
             val manual = ErbilDataBase.getInstance(this).manualEntryDao().getAll().filter{ entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
 
             val toPlot = if(guess == null) readings.map { g -> g.toReading() } else readings.map { g -> g.toReading() } + guess.second
@@ -46,7 +49,8 @@ class RecentActivity : ErbilActivity() {
             val avg = Compute.avg(readings, sd)
 
             if(graph!=null && ingData != null && avgData != null && recentData != null && TimeLeftText != null && TimeLeftData != null && TimeLeftUnit != null) {
-                graph.post { Push2Plot._setPlot(toPlot, manual, graph, Time.now() - Time.HOUR * 8, Time.now() + 5 * Time.MINUTE, sd) }
+                graph.post { Push2Plot._setPlot(toPlot, manual, graph, start, end, sd, Push2Plot.PlotType.RECENT) }
+
                 ingData.text = Compute.inGoal(4.0, 8.0, readings, sd)
                 avgData.text = String.format("%.1f", avg)
                 recentData.text = recentText

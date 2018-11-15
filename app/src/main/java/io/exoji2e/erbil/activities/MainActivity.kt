@@ -44,7 +44,9 @@ class MainActivity : ErbilActivity() {
                                   savedInstanceState: Bundle?): View? {
             val rootView = inflater.inflate(R.layout.fragment_dashboard, container, false)
             val section = (if(arguments != null) arguments!!.getInt(ARG_SECTION_NUMBER) else 0)
-            val end = Time.now()
+
+            val now = Time.now()
+            val end = if(section == 0) Time.floor_hour(now) + Time.HOUR else Time.floor_day(now) + Time.DAY
             val start = end - durations[section]
 
             val task = Runnable {
@@ -55,7 +57,7 @@ class MainActivity : ErbilActivity() {
                 val manual = ErbilDataBase.getInstance(context!!).manualEntryDao().getAll().filter{ entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
                 // TODO: Move constants to user.
                 if(graph!=null && ingData != null && avgData != null && readingsData != null) {
-                    graph.post{ Push2Plot.setPlot(readings, manual, graph, start, end, sd) }
+                    graph.post{ Push2Plot.setPlot(readings, manual, graph, start, end, sd, plotTypes[section]) }
                     ingData.text = Compute.inGoal(4.0, 8.0, readings, sd)
                     avgData.text = String.format("%.1f", avg)
                     readingsData.text = ErbilDataBase.getInstance(context!!).sensorContactDao().getAll().filter { s -> s.utcTimeStamp in start..end }.size.toString()
@@ -68,7 +70,8 @@ class MainActivity : ErbilActivity() {
 
         companion object {
             private val ARG_SECTION_NUMBER = "section_number"
-            val durations = longArrayOf(Time.DAY, Time.DAY *7, Time.DAY *31)
+            val durations = longArrayOf(Time.DAY, Time.DAY * 7, Time.DAY *30)
+            val plotTypes = arrayOf(Push2Plot.PlotType.DAY, Push2Plot.PlotType.WEEK, Push2Plot.PlotType.MONTH)
 
             fun newInstance(sectionNumber: Int): PlaceholderFragment {
                 val fragment = PlaceholderFragment()

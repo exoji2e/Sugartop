@@ -51,7 +51,16 @@ class Time {
             mCalendar.timeInMillis = t
             val time_str = mSegmentStartTimeFormatter.format(mCalendar.getTimeInMillis())
             val (h, m, s) = time_str.split(":").map{i -> i.toInt()}
-            return t - h* HOUR - m* MINUTE - s * SECOND
+            return t - h * HOUR - m * MINUTE - s * SECOND
+        }
+        fun floor_hour(t: Long) : Long {
+            val mSegmentStartTimeFormatter = SimpleDateFormat("HH:mm:ss")
+            val mCalendar = Calendar.getInstance()
+            mCalendar.timeInMillis = t
+            val time_str = mSegmentStartTimeFormatter.format(mCalendar.getTimeInMillis())
+            val (h, m, s) = time_str.split(":").map{i -> i.toInt()}
+            return t - m * MINUTE - s * SECOND
+
         }
         fun date_as_string(daysSince: Int) : String {
             return date(now() - daysSince*DAY)

@@ -2,6 +2,7 @@ package io.exoji2e.erbil
 
 import com.github.mikephil.charting.charts.CombinedChart
 import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.*
@@ -11,9 +12,16 @@ import io.exoji2e.erbil.database.GlucoseEntry
 import io.exoji2e.erbil.database.GlucoseReading
 import io.exoji2e.erbil.database.ManualGlucoseEntry
 import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 class Push2Plot {
+    enum class PlotType{
+        RECENT,
+        DAY,
+        WEEK,
+        MONTH
+    }
     companion object {
         fun standardLineDataSet(data : List<Entry>, dash : Boolean, color : Int) : LineDataSet {
             val dataSet = LineDataSet(data,"")
@@ -29,8 +37,8 @@ class Push2Plot {
             dataSet.setDrawCircleHole(false)
             return dataSet
         }
-        fun setPlot(entries : List<GlucoseEntry>, manual : List<ManualGlucoseEntry>, graph : CombinedChart, start: Long, end : Long, sd : SensorData) {
-            _setPlot(entries.map{g -> g.toReading()}, manual, graph, start, end, sd)
+        fun setPlot(entries : List<GlucoseEntry>, manual : List<ManualGlucoseEntry>, graph : CombinedChart, start: Long, end : Long, sd : SensorData, type : PlotType) {
+            _setPlot(entries.map{g -> g.toReading()}, manual, graph, start, end, sd, type)
         }
 
         fun scatter(data : List<Entry>) : ScatterDataSet {
@@ -39,8 +47,62 @@ class Push2Plot {
             dataSet.axisDependency = YAxis.AxisDependency.LEFT
             return dataSet
         }
+        fun get_value_fomatter(t : PlotType, start: Long): IAxisValueFormatter? {
+            return if(t == PlotType.RECENT || t == PlotType.DAY) {
+                object : IAxisValueFormatter {
+                    private val mCalendar = Calendar.getInstance()
+                    override fun getFormattedValue(value: Float, axis: AxisBase): String {
+                        mCalendar.timeInMillis = value.toLong() + start + Time.SECOND*10
+                        return DateFormat.getTimeInstance(DateFormat.SHORT).format(mCalendar.timeInMillis)
+                    }
+                }
+            } else if(t == PlotType.WEEK) {
+                object : IAxisValueFormatter {
+                    private val mCalendar = Calendar.getInstance()
+                    val WeekDayTimeFormatter = SimpleDateFormat("EEE")
+                    override fun getFormattedValue(value: Float, axis: AxisBase): String {
+                        mCalendar.timeInMillis = value.toLong() + start + Time.HOUR
+                        return WeekDayTimeFormatter.format(mCalendar.timeInMillis)
+                    }
+                }
+            }
+            else {
+                object : IAxisValueFormatter {
+                    private val mCalendar = Calendar.getInstance()
+                    val DateFormatter = SimpleDateFormat("MMM dd")
+                    override fun getFormattedValue(value: Float, axis: AxisBase): String {
+                        mCalendar.timeInMillis = value.toLong() + start + Time.HOUR
+                        return DateFormatter.format(mCalendar.timeInMillis)
+                    }
+                }
+            }
+        }
+        fun fixXaxis(xAxis: XAxis, t : PlotType, start: Long, end: Long){
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
+            xAxis.textSize = 12f
+            xAxis.setDrawAxisLine(false)
+            xAxis.setDrawGridLines(true)
+            xAxis.textColor = Color.black
+            xAxis.axisMinimum = 0f
+            xAxis.axisMaximum = (end-start).toFloat()
+            xAxis.valueFormatter = get_value_fomatter(t, start)
+            if(t == PlotType.RECENT){
+                xAxis.setLabelCount(9, true)
+                val now = (Time.now() - start).toFloat()
+                val L = LimitLine(now, xAxis.valueFormatter.getFormattedValue(now, xAxis))
+                L.labelPosition = LimitLine.LimitLabelPosition.LEFT_TOP
+                xAxis.removeAllLimitLines()
+                xAxis.addLimitLine(L)
+            } else if(t == PlotType.DAY){
+                xAxis.setLabelCount(7, true)
+            } else if(t == PlotType.WEEK){
+                xAxis.setLabelCount(8, true)
+            } else if(t == PlotType.MONTH){
+                xAxis.setLabelCount(6, true)
+            }
+        }
 
-        fun _setPlot(entries : List<GlucoseReading>, manual : List<ManualGlucoseEntry>, graph : CombinedChart, start: Long, end : Long, sd : SensorData) : Unit {
+        fun _setPlot(entries : List<GlucoseReading>, manual : List<ManualGlucoseEntry>, graph : CombinedChart, start: Long, end : Long, sd : SensorData, type: PlotType) {
             val values = entries
                     .groupBy { g -> g.sensorId }
             val sets = mutableListOf<LineDataSet>()
@@ -80,23 +142,7 @@ class Push2Plot {
             graph.data = combData
             graph.legend.isEnabled = false
             graph.description.text = ""
-            val xAxis = graph.xAxis
-            xAxis.position = XAxis.XAxisPosition.BOTTOM
-            xAxis.textSize = 12f
-            xAxis.setDrawAxisLine(false)
-            xAxis.setDrawGridLines(true)
-            xAxis.textColor = Color.black
-            xAxis.setLabelCount(6, false)
-            xAxis.axisMinimum = 0f
-            xAxis.axisMaximum = (end-start).toFloat()
-            xAxis.valueFormatter = object : IAxisValueFormatter {
-                private val mCalendar = Calendar.getInstance()
-                override fun getFormattedValue(value: Float, axis: AxisBase): String {
-                    mCalendar.setTimeInMillis(value.toLong() + start)
-                    val hhmm = DateFormat.getTimeInstance(DateFormat.SHORT).format(mCalendar.getTimeInMillis())
-                    return hhmm
-                }
-            }
+            fixXaxis(graph.xAxis, type, start, end)
 
             val leftAxis = graph.getAxisLeft()
             leftAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART)
