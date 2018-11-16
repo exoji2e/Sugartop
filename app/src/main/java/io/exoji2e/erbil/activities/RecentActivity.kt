@@ -26,7 +26,7 @@ class RecentActivity : ErbilActivity() {
             val end = Time.floor_hour(guess_time + Time.HOUR)
             val start = end - Time.HOUR * 8
 
-            val readings = dc.get(start, end).filter{th -> th.status == 200 && (th.value < 5000 && th.value > 10)}
+            val readings = dc.get(start, end)
             val manual = ErbilDataBase.getInstance(this).manualEntryDao().getAll().filter{ entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
 
             val toPlot = if(guess == null) readings.map { g -> g.toReading() } else readings.map { g -> g.toReading() } + guess.second

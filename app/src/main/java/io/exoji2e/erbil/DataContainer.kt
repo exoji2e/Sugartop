@@ -128,17 +128,20 @@ class DataContainer {
             GlucoseReading(chunk, start + i * dt, sensorId)
         }
     }
-     fun get(after: Long, before : Long) : List<GlucoseEntry> {
+    fun nice(g : GlucoseEntry) : Boolean = g.status == 200 && (g.value < 5000 && g.value > 10)
+    fun get(after: Long, before : Long) : List<GlucoseEntry> {
+        return get(after, before, true)
+    }
+    fun get(after: Long, before : Long, nice : Boolean) : List<GlucoseEntry> {
         waitForDone()
         synchronized(lock) {
-            return (history.filter{r -> r.utcTimeStamp < before && r.utcTimeStamp > after} +
+            val v = (history.filter{r -> r.utcTimeStamp < before && r.utcTimeStamp > after} +
                     recent.filter{r -> r.utcTimeStamp < before && r.utcTimeStamp > after})
                     .sortedWith(compareBy({ it.utcTimeStamp }, { it.history }))
+            if(!nice) return v
+            else return v.filter{g -> nice(g)}
+
         }
-    }
-    fun get8h() : List<GlucoseEntry> {
-        val now = Time.now()
-        return get(now - Time.HOUR*8L, now)
     }
 
     private fun last() : Pair<GlucoseEntry, Int>? {
@@ -146,7 +149,7 @@ class DataContainer {
         while (i >= 0){
             val last = recent[i]
             i -= 1
-            if (last.status == 200) return Pair(last, i)
+            if (nice(last)) return Pair(last, i)
         }
         return null
     }
@@ -162,7 +165,7 @@ class DataContainer {
             while (i >= 0) {
                 val entry = recent[i]
                 if(entry.utcTimeStamp + Time.MINUTE*5 < last.utcTimeStamp) return out
-                if(entry.sensorId == last.sensorId && entry.status == 200) {
+                if(entry.sensorId == last.sensorId && nice(entry)) {
                     val guess = last.value * 2 - entry.value
                     val time = last.utcTimeStamp * 2 - entry.utcTimeStamp
                     out = Pair(last_as_reading, GlucoseReading(guess,
@@ -178,6 +181,7 @@ class DataContainer {
         waitForDone()
         synchronized(lock){return lastTimeStamp}
     }
+    // For merging readings (does not guarantee readings have a success status-code, etc).
     private fun last(sensorId: Long, v: List<GlucoseEntry>) : GlucoseEntry? {
         waitForDone()
         synchronized(lock) {

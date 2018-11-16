@@ -77,7 +77,7 @@ class Push2Plot {
                 }
             }
         }
-        fun fixXaxis(xAxis: XAxis, t : PlotType, start: Long, end: Long){
+        private fun fixXaxis(xAxis: XAxis, t : PlotType, start: Long, end: Long){
             xAxis.position = XAxis.XAxisPosition.BOTTOM
             xAxis.textSize = 12f
             xAxis.setDrawAxisLine(false)
