@@ -59,7 +59,7 @@ class Push2Plot {
             } else if(t == PlotType.WEEK) {
                 object : IAxisValueFormatter {
                     private val mCalendar = Calendar.getInstance()
-                    val WeekDayTimeFormatter = SimpleDateFormat("EEE")
+                    val WeekDayTimeFormatter = SimpleDateFormat("EEE", Locale.getDefault())
                     override fun getFormattedValue(value: Float, axis: AxisBase): String {
                         mCalendar.timeInMillis = value.toLong() + start + Time.HOUR
                         return WeekDayTimeFormatter.format(mCalendar.timeInMillis)
@@ -69,7 +69,7 @@ class Push2Plot {
             else {
                 object : IAxisValueFormatter {
                     private val mCalendar = Calendar.getInstance()
-                    val DateFormatter = SimpleDateFormat("MMM dd")
+                    val DateFormatter = SimpleDateFormat("MMM dd", Locale.getDefault())
                     override fun getFormattedValue(value: Float, axis: AxisBase): String {
                         mCalendar.timeInMillis = value.toLong() + start + Time.HOUR
                         return DateFormatter.format(mCalendar.timeInMillis)
@@ -126,8 +126,8 @@ class Push2Plot {
 
             val scatter = ScatterData(scatter(manual.map{ m -> Entry((m.utcTimeStamp - start).toFloat(), m.value.toFloat())}))
             // TODO: Move constants to user.
-            val lo = arrayListOf(Entry(start.toFloat(), 4f), Entry(end.toFloat(), 4f))
-            val hi = arrayListOf(Entry(start.toFloat(), 8f), Entry(end.toFloat(), 8f))
+            val lo = arrayListOf(Entry(0f, 4f), Entry((end-start).toFloat(), 4f))
+            val hi = arrayListOf(Entry(0f, 8f), Entry((end-start).toFloat(), 8f))
             sets.add(standardLineDataSet(lo, true, Color.gray))
             sets.add(standardLineDataSet(hi, true, Color.gray))
             val combData = CombinedData()
@@ -144,8 +144,8 @@ class Push2Plot {
             graph.description.text = ""
             fixXaxis(graph.xAxis, type, start, end)
 
-            val leftAxis = graph.getAxisLeft()
-            leftAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART)
+            val leftAxis = graph.axisLeft
+            leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART)
             leftAxis.setDrawGridLines(true)
             leftAxis.granularity = 4f
             leftAxis.axisMinimum = Math.max(min, 0f)
@@ -153,11 +153,7 @@ class Push2Plot {
             leftAxis.textSize = 12f
             leftAxis.textColor = Color.black
 
-            val rightAxis = graph.getAxisRight()
-            rightAxis.setDrawGridLines(false)
-            rightAxis.setLabelCount(0, true)
-
-            rightAxis.isEnabled = false
+            graph.axisRight.isEnabled = false
             graph.invalidate()
 
         }
