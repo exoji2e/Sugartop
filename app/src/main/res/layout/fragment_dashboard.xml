@@ -11,7 +11,7 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/TextLayOut"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="130dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="8dp"
@@ -108,6 +108,44 @@
                 android:textSize="30sp"
                 android:layout_below="@+id/readingsText" />
         </RelativeLayout>
+    </RelativeLayout>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/SecondTextLayout"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:layout_below="@+id/TextLayOut">
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/LowLayout"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+            <TextView
+                android:id="@+id/lowText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="start"
+                android:text="Low Occurencies:"
+                android:textColor="?attr/colorAccent"
+                android:textSize="14sp"
+                />
+            <TextView
+                android:id="@+id/lowData"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="start"
+                android:text=""
+                android:textColor="?attr/colorAccent"
+                android:textSize="30sp"
+                android:layout_below="@+id/lowText" />
+        </RelativeLayout>
+
     </RelativeLayout>
 
 </RelativeLayout>

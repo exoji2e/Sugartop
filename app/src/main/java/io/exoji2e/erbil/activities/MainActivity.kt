@@ -61,6 +61,7 @@ class MainActivity : ErbilActivity() {
                     ingData.text = Compute.inGoal(4.0, 8.0, readings, sd)
                     avgData.text = String.format("%.1f", avg)
                     readingsData.text = ErbilDataBase.getInstance(context!!).sensorContactDao().getAll().filter { s -> s.utcTimeStamp in start..end }.size.toString()
+                    lowData.text = String.format("%d", Compute.occurenciesBelow(4.0, 5.0, readings, sd))
                 }
             }
             DbWorkerThread.getInstance().postTask(task)

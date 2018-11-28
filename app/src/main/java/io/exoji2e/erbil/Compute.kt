@@ -20,6 +20,17 @@ class Compute {
             val ret =  if(res.equals("100.0")) "100" else res
             return String.format("%s %s", ret, "%")
         }
+        fun occurenciesBelow(lo: Double, bound: Double, data : List<GlucoseEntry>, sd: SensorData) : Int {
+            var occs = 0
+            var last = false
+            for(g in data){
+                val below = sd.sensor2mmol(g.value, g.sensorId) < lo
+                val conf = sd.sensor2mmol(g.value, g.sensorId) < bound
+                if(below && !last) occs += 1
+                last = (last && conf) || below // We have get above bound to reset.
+            }
+            return occs
+        }
         private fun _inGoal(lo: Double, hi : Double, data: List<GlucoseEntry>, sd: SensorData) : Double {
             if(data.isEmpty()) return 0.0
             if(data.size == 1) {
