@@ -11,140 +11,35 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/TextLayOut"
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="wrap_content"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:layout_below="@+id/graph">
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/AvgLayOut"
-            android:layout_width="120dp"
-            android:layout_height="match_parent"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-            <TextView
-                android:id="@+id/avgText"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:gravity="start"
-                android:text="@string/avg"
-                android:textColor="?attr/colorAccent"
-                android:textSize="14sp"
-                />
-            <TextView
-                android:id="@+id/avgData"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="start"
-                android:text=""
-                android:textColor="?attr/colorAccent"
-                android:textSize="30sp"
-                android:layout_below="@+id/avgText" />
-            <TextView
-                android:id="@+id/avgUnit"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:gravity="start"
-                android:text="@string/mmol"
-                android:textColor="?attr/colorAccent"
-                android:textSize="14sp"
-                android:layout_below="@+id/avgData" />
-        </RelativeLayout>
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/InGLayOut"
-            android:layout_width="120dp"
-            android:layout_height="match_parent"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:layout_toRightOf="@+id/AvgLayOut">
-            <TextView
-                android:id="@+id/ingText"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:gravity="start"
-                android:text="@string/ingoal"
-                android:textColor="?attr/colorAccent"
-                android:textSize="14sp" />
-            <TextView
-                android:id="@+id/ingData"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="start"
-                android:text=""
-                android:textColor="?attr/colorAccent"
-                android:textSize="30sp"
-                android:layout_below="@+id/ingText" />
-        </RelativeLayout>
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/Readings"
-            android:layout_width="120dp"
-            android:layout_height="match_parent"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:layout_toRightOf="@+id/InGLayOut">
-            <TextView
-                android:id="@+id/readingsText"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:gravity="start"
-                android:text="Readings:"
-                android:textColor="?attr/colorAccent"
-                android:textSize="14sp"
-                />
-            <TextView
-                android:id="@+id/readingsData"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="start"
-                android:text=""
-                android:textColor="?attr/colorAccent"
-                android:textSize="30sp"
-                android:layout_below="@+id/readingsText" />
-        </RelativeLayout>
-    </RelativeLayout>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/SecondTextLayout"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:layout_below="@+id/TextLayOut">
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/LowLayout"
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-            <TextView
-                android:id="@+id/lowText"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:gravity="start"
-                android:text="Low Occurrences:"
-                android:textColor="?attr/colorAccent"
-                android:textSize="14sp"
-                />
-            <TextView
-                android:id="@+id/lowData"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="start"
-                android:text=""
-                android:textColor="?attr/colorAccent"
-                android:textSize="30sp"
-                android:layout_below="@+id/lowText" />
-        </RelativeLayout>
+        <include
+            layout="@layout/element_data_row"
+            android:id="@+id/avg_elem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <include
+            layout="@layout/element_data_row"
+            android:id="@+id/in_elem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/avg_elem"/>
+        <include
+            layout="@layout/element_data_row"
+            android:id="@+id/read_elem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/in_elem"/>
+        <include
+            layout="@layout/element_data_row"
+            android:id="@+id/low_elem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/read_elem"/>
 
     </RelativeLayout>
 

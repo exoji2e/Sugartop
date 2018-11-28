@@ -55,14 +55,15 @@ class MainActivity : ErbilActivity() {
                 val readings = dc.get(start, end)
                 val avg = Compute.avg(readings, sd)
                 val manual = ErbilDataBase.getInstance(context!!).manualEntryDao().getAll().filter{ entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
+                val readdata = ErbilDataBase.getInstance(context!!).sensorContactDao().getAll().filter { s -> s.utcTimeStamp in start..end }.size.toString()
+                val lowdata = String.format("%d", Compute.occurrencesBelow(4.0, 5.0, readings, sd))
                 // TODO: Move constants to user.
-                if(graph!=null && ingData != null && avgData != null && readingsData != null) {
-                    graph.post{ Push2Plot.setPlot(readings, manual, graph, start, end, sd, plotTypes[section]) }
-                    ingData.text = Compute.inGoal(4.0, 8.0, readings, sd)
-                    avgData.text = String.format("%.1f", avg)
-                    readingsData.text = ErbilDataBase.getInstance(context!!).sensorContactDao().getAll().filter { s -> s.utcTimeStamp in start..end }.size.toString()
-                    lowData.text = String.format("%d", Compute.occurrencesBelow(4.0, 5.0, readings, sd))
-                }
+                Push2Plot.setPlot(readings, manual, graph, start, end, sd, plotTypes[section])
+                Push2Plot.place_data_in_view(avg_elem, "Average:", String.format("%.1f", avg),"mmol/L")
+                Push2Plot.place_data_in_view(in_elem, "Inside Target:", Compute.inGoal(4.0, 8.0, readings, sd),"")
+                Push2Plot.place_data_in_view(read_elem, "Readings:", readdata,"")
+                Push2Plot.place_data_in_view(low_elem, "Low Occurrences:", lowdata,"")
+
             }
             DbWorkerThread.getInstance().postTask(task)
             return rootView

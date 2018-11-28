@@ -49,8 +49,7 @@ class RecentActivity : ErbilActivity() {
             val avg = Compute.avg(readings, sd)
 
             if(graph!=null && ingData != null && avgData != null && recentData != null && TimeLeftText != null && TimeLeftData != null && TimeLeftUnit != null) {
-                graph.post { Push2Plot._setPlot(toPlot, manual, graph, start, end, sd, Push2Plot.PlotType.RECENT) }
-
+                Push2Plot._setPlot(toPlot, manual, graph, start, end, sd, Push2Plot.PlotType.RECENT)
                 ingData.text = Compute.inGoal(4.0, 8.0, readings, sd)
                 avgData.text = String.format("%.1f", avg)
                 recentData.text = recentText
