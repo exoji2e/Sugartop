@@ -99,34 +99,32 @@ class CalibrateActivity : SimpleActivity() {
     inner class ManualEntryAdapter(L : MutableList<Pair<ManualGlucoseEntry, GlucoseEntry>>):
             ArrayAdapter<Pair<ManualGlucoseEntry, GlucoseEntry>>(this, R.layout.manual_checkbox_entry, R.id.value, L) {
         val L = L.toList()
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val view = if(convertView == null)
+                    LayoutInflater.from(this@CalibrateActivity).inflate(R.layout.manual_checkbox_entry, parent, false);
+                else
+                    convertView
 
-            if(parent == null) {
-                    Log.d(TAG, "parent is null")
-                return super.getView(position, convertView, parent)
-            }
-            val view = if(convertView == null){
-                LayoutInflater.from(this@CalibrateActivity).inflate(R.layout.manual_checkbox_entry, parent, false);
-            } else
-                convertView
+            val p = getItem(position)
+            if(p==null)
+                return view
+
             view.check.setOnClickListener { v  ->
                 val c = v as CheckBox
                 //isChecked has already changed
                 if(c.isChecked){
-                    s.add(getItem(position))
+                    s.add(p)
                 } else{
-                    s.remove(getItem(position))
+                    s.remove(p)
                 }
                 recalib()
                 refresh()
             }
-            val p = getItem(position)
+
             view.value.text = String.format("%.1f", p.first.value)
             view.calib_value.text = String.format("%.1f", SensorData.sensor2mmol(p.second.value, P))
             view.default_value.text = String.format("%.1f", SensorData.sensor2mmol(p.second.value))
             view.time.text = Time.datetime(p.first.utcTimeStamp)
-
-            //Log.d(TAG, view.label.text.toString())
             return view
         }
         fun refresh() {
