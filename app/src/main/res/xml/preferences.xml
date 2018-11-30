@@ -7,4 +7,14 @@
         android:defaultValue="@string/mmol"
         android:entries="@array/unitArray"
         android:entryValues="@array/unitArray"/>
+    <io.exoji2e.erbil.settings.LowThresholdPreference
+        android:title="Low threshold"
+        android:inputType="numberDecimal"
+        android:key="0001"
+        android:defaultValue="abc"/>
+    <io.exoji2e.erbil.settings.HiThresholdPreference
+        android:title="Hi threshold"
+        android:inputType="numberDecimal"
+        android:key="0002"
+        android:defaultValue="abc"/>
 </PreferenceScreen>

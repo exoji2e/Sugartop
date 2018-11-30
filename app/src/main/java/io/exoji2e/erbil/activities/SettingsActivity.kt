@@ -1,7 +1,7 @@
 package io.exoji2e.erbil.activities
 
 import android.os.Bundle
-import android.support.v7.preference.PreferenceFragmentCompat
+import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat
 import io.exoji2e.erbil.R
 
 class SettingsActivity : SimpleActivity() {
@@ -13,7 +13,7 @@ class SettingsActivity : SimpleActivity() {
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
-        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.preferences, rootKey)
         }
     }
