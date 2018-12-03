@@ -1,8 +1,8 @@
 package io.exoji2e.erbil.activities
 
 import io.exoji2e.erbil.*
-import io.exoji2e.erbil.database.DbWorkerThread
-import io.exoji2e.erbil.database.ErbilDataBase
+import io.exoji2e.erbil.database.*
+import io.exoji2e.erbil.settings.UserData
 import kotlinx.android.synthetic.main.recent_layout.*
 
 class RecentActivity : ErbilActivity() {
@@ -15,12 +15,30 @@ class RecentActivity : ErbilActivity() {
         showLayout()
     }
 
+    private fun get_recent_text(readings: List<GlucoseEntry>,
+                                guess : Pair<GlucoseReading, GlucoseReading>?,
+                                sd: SensorData,
+                                manual : List<ManualGlucoseEntry>) : String{
+        if(readings.isNotEmpty() && guess != null) {
+            val diff = guess.second.tommol(sd) - guess.first.tommol(sd)
+            val trend = if (diff > .5) "↑↑" else if (diff > .25) "↑" else if (diff < -.5) "↓↓" else if (diff < -.25) "↓" else "→"
+            if (Time.now() - readings.last().utcTimeStamp < Time.HOUR)
+                return String.format("%.1f %s", guess.second.tommol(sd), trend)
+        }
+        if(manual.isNotEmpty()) {
+            if(Time.now() - manual.last().utcTimeStamp < Time.HOUR)
+                return String.format("%.1f", manual.last().value)
+        }
+        return "-"
+
+    }
+
     private fun showLayout() {
         val task = Runnable {
             val dc = DataContainer.getInstance(this)
             val sd = SensorData.instance(this)
 
-            val guess = dc.guess()
+            val guess : Pair<GlucoseReading, GlucoseReading>? = dc.guess()
             val now = Time.now()
             val guess_time = now + Time.MINUTE * 5
             val end = Time.floor_hour(guess_time + Time.HOUR)
@@ -33,24 +51,14 @@ class RecentActivity : ErbilActivity() {
             val timeStamp = dc.lastTimeStamp()
             val (above, left, unit) = Time.timeLeft(timeStamp)
 
-            var recentText = "-"
-            if(readings.isNotEmpty() && guess != null) {
-
-                val diff = guess.second.tommol(sd) - guess.first.tommol(sd)
-                val trend = if (diff > .5) "↑↑" else if (diff > .25) "↑" else if (diff < -.5) "↓↓" else if (diff < -.25) "↓" else "→"
-                if (Time.now() - readings.last().utcTimeStamp < Time.HOUR)
-                    recentText = String.format("%.1f %s", guess.second.tommol(sd), trend)
-            }
-            if(recentText.equals("-") && manual.isNotEmpty()) {
-                if(Time.now() - manual.last().utcTimeStamp < Time.HOUR)
-                    recentText = String.format("%.1f", manual.last().value)
-            }
-
+            val recentText = get_recent_text(readings, guess, sd, manual)
             val avg = Compute.avg(readings, sd)
+            val thresholds = Pair(UserData.get_low_threshold(this), UserData.get_hi_threshold(this))
+
 
             if(graph!=null && ingData != null && avgData != null && recentData != null && TimeLeftText != null && TimeLeftData != null && TimeLeftUnit != null) {
-                Push2Plot._setPlot(toPlot, manual, graph, start, end, sd, Push2Plot.PlotType.RECENT)
-                ingData.text = Compute.inGoal(4.0, 8.0, readings, sd)
+                Push2Plot._setPlot(toPlot, manual, graph, start, end, sd, Push2Plot.PlotType.RECENT, thresholds)
+                ingData.text = Compute.inGoal(thresholds.first, thresholds.second, readings, sd)
                 avgData.text = String.format("%.1f", avg)
                 recentData.text = recentText
                 TimeLeftText.text = above

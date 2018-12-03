@@ -47,8 +47,8 @@ class Push2Plot {
             dataSet.setDrawCircleHole(false)
             return dataSet
         }
-        fun setPlot(entries : List<GlucoseEntry>, manual : List<ManualGlucoseEntry>, graph : CombinedChart?, start: Long, end : Long, sd : SensorData, type : PlotType) {
-            _setPlot(entries.map{g -> g.toReading()}, manual, graph, start, end, sd, type)
+        fun setPlot(entries : List<GlucoseEntry>, manual : List<ManualGlucoseEntry>, graph : CombinedChart?, start: Long, end : Long, sd : SensorData, type : PlotType, thresholds: Pair<Float, Float>) {
+            _setPlot(entries.map{g -> g.toReading()}, manual, graph, start, end, sd, type, thresholds)
         }
 
         fun scatter(data : List<Entry>) : ScatterDataSet {
@@ -112,7 +112,7 @@ class Push2Plot {
             }
         }
 
-        fun _setPlot(entries : List<GlucoseReading>, manual : List<ManualGlucoseEntry>, graph : CombinedChart?, start: Long, end : Long, sd : SensorData, type: PlotType) {
+        fun _setPlot(entries : List<GlucoseReading>, manual : List<ManualGlucoseEntry>, graph : CombinedChart?, start: Long, end : Long, sd : SensorData, type: PlotType, thresholds: Pair<Float, Float>) {
             if(graph == null) return
             val task = {
                 val values = entries
@@ -138,8 +138,8 @@ class Push2Plot {
 
                 val scatter = ScatterData(scatter(manual.map { m -> Entry((m.utcTimeStamp - start).toFloat(), m.value.toFloat()) }))
                 // TODO: Move constants to user.
-                val lo = arrayListOf(Entry(0f, 4f), Entry((end - start).toFloat(), 4f))
-                val hi = arrayListOf(Entry(0f, 8f), Entry((end - start).toFloat(), 8f))
+                val lo = arrayListOf(Entry(0f, thresholds.first), Entry((end - start).toFloat(), thresholds.first))
+                val hi = arrayListOf(Entry(0f, thresholds.second), Entry((end - start).toFloat(), thresholds.second))
                 sets.add(standardLineDataSet(lo, true, Color.gray))
                 sets.add(standardLineDataSet(hi, true, Color.gray))
                 val combData = CombinedData()

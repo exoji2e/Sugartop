@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.exoji2e.erbil.*
+import io.exoji2e.erbil.settings.UserData
 import io.exoji2e.erbil.database.DbWorkerThread
 import io.exoji2e.erbil.database.ErbilDataBase
 import kotlinx.android.synthetic.main.dashboard_layout.*
@@ -51,18 +52,18 @@ class MainActivity : ErbilActivity() {
 
             val task = Runnable {
                 val dc = DataContainer.getInstance(context!!)
-                val sd = SensorData.instance(context!!)
                 val readings = dc.get(start, end)
+                val sd = SensorData.instance(context!!)
                 val avg = Compute.avg(readings, sd)
+                val thresholds = Pair(UserData.get_low_threshold(context!!), UserData.get_hi_threshold(context!!))
                 val manual = ErbilDataBase.getInstance(context!!).manualEntryDao().getAll().filter{ entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
                 val readdata = ErbilDataBase.getInstance(context!!).sensorContactDao().getAll().filter { s -> s.utcTimeStamp in start..end }.size.toString()
-                val lowdata = String.format("%d", Compute.occurrencesBelow(4.0, 5.0, readings, sd))
-                // TODO: Move constants to user.
-                Push2Plot.setPlot(readings, manual, graph, start, end, sd, plotTypes[section])
-                Push2Plot.place_data_in_view(avg_elem, "Average:", String.format("%.1f", avg),"mmol/L")
-                Push2Plot.place_data_in_view(in_elem, "Inside Target:", Compute.inGoal(4.0, 8.0, readings, sd),"")
-                Push2Plot.place_data_in_view(read_elem, "Readings:", readdata,"")
-                Push2Plot.place_data_in_view(low_elem, "Low Occurrences:", lowdata,"")
+                val lowdata = String.format("%d", Compute.occurrencesBelow(thresholds.first, thresholds.first+1f, readings, sd))
+                Push2Plot.setPlot(readings, manual, graph, start, end, sd, Push2Plot.PlotType.DAY, thresholds)
+                Push2Plot.place_data_in_view(avg_elem, "Average:", String.format("%.1f", avg), "mmol/L")
+                Push2Plot.place_data_in_view(in_elem, "Inside Target:", Compute.inGoal(thresholds.first, thresholds.second, readings, sd), "")
+                Push2Plot.place_data_in_view(read_elem, "Readings:", readdata, "")
+                Push2Plot.place_data_in_view(low_elem, "Low Occurrences:", lowdata, "")
 
             }
             DbWorkerThread.getInstance().postTask(task)

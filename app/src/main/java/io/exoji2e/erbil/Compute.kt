@@ -14,13 +14,13 @@ class Compute {
             }
             return sum/(data.last().utcTimeStamp - data[0].utcTimeStamp)
         }
-        fun inGoal(lo: Double, hi : Double, data: List<GlucoseEntry>, sd: SensorData) : String {
+        fun inGoal(lo: Float, hi : Float, data: List<GlucoseEntry>, sd: SensorData) : String {
             val v = _inGoal(lo, hi, data, sd)*100
             val res = String.format("%.1f", v)
             val ret =  if(res.equals("100.0")) "100" else res
             return String.format("%s %s", ret, "%")
         }
-        fun occurrencesBelow(lo: Double, bound: Double, data : List<GlucoseEntry>, sd: SensorData) : Int {
+        fun occurrencesBelow(lo: Float, bound: Float, data : List<GlucoseEntry>, sd: SensorData) : Int {
             var occs = 0
             var last = false
             for(g in data){
@@ -31,7 +31,7 @@ class Compute {
             }
             return occs
         }
-        private fun _inGoal(lo: Double, hi : Double, data: List<GlucoseEntry>, sd: SensorData) : Double {
+        private fun _inGoal(lo: Float, hi : Float, data: List<GlucoseEntry>, sd: SensorData) : Double {
             if(data.isEmpty()) return 0.0
             if(data.size == 1) {
                 val v = data[0].tommol(sd)

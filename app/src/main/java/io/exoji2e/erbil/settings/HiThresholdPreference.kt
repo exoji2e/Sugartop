@@ -1,7 +1,6 @@
 package io.exoji2e.erbil.settings
 
 import android.content.Context
-//import android.support.v7.preference.EditTextPreference
 import com.takisoft.fix.support.v7.preference.EditTextPreference
 import android.util.AttributeSet
 
