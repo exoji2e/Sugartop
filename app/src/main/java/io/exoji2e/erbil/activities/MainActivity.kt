@@ -59,7 +59,7 @@ class MainActivity : ErbilActivity() {
                 val manual = ErbilDataBase.getInstance(context!!).manualEntryDao().getAll().filter{ entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
                 val readdata = ErbilDataBase.getInstance(context!!).sensorContactDao().getAll().filter { s -> s.utcTimeStamp in start..end }.size.toString()
                 val lowdata = String.format("%d", Compute.occurrencesBelow(thresholds.first, thresholds.first+1f, readings, sd))
-                Push2Plot.setPlot(readings, manual, graph, start, end, sd, Push2Plot.PlotType.DAY, thresholds)
+                Push2Plot.setPlot(readings, manual, graph, start, end, sd, plotTypes[section], thresholds)
                 Push2Plot.place_data_in_view(avg_elem, "Average:", String.format("%.1f", avg), "mmol/L")
                 Push2Plot.place_data_in_view(in_elem, "Inside Target:", Compute.inGoal(thresholds.first, thresholds.second, readings, sd), "")
                 Push2Plot.place_data_in_view(read_elem, "Readings:", readdata, "")

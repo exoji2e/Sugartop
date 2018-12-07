@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    tools:context=".activities.MainActivity$PlaceholderFragment">
+    android:layout_height="fill_parent"
+    android:layout_width="match_parent">
+
     <com.github.mikephil.charting.charts.CombinedChart
         android:id="@+id/graph"
         android:layout_width="match_parent"
-        android:layout_height="250dp" />
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="250dp"
+        android:layout_alignParentTop="true" />
+    <RelativeLayout
         android:id="@+id/TextLayOut"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:layout_below="@+id/graph">
+        android:paddingBottom="24dp"
+        android:layout_alignParentBottom="true">
         <include
             layout="@layout/element_data_row"
             android:id="@+id/avg_elem"

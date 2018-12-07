@@ -11,8 +11,7 @@ import io.exoji2e.erbil.*
 import io.exoji2e.erbil.database.DbWorkerThread
 import io.exoji2e.erbil.database.ErbilDataBase
 import io.exoji2e.erbil.settings.UserData
-
-import kotlinx.android.synthetic.main.activity_history.*
+import kotlinx.android.synthetic.main.dashboard_layout.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 
 class HistoryActivity : ErbilActivity() {
@@ -21,21 +20,16 @@ class HistoryActivity : ErbilActivity() {
 
     private lateinit var mSectionsPagerAdapter: SectionsPagerAdapter
 
-    override fun getContentViewId(): Int = R.layout.activity_history
+    override fun getContentViewId(): Int = R.layout.dashboard_layout
     override fun getNavigationMenuItemId() = R.id.action_history
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
-        container.adapter = mSectionsPagerAdapter
-        container.setCurrentItem(NUM_ITEMS - 1, false)
-    }
-
     override fun onResume() {
         super.onResume()
+        mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
         NUM_ITEMS = Time.date_as_int()
-        mSectionsPagerAdapter.notifyDataSetChanged()
+        container.adapter = mSectionsPagerAdapter
+        container.setCurrentItem(NUM_ITEMS - 1, false)
     }
 
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
