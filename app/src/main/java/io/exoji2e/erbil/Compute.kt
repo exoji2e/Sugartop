@@ -9,7 +9,7 @@ class Compute {
             if(data.size == 1) return data[0].tommol(sd)
             var sum = 0.0
             for (i in 1..data.size - 1) {
-                val tdiff = data[i].utcTimeStamp - data[i-1].utcTimeStamp
+                val tdiff = Math.min(data[i].utcTimeStamp - data[i-1].utcTimeStamp, 15*Time.MINUTE)
                 sum += (data[i-1].tommol(sd)+ data[i].tommol(sd))/2.0*tdiff
             }
             return sum/(data.last().utcTimeStamp - data[0].utcTimeStamp)
@@ -18,14 +18,14 @@ class Compute {
             val avg = avg(data, sd)
             if(data.size < 2) return 0.0
             var sum = 0.0
-            var w = 0.0
+            var sum_w = 0.0
             for (i in 1..data.size - 1) {
                 val tdiff = Math.min(data[i].utcTimeStamp - data[i-1].utcTimeStamp, 15*Time.MINUTE)
                 val dx = ((data[i-1].tommol(sd)+ data[i].tommol(sd))/2.0 - avg)
                 sum += dx*dx*tdiff
-                w += tdiff
+                sum_w += tdiff
             }
-            return Math.sqrt(sum/w)
+            return Math.sqrt(sum/sum_w)
         }
         fun inGoal(lo: Float, hi : Float, data: List<GlucoseEntry>, sd: SensorData) : String {
             val v = _inGoal(lo, hi, data, sd)*100
