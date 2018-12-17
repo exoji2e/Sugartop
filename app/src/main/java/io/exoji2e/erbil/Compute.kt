@@ -14,6 +14,19 @@ class Compute {
             }
             return sum/(data.last().utcTimeStamp - data[0].utcTimeStamp)
         }
+        fun stddev(data: List<GlucoseEntry>, sd : SensorData) : Double {
+            val avg = avg(data, sd)
+            if(data.size < 2) return 0.0
+            var sum = 0.0
+            var w = 0.0
+            for (i in 1..data.size - 1) {
+                val tdiff = Math.min(data[i].utcTimeStamp - data[i-1].utcTimeStamp, 15*Time.MINUTE)
+                val dx = ((data[i-1].tommol(sd)+ data[i].tommol(sd))/2.0 - avg)
+                sum += dx*dx*tdiff
+                w += tdiff
+            }
+            return Math.sqrt(sum/w)
+        }
         fun inGoal(lo: Float, hi : Float, data: List<GlucoseEntry>, sd: SensorData) : String {
             val v = _inGoal(lo, hi, data, sd)*100
             val res = String.format("%.1f", v)

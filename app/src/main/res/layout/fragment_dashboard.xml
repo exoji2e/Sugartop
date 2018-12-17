@@ -24,22 +24,29 @@
             android:layout_height="wrap_content"/>
         <include
             layout="@layout/element_data_row"
+            android:id="@+id/std_dev_elem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/avg_elem"/>
+        <include
+            layout="@layout/element_data_row"
             android:id="@+id/in_elem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/avg_elem"/>
+            android:layout_below="@id/std_dev_elem"/>
         <include
             layout="@layout/element_data_row"
             android:id="@+id/read_elem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/in_elem"/>
+            android:layout_below="@id/in_elem"/>
         <include
             layout="@layout/element_data_row"
             android:id="@+id/low_elem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/read_elem"/>
+            android:layout_below="@id/read_elem"/>
+
 
     </RelativeLayout>
 

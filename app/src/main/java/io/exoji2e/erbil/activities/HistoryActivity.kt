@@ -60,15 +60,18 @@ class HistoryActivity : ErbilActivity() {
                 val readings = dc.get(start, end)
                 val sd = SensorData.instance(context!!)
                 val avg = Compute.avg(readings, sd)
+                val stddev = Compute.stddev(readings, sd)
+
                 val thresholds = Pair(UserData.get_low_threshold(context!!), UserData.get_hi_threshold(context!!))
                 val manual = ErbilDataBase.getInstance(context!!).manualEntryDao().getAll().filter{ entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
                 val readdata = ErbilDataBase.getInstance(context!!).sensorContactDao().getAll().filter { s -> s.utcTimeStamp in start..end }.size.toString()
                 val lowdata = String.format("%d", Compute.occurrencesBelow(thresholds.first, thresholds.first+1f, readings, sd))
                 Push2Plot.setPlot(readings, manual, graph, start, end, sd, Push2Plot.PlotType.DAY, thresholds)
-                Push2Plot.place_data_in_view(avg_elem, "Average:", String.format("%.1f", avg), "mmol/L")
-                Push2Plot.place_data_in_view(in_elem, "Inside Target:", Compute.inGoal(thresholds.first, thresholds.second, readings, sd), "")
-                Push2Plot.place_data_in_view(read_elem, "Readings:", readdata, "")
-                Push2Plot.place_data_in_view(low_elem, "Low Occurrences:", lowdata, "")
+                Push2Plot.place_data_in_view(avg_elem, "avg:", String.format("%.1f", avg), "mmol/L")
+                Push2Plot.place_data_in_view(std_dev_elem, "stddev:", String.format("%.1f", stddev), "mmol/L")
+                Push2Plot.place_data_in_view(in_elem, "in target:", Compute.inGoal(thresholds.first, thresholds.second, readings, sd), "")
+                Push2Plot.place_data_in_view(read_elem, "#readings:", readdata, "")
+                Push2Plot.place_data_in_view(low_elem, "#lows:", lowdata, "")
             }
 
             DbWorkerThread.getInstance().postTask(task)
