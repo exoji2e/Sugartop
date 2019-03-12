@@ -13,6 +13,9 @@ import io.exoji2e.erbil.database.ErbilDataBase
 import io.exoji2e.erbil.settings.UserData
 import kotlinx.android.synthetic.main.dashboard_layout.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
+import android.app.DatePickerDialog
+import java.util.Calendar
+
 
 class HistoryActivity : ErbilActivity() {
     var NUM_ITEMS = Time.date_as_int()
@@ -26,10 +29,25 @@ class HistoryActivity : ErbilActivity() {
 
     override fun onResume() {
         super.onResume()
+
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
         NUM_ITEMS = Time.date_as_int()
         container.adapter = mSectionsPagerAdapter
         container.setCurrentItem(NUM_ITEMS - 1, false)
+        val myCalendar = Calendar.getInstance()
+        val date = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            myCalendar.set(Calendar.YEAR, year)
+            myCalendar.set(Calendar.MONTH, monthOfYear)
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            container.setCurrentItem(NUM_ITEMS - 1 - Time.days_since(year, monthOfYear, dayOfMonth) , false)
+        }
+        pager_title_strip.setOnClickListener{
+                DatePickerDialog(this@HistoryActivity, date, myCalendar
+                    .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                    myCalendar.get(Calendar.DAY_OF_MONTH)).show()
+        }
+
+
     }
 
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {

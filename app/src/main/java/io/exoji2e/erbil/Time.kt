@@ -45,6 +45,11 @@ class Time {
             val (y, m, d) = date_str.split("-").map{i -> i.toInt()}
             return d + m*31 + (y-1970)*31*12
         }
+        fun days_since(y: Int, m: Int, d: Int) : Int {
+            val mCalendar = Calendar.getInstance()
+            mCalendar.set(y, m, d)
+            return ((now() - mCalendar.timeInMillis)/(DAY)).toInt()
+        }
         fun floor_day(t : Long) : Long {
             val mSegmentStartTimeFormatter = SimpleDateFormat("HH:mm:ss")
             val mCalendar = Calendar.getInstance()
