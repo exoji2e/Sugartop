@@ -35,12 +35,13 @@ class Compute {
         }
         fun occurrencesBelow(lo: Float, bound: Float, data : List<GlucoseEntry>, sd: SensorData) : Int {
             var occs = 0
-            var last = false
+            var last = 0L
             for(g in data){
                 val below = sd.sensor2mmol(g.value, g.sensorId) < lo
-                val conf = sd.sensor2mmol(g.value, g.sensorId) < bound
-                if(below && !last) occs += 1
-                last = (last && conf) || below // We have get above bound to reset.
+                if(below) {
+                    if(last + Time.MINUTE*30 < g.utcTimeStamp) occs += 1
+                    last = g.utcTimeStamp
+                }
             }
             return occs
         }
