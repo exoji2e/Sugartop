@@ -16,11 +16,13 @@ import io.exoji2e.erbil.database.ManualGlucoseEntry
 
 class ManualActivity : SimpleActivity() {
     override val TAG = "ManualActivity"
+    lateinit var imm : InputMethodManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_manual)
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        glucoseinput.requestFocus()
 
         fab.setOnClickListener { _ ->
             imm.hideSoftInputFromWindow(glucoseinput.windowToken, 0)
@@ -38,5 +40,10 @@ class ManualActivity : SimpleActivity() {
                 Toast.makeText(this, "Value not inside range [1, 25]", Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        imm.hideSoftInputFromWindow(glucoseinput.windowToken, 0)
     }
 }
