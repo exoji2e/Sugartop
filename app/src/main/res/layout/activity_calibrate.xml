@@ -38,9 +38,23 @@
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
         android:layout_below="@+id/CalibrationLayout">
+        <include
+            layout="@layout/manual_checkbox_entry"
+            android:id="@+id/listhead"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:background="#FF000000"
+            android:id="@+id/hrule"
+            android:layout_below="@id/listhead"/>
+
         <ListView
             android:id="@+id/checkbox_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_below="@id/hrule"/>
     </RelativeLayout>
 </RelativeLayout>

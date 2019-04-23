@@ -44,6 +44,12 @@ class CalibrateActivity : SimpleActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calibrate)
+        listhead.value.text="Real"
+        listhead.calib_value.text="Re"
+        listhead.default_value.text="Def"
+        listhead.time.text = "Time"
+
+
         val task = Runnable {
             val guess = DataContainer.getInstance(this).guess()
             try {
@@ -124,7 +130,7 @@ class CalibrateActivity : SimpleActivity() {
             view.value.text = String.format("%.1f", p.first.value)
             view.calib_value.text = String.format("%.1f", SensorData.sensor2mmol(p.second.value, P))
             view.default_value.text = String.format("%.1f", SensorData.sensor2mmol(p.second.value))
-            view.time.text = Time.datetime(p.first.utcTimeStamp)
+            view.time.text = Time.datetime(p.first.utcTimeStamp).replace('T', ' ')
             return view
         }
         fun refresh() {
