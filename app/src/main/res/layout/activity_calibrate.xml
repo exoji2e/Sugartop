@@ -4,10 +4,7 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp">
+    android:padding="8dp">
     <RelativeLayout
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
@@ -38,15 +35,32 @@
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
         android:layout_below="@+id/CalibrationLayout">
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_minute"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/minutes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:singleLine="true"
+                android:hint="Minutes delayed"
+                android:text="5"/>
+        </android.support.design.widget.TextInputLayout>
+
         <include
             layout="@layout/manual_checkbox_entry"
             android:id="@+id/listhead"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/input_minute"
+            android:layout_marginTop="10dp"
             />
         <View
             android:layout_width="fill_parent"
-            android:layout_height="2dip"
+            android:layout_height="2dp"
             android:background="#FF000000"
             android:id="@+id/hrule"
             android:layout_below="@id/listhead"/>

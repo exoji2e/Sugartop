@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import io.exoji2e.erbil.DataContainer
 import io.exoji2e.erbil.R
@@ -26,6 +27,7 @@ class CalibrateActivity : SimpleActivity() {
     val s : MutableSet<Pair<ManualGlucoseEntry, GlucoseEntry>> = mutableSetOf()
     var id = 0L
     var P = Pair(0.0, 0.0)
+    var DT = 5L
     private fun recalib() {
         P = SensorData.recalibrate(s.toList())
         if(calibrated_save != null) {
@@ -39,18 +41,11 @@ class CalibrateActivity : SimpleActivity() {
                 finish()
             }
         }
-
     }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_calibrate)
-        listhead.value.text="Real"
-        listhead.calib_value.text="Re"
-        listhead.default_value.text="Def"
-        listhead.time.text = "Time"
-
-
+    private fun updateCheckboxList() {
         val task = Runnable {
+            Log.d(TAG, "Updating checkboxes")
+            Log.d(TAG, DT.toString())
             val guess = DataContainer.getInstance(this).guess()
             try {
                 id = guess!!.first.sensorId
@@ -60,30 +55,17 @@ class CalibrateActivity : SimpleActivity() {
                 return@Runnable
             }
             val inst = SensorData.instance(this)
-            val pairs = inst.get_calibration_pts(id, this).sortedBy{p -> -p.first.utcTimeStamp}.toMutableList()
+            val pairs = inst.get_calibration_pts(id, this, Time.MINUTE*DT).sortedBy{p -> -p.first.utcTimeStamp}.toMutableList()
+            s.clear()
             s.addAll(pairs)
             val adapter = ManualEntryAdapter(pairs)
-            checkbox_list.post{checkbox_list.adapter = adapter}
+            checkbox_list.post{
+                checkbox_list.adapter = adapter
+                adapter.refresh()
+            }
             P = inst.recalibrate(id, this)
 
-            current_save.post{
-                current_save.text.text = "Current"
-                put(inst.get(id), current_save.data)
-                current_save.fab.setOnClickListener { _ ->
-                    finish()
-                }
-            }
-            default_save.post{
-                default_save.text.text = "Default"
-                put(SensorData.default, default_save.data)
-                default_save.fab.setOnClickListener { _ ->
-                    val task = Runnable {
-                        inst.save(id, SensorData.default)
-                    }
-                    DbWorkerThread.getInstance().postTask(task)
-                    finish()
-                }
-            }
+
             calibrated_save.post {
                 calibrated_save.text.text = "Recalibrated"
                 put(P, calibrated_save.data)
@@ -98,9 +80,53 @@ class CalibrateActivity : SimpleActivity() {
         }
         DbWorkerThread.getInstance().postTask(task)
 
-        // List all sensors (in a scrolled view?
-        // make all sensors buttons
-        // if button pressed launch a new activity with sensor, where it shows current, default and calibrated glucose curves.
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_calibrate)
+        listhead.value.text="Real"
+        listhead.calib_value.text="Re"
+        listhead.default_value.text="Def"
+        listhead.time.text = "Time"
+        minutes.setOnFocusChangeListener { _, b ->
+            if (!b) {
+                val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(minutes.windowToken, 0)
+                val v = minutes.text.toString().toDoubleOrNull()
+                if (v != null){
+                    val vL = v.toLong()
+                    if (vL > 0 && vL < 60) {
+                        DT = vL
+                        updateCheckboxList()
+                    }
+                    minutes.text.replace(0, minutes.text.length, DT.toString())
+                }
+            }
+        }
+        current_save.post{
+            current_save.text.text = "Current"
+            val task = Runnable {
+                val inst = SensorData.instance(this)
+                put(inst.get(id), current_save.data)
+                current_save.fab.setOnClickListener {
+                    finish()
+                }
+            }
+            DbWorkerThread.getInstance().postTask(task)
+        }
+        default_save.post{
+            default_save.text.text = "Default"
+            put(SensorData.default, default_save.data)
+            default_save.fab.setOnClickListener {
+                val task = Runnable {
+                    val inst = SensorData.instance(this)
+                    inst.save(id, SensorData.default)
+                }
+                DbWorkerThread.getInstance().postTask(task)
+                finish()
+            }
+        }
+        updateCheckboxList()
     }
     inner class ManualEntryAdapter(L : MutableList<Pair<ManualGlucoseEntry, GlucoseEntry>>):
             ArrayAdapter<Pair<ManualGlucoseEntry, GlucoseEntry>>(this, R.layout.manual_checkbox_entry, R.id.value, L) {

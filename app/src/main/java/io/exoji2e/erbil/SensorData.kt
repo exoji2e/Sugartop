@@ -40,15 +40,18 @@ class SensorData {
         return db.manualEntryDao().getAll().filter{m -> m.utcTimeStamp >= start && m.utcTimeStamp <= end}
     }
     fun get_calibration_pts(sensorId: Long, context: Context): List<Pair<ManualGlucoseEntry, GlucoseEntry>> {
+        return get_calibration_pts(sensorId, context, Time.MINUTE * 5);
+    }
+    fun get_calibration_pts(sensorId: Long, context: Context, dt : Long): List<Pair<ManualGlucoseEntry, GlucoseEntry>> {
         val (start, end) = start_end_sensor(sensorId, context)
         val db = ErbilDataBase.getInstance(context)
         val manualData =  db.manualEntryDao().getAll().filter{m -> m.utcTimeStamp >= start && m.utcTimeStamp <= end}
         val entries = DataContainer.getInstance(context).get(start, end).filter { g -> g.sensorId == sensorId && g.status == 200}
         val out = mutableListOf<Pair<ManualGlucoseEntry, GlucoseEntry>>()
         for (m in manualData) {
-            val ts = m.utcTimeStamp + Time.MINUTE*5
-            val e = entries.minBy{e -> Math.max(e.utcTimeStamp - ts, ts - e.utcTimeStamp)}
-            if(e == null || Math.max(e.utcTimeStamp - ts, ts - e.utcTimeStamp) > Time.MINUTE*5) continue
+            val ts = m.utcTimeStamp + dt
+            val e = entries.minBy{e -> Math.abs(e.utcTimeStamp - ts)}
+            if(e == null || Math.abs(e.utcTimeStamp - ts) > Time.MINUTE*5) continue
             out.add(Pair(m, e))
         }
         return out
