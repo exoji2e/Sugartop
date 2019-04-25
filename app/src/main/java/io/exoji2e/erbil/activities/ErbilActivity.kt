@@ -238,6 +238,8 @@ abstract class ErbilActivity : AppCompatActivity() {
         private val data = ByteArray(360)
         private var success = false
         private var tagId = 0L
+        private val LOGTAG = "NFCREADER"
+        private var request_fail = -1
 
         private fun vibrate(t : Long, double : Boolean) {
             val v = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
@@ -257,10 +259,15 @@ abstract class ErbilActivity : AppCompatActivity() {
         override fun onPostExecute(tag: Tag?) {
             if (tag == null || !success) {
                 vibrate(300L, false)
-                Toast.makeText(this@ErbilActivity, "Failed to read sensor data.", Toast.LENGTH_LONG).show()
+                val S = "Failed to read sensor data."
+                val out = if(request_fail != -1) S + " " + request_fail + "/40" else S
+                Toast.makeText(this@ErbilActivity, out, Toast.LENGTH_LONG).show()
+
+                request_fail = -1
                 success = false
                 return
             }
+            Log.d(LOGTAG, "Long " + Toast.LENGTH_LONG + "Short: " + Toast.LENGTH_SHORT)
 
             vibrate(100L, true)
             success = false
@@ -268,7 +275,7 @@ abstract class ErbilActivity : AppCompatActivity() {
             for (i in 0..359) {
                 sb.append(i).append(" ").append(RawParser.byte2uns(data[i])).append("\n")
             }
-            Log.d(TAG, sb.toString())
+            //Log.d(LOGTAG, sb.toString())
             val now = Time.now()
             val task = Runnable {
                 val dc = DataContainer.getInstance(this@ErbilActivity)
@@ -286,7 +293,7 @@ abstract class ErbilActivity : AppCompatActivity() {
                 val uid = tag.id
                 tagId = RawParser.bin2long(uid)
 
-                Log.d(TAG, "TAGid: %d".format(tagId))
+                Log.d(LOGTAG, "TAGid: %d".format(tagId))
                 // Get bytes [i*8:(i+1)*8] from sensor memory and stores in data
                 for (i in 0..40) {
                     val cmd = byteArrayOf(0x60, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, i.toByte(), 0)
@@ -296,26 +303,31 @@ abstract class ErbilActivity : AppCompatActivity() {
                     while (true) {
                         try {
                             resp = nfcvTag.transceive(cmd)
+                            resp = Arrays.copyOfRange(resp, 2, resp.size)
+                            System.arraycopy(resp, 0, data, i * 8, resp.size)
                             break
-                        } catch (e: IOException) {
-                            if (Time.now() > time + Time.SECOND) {
-                                Log.e(TAG, "Timeout: took more than 1 second to read nfctag")
+                        } catch (e: Exception) {
+                            if (Time.now() > time + Time.SECOND*5) {
+                                Log.e(LOGTAG, "Timeout: took more than 1 second to read nfctag")
+                                request_fail = i
                                 return null
                             }
                         }
                     }
-                    resp = Arrays.copyOfRange(resp, 2, resp.size)
-                    System.arraycopy(resp, 0, data, i * 8, resp.size)
                 }
 
             } catch (e: Exception) {
-                Log.i(TAG, e.toString())
+                val sb = StringBuilder()
+                for(st in e.stackTrace) {
+                    sb.append(st.toString()).append('\n')
+                }
+                Log.i(LOGTAG, sb.toString())
                 return null
             } finally {
                 try {
                     nfcvTag.close()
                 } catch (e: Exception) {
-                    Log.e(TAG, "Error closing tag!")
+                    Log.e(LOGTAG, "Error closing tag!")
                 }
 
             }
