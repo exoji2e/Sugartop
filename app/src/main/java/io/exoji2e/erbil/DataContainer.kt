@@ -59,7 +59,11 @@ class DataContainer {
 
         val history_prepared = prepare(now_history, sensorId, history, 15*Time.MINUTE, start, minutesSinceLast != 14)
         val start_recent =
-                if(history_prepared.isEmpty()) { readingTime - 16 * Time.MINUTE }
+                if(history_prepared.isEmpty()) {
+                    val last = last(sensorId, history)
+                    if(last != null) { min(last.utcTimeStamp, readingTime - 16 * Time.MINUTE)}
+                    else {readingTime - 16 * Time.MINUTE }
+                }
                 else { min(readingTime - 16*Time.MINUTE, history_prepared.last().utcTimeStamp)}
 
         val recent_prepared = prepare(now_recent, sensorId, recent, 1*Time.MINUTE, start_recent, true)
