@@ -3,4 +3,13 @@
         <item>@string/mmol</item>
         <item>@string/mg</item>
     </string-array>
+
+    <array name="autosize_text_sizes">
+        <item>10sp</item>
+        <item>18sp</item>
+        <item>20sp</item>
+        <item>40sp</item>
+        <item>100sp</item>
+    </array>
+
 </resources>

@@ -20,4 +20,6 @@
         android:title="Add manual reading" />
     <item android:id="@+id/calibrate"
         android:title="Calibrate most recent sensor" />
+    <item android:id="@+id/raw_reading"
+        android:title="Show Last Reading Raw" />
 </menu>

@@ -1,53 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="fill_parent"
-    android:layout_width="match_parent">
-
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:weightSum="5">
     <com.github.mikephil.charting.charts.CombinedChart
         android:id="@+id/graph"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_alignParentTop="true" />
+        android:layout_height="0dp"
+        android:layout_weight="2" />
     <RelativeLayout
         android:id="@+id/TextLayOut"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="8dp"
         android:paddingBottom="24dp"
-        android:layout_alignParentBottom="true">
+        android:layout_weight="3"
+        android:gravity="bottom">
         <include
             layout="@layout/element_data_row"
             android:id="@+id/avg_elem"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <include
             layout="@layout/element_data_row"
             android:id="@+id/std_dev_elem"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/avg_elem"/>
         <include
             layout="@layout/element_data_row"
             android:id="@+id/in_elem"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/std_dev_elem"/>
         <include
             layout="@layout/element_data_row"
             android:id="@+id/read_elem"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/in_elem"/>
         <include
             layout="@layout/element_data_row"
             android:id="@+id/low_elem"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/read_elem"/>
-
-
     </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>

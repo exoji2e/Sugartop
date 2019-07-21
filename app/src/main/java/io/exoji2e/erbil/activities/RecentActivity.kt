@@ -3,6 +3,7 @@ package io.exoji2e.erbil.activities
 import io.exoji2e.erbil.*
 import io.exoji2e.erbil.database.*
 import io.exoji2e.erbil.settings.UserData
+import kotlinx.android.synthetic.main.element_recent_info.view.*
 import kotlinx.android.synthetic.main.recent_layout.*
 
 class RecentActivity : ErbilActivity() {
@@ -56,14 +57,24 @@ class RecentActivity : ErbilActivity() {
             val thresholds = Pair(UserData.get_low_threshold(this), UserData.get_hi_threshold(this))
 
 
-            if(graph!=null && ingData != null && avgData != null && recentData != null && TimeLeftText != null && TimeLeftData != null && TimeLeftUnit != null) {
-                Push2Plot._setPlot(toPlot, manual, graph, start, end, sd, Push2Plot.PlotType.RECENT, thresholds)
-                ingData.text = Compute.inGoal(thresholds.first, thresholds.second, readings, sd)
-                avgData.text = String.format("%.1f", avg)
+            if(graph!=null) {
                 recentData.text = recentText
-                TimeLeftText.text = above
-                TimeLeftData.text = left
-                TimeLeftUnit.text = unit
+                Push2Plot._setPlot(toPlot, manual, graph, start, end, sd, Push2Plot.PlotType.RECENT, thresholds)
+                val goal = Compute.inGoal(thresholds.first, thresholds.second, readings, sd)
+                insideBox.post {
+                    insideBox.recent_info_text.text = "Inside target:"
+                    insideBox.recent_info_data.text = goal
+                }
+                avgBox.post {
+                    avgBox.recent_info_text.text = "Average:"
+                    avgBox.recent_info_data.text = String.format("%.1f", avg)
+                    avgBox.recent_info_unit.text = "mmol/L"
+                }
+                timeBox.post {
+                    timeBox.recent_info_text.text = above
+                    timeBox.recent_info_data.text = left
+                    timeBox.recent_info_unit.text = unit
+                }
             }
         }
         DbWorkerThread.getInstance().postTask(task)
