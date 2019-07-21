@@ -145,6 +145,10 @@ abstract class ErbilActivity : AppCompatActivity() {
                 launchSettings()
                 return true
             }
+            R.id.raw_reading -> {
+                launchRawReading()
+                return true
+            }
             else -> return super.onOptionsItemSelected(item)
         }
     }
@@ -197,6 +201,10 @@ abstract class ErbilActivity : AppCompatActivity() {
     }
     private fun launchSettings() {
         val intent = Intent(this, SettingsActivity::class.java)
+        startActivity(intent)
+    }
+    private fun launchRawReading() {
+        val intent = Intent(this, LastReadingActivity::class.java)
         startActivity(intent)
     }
 
@@ -290,7 +298,14 @@ abstract class ErbilActivity : AppCompatActivity() {
             val nfcvTag = NfcV.get(tag)
             try {
                 nfcvTag.connect()
-                val uid = tag.id
+                val uid : ByteArray = tag.id
+                Log.d(LOGTAG, "TAGid sz: %d".format(uid.size))
+                val sb = StringBuilder()
+                for(b in uid){
+                    sb.append((b+256)%256).append(' ')
+                }
+                sb.append('\n')
+                Log.d(LOGTAG, "TAGid: %s".format(sb.toString()))
                 tagId = RawParser.bin2long(uid)
 
                 Log.d(LOGTAG, "TAGid: %d".format(tagId))

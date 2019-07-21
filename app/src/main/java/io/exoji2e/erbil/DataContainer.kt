@@ -15,6 +15,8 @@ class DataContainer {
     private var lastId : Int = -1
     private val lock = java.lang.Object()
     private var lastTimeStamp : Int = 0
+    //private var raw_data : ByteArray = byteArrayOf()
+    private var readings : MutableList<ByteArray> = mutableListOf()
     constructor(context : Context) {
         mDb = ErbilDataBase.getInstance(context)
         val glucoseData =
@@ -45,7 +47,7 @@ class DataContainer {
         }
     }
     fun append(raw_data: ByteArray, readingTime: Long, sensorId : Long) {
-
+        readings.add(raw_data.copyOf())
         val timestamp = RawParser.timestamp(raw_data)
         if(timestamp == 0) {
             mDb?.sensorContactDao()?.insert(SensorContact(0, readingTime, sensorId, 0, 0))
@@ -73,7 +75,15 @@ class DataContainer {
         Log.d(TAG, String.format("recent_size %d", recent.size))
         Log.d(TAG, String.format("histroy_size %d", history.size))
     }
-
+    fun get_raw_data(i: Int) : ByteArray{
+        waitForDone()
+        synchronized(lock){
+            if(i < readings.size)
+                return readings[readings.size - i - 1]
+            else
+                return byteArrayOf()
+        }
+    }
     fun insert(v: List<GlucoseEntry>) {
         waitForDone()
         synchronized(lock){

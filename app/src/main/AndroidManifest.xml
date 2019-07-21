@@ -71,6 +71,10 @@
             android:label="@string/title_activity_calibrate"
             android:theme="@style/AppTheme" />
         <activity
+            android:name=".activities.LastReadingActivity"
+            android:label="Last Raw Reading"
+            android:theme="@style/AppTheme" />
+        <activity
             android:theme="@style/PreferenceFixTheme.Light.NoActionBar"
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings" />
