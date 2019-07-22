@@ -17,8 +17,10 @@ import kotlinx.android.synthetic.main.reading_entry.view.*
 
 class LastReadingActivity : SimpleActivity() {
     override val TAG = "LastReadingActivity"
+    var sz = 0
     private fun updateReadingList(i: Int) {
         val task = Runnable {
+            status_text.post{status_text.text="%d/%d".format(i+1, sz)}
             Log.d(TAG, "Updating values")
             val raw_data = DataContainer.getInstance(this).get_raw_data(i)
             Log.d(TAG, raw_data.size.toString())
@@ -27,14 +29,14 @@ class LastReadingActivity : SimpleActivity() {
                 reading_list.adapter = adapter
                 adapter.refresh()
             }
-            if(i > 0)
+            if(i < sz - 1)
                 forward_button.setOnClickListener{
-                    updateReadingList(i - 1)
+                    updateReadingList(i + 1)
                 }
-
-            back_button.setOnClickListener{
-                updateReadingList(i+1)
-            }
+            if(i > 0)
+                back_button.setOnClickListener{
+                    updateReadingList(i-1)
+                }
         }
         DbWorkerThread.getInstance().postTask(task)
 
@@ -45,7 +47,11 @@ class LastReadingActivity : SimpleActivity() {
         listhead.a.text="id"
         listhead.b.text="value"
         listhead.c.text="comment"
-        updateReadingList(0)
+
+        DbWorkerThread.getInstance().postTask(Runnable{
+            sz = DataContainer.getInstance(this).get_sz_raw_data()
+            updateReadingList(sz - 1)
+        })
 
     }
     inner class ManualEntryAdapter(L : MutableList<Byte>):
@@ -91,7 +97,6 @@ class LastReadingActivity : SimpleActivity() {
             return view
         }
         fun refresh() {
-            // Should find other way of reloading layout.
             clear()
             notifyDataSetChanged()
             addAll(L)

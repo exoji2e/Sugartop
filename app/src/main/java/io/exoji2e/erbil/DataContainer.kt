@@ -50,10 +50,13 @@ class DataContainer {
             lastTimeStamp = timestamp
         }
     }
+    fun get_sz_raw_data() : Int {
+        return readings.size
+    }
     fun get_raw_data(i: Int) : ByteArray{
         synchronized(lock){
             if(0<= i && i < readings.size)
-                return readings[readings.size - i - 1]
+                return readings[i]
             else
                 return byteArrayOf()
         }
