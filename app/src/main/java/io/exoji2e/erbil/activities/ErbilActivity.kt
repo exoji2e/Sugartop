@@ -102,6 +102,10 @@ abstract class ErbilActivity : AppCompatActivity() {
         reopen.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
         startActivityIfNeeded(reopen, 0)
     }
+    private fun startActivity(cls: Class<*>) {
+        val intent = Intent(this, cls)
+        startActivity(intent)
+    }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.constant_menu, menu)
@@ -130,7 +134,8 @@ abstract class ErbilActivity : AppCompatActivity() {
                 return true
             }
             R.id.manual -> {
-                launchManual()
+                val intent = Intent(this, ManualActivity::class.java)
+                startActivityForResult(intent, REQUEST_MANUAL)
                 return true
             }
             R.id.share_csv -> {
@@ -138,15 +143,15 @@ abstract class ErbilActivity : AppCompatActivity() {
                 return true
             }
             R.id.calibrate -> {
-                launchCalibrate()
+                startActivity(CalibrateActivity::class.java)
                 return true
             }
             R.id.settings -> {
-                launchSettings()
+                startActivity(SettingsActivity::class.java)
                 return true
             }
             R.id.raw_reading -> {
-                launchRawReading()
+                startActivity(LastReadingActivity::class.java)
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
@@ -195,18 +200,6 @@ abstract class ErbilActivity : AppCompatActivity() {
         }
 
     }
-    private fun launchManual() {
-        val intent = Intent(this, ManualActivity::class.java)
-        startActivityForResult(intent, REQUEST_MANUAL)
-    }
-    private fun launchSettings() {
-        val intent = Intent(this, SettingsActivity::class.java)
-        startActivity(intent)
-    }
-    private fun launchRawReading() {
-        val intent = Intent(this, LastReadingActivity::class.java)
-        startActivity(intent)
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_MANUAL && resultCode == Activity.RESULT_OK) {
@@ -224,10 +217,6 @@ abstract class ErbilActivity : AppCompatActivity() {
             })
             sb.show()
         }
-    }
-    private fun launchCalibrate() {
-        val intent = Intent(this, CalibrateActivity::class.java)
-        startActivity(intent)
     }
     private fun read(intentReader: ShareCompat.IntentReader) : List<GlucoseEntry> {
         val s = intentReader.stream
