@@ -30,7 +30,7 @@ class ManualActivity : SimpleActivity() {
             if(v!=null && v > 1.0 && v < 25.0){
                 val entry = ManualGlucoseEntry(Time.now(), v)
                 DbWorkerThread.getInstance().postTask(Runnable{
-                    DataContainer.getInstance(this).insertIntoDb(entry)
+                    DataContainer.getInstance(this).insertManual(entry)
                 })
                 val str = String.format("Saved measurement: %.1f mmol/L", v)
                 setResult(Activity.RESULT_OK,
