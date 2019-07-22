@@ -26,7 +26,14 @@ class LastReadingActivity : SimpleActivity() {
             reading_list.post{
                 reading_list.adapter = adapter
                 adapter.refresh()
+            }
+            if(i > 0)
+                forward_button.setOnClickListener{
+                    updateReadingList(i - 1)
+                }
 
+            back_button.setOnClickListener{
+                updateReadingList(i+1)
             }
         }
         DbWorkerThread.getInstance().postTask(task)
@@ -39,18 +46,6 @@ class LastReadingActivity : SimpleActivity() {
         listhead.b.text="value"
         listhead.c.text="comment"
         updateReadingList(0)
-        minutes.setOnFocusChangeListener { _, b ->
-            if (!b) {
-                val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(minutes.windowToken, 0)
-                val v = minutes.text.toString().toIntOrNull()
-                if (v != null){
-                    val vL = v.toInt()
-                    updateReadingList(vL)
-                    minutes.text.replace(0, minutes.text.length, vL.toString())
-                }
-            }
-        }
 
     }
     inner class ManualEntryAdapter(L : MutableList<Byte>):

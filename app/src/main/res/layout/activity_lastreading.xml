@@ -5,27 +5,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp">
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_minute"
+    <RelativeLayout
+        android:id="@+id/navigation_buttons"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/minutes"
-            android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/back_button"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            android:singleLine="true"
-            android:hint="Minutes delayed"
-            android:text="0"/>
-    </android.support.design.widget.TextInputLayout>
+            android:padding="16dp"
+            android:text="Prev"
+            android:textAllCaps="false"
+            android:drawableLeft="@drawable/ic_left"
+            android:background="@drawable/button_background"
+            android:layout_alignParentStart="true"/>
+
+
+        <Button
+            android:id="@+id/forward_button"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Next"
+            android:textAllCaps="false"
+            android:drawableRight="@drawable/ic_right"
+            android:background="@drawable/button_background"
+            android:layout_alignParentEnd="true"/>
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/ListLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
-        android:layout_below="@id/input_minute">
+        android:layout_below="@id/navigation_buttons">
 
 
         <include
