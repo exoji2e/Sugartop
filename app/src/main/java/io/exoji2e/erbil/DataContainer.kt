@@ -31,7 +31,7 @@ class DataContainer {
             val now_history = RawParser.history(raw_data)
             val now_recent = RawParser.recent(raw_data)
 
-            val history_prepared = prepare(now_history, sensorId, 15 * Time.MINUTE, start, minutesSinceLast != 14, true)
+            val history_prepared = prepare(now_history, sensorId, 15 * Time.MINUTE, start, minutesSinceLast != 14 && timestamp < Time.DURATION_MINUTES, true)
             val start_recent =
                     if (history_prepared.isEmpty()) {
                         val last = mDb?.glucoseEntryDao()?.getLast(sensorId, true)
