@@ -9,10 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import io.exoji2e.erbil.*
 import io.exoji2e.erbil.database.DbWorkerThread
-import io.exoji2e.erbil.database.ErbilDataBase
-import io.exoji2e.erbil.settings.UserData
 import kotlinx.android.synthetic.main.dashboard_layout.*
-import kotlinx.android.synthetic.main.fragment_dashboard.*
 import android.app.DatePickerDialog
 import java.util.Calendar
 
@@ -52,7 +49,7 @@ class HistoryActivity : ErbilActivity() {
 
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
         override fun getItem(position: Int): Fragment {
-            return PlaceholderFragment.newInstance(position)
+            return HistoryFragment.newInstance(position)
         }
 
         override fun getCount(): Int {
@@ -64,44 +61,25 @@ class HistoryActivity : ErbilActivity() {
         }
 
     }
-
-    class PlaceholderFragment : Fragment() {
-
+    class HistoryFragment : DashboardFragment() {
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
             val rootView = inflater.inflate(R.layout.fragment_dashboard, container, false)
-            val day = Time.date_as_int() - 1 - (if(arguments != null) arguments!!.getInt(ARG_SECTION_NUMBER) else Time.date_as_int() - 1)
+            val day = Time.date_as_int() - 1 - (if(arguments != null) arguments!!.getInt(HistoryFragment.ARG_SECTION_NUMBER) else Time.date_as_int() - 1)
 
             val (start, end) = Time.limits(day)
-            val task = Runnable {
-                val dc = DataContainer.getInstance(context!!)
-                val readings = dc.get(start, end)
-                val sd = SensorData.instance(context!!)
-                val avg = Compute.avg(readings, sd)
-                val stddev = Compute.stddev(readings, sd)
-
-                val thresholds = Pair(UserData.get_low_threshold(context!!), UserData.get_hi_threshold(context!!))
-                val manual = ErbilDataBase.getInstance(context!!).manualEntryDao().getAll().filter{ entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
-                val readdata = ErbilDataBase.getInstance(context!!).sensorContactDao().getAll().filter { s -> s.utcTimeStamp in start..end }.size.toString()
-                val lowdata = String.format("%d", Compute.occurrencesBelow(thresholds.first, thresholds.first+1f, readings, sd))
-                Push2Plot.setPlot(readings, manual, graph, start, end, sd, Push2Plot.PlotType.DAY, thresholds)
-                Push2Plot.place_data_in_view(avg_elem, "avg:", String.format("%.1f", avg), "mmol/L")
-                Push2Plot.place_data_in_view(std_dev_elem, "stddev:", String.format("%.1f", stddev), "mmol/L")
-                Push2Plot.place_data_in_view(in_elem, "in target:", Compute.inGoal(thresholds.first, thresholds.second, readings, sd), "")
-                Push2Plot.place_data_in_view(read_elem, "#readings:", readdata, "")
-                Push2Plot.place_data_in_view(low_elem, "#lows:", lowdata, "")
+            if(context!=null) {
+                val task = generate_task(start, end, context!!, Push2Plot.PlotType.DAY)
+                DbWorkerThread.getInstance().postTask(task)
             }
-
-            DbWorkerThread.getInstance().postTask(task)
             return rootView
         }
-
 
         companion object {
             private val ARG_SECTION_NUMBER = "section_number"
 
-            fun newInstance(sectionNumber: Int): PlaceholderFragment {
-                val fragment = PlaceholderFragment()
+            fun newInstance(sectionNumber: Int): DashboardFragment {
+                val fragment = HistoryFragment()
                 val args = Bundle()
                 args.putInt(ARG_SECTION_NUMBER, sectionNumber)
                 fragment.arguments = args
@@ -109,4 +87,6 @@ class HistoryActivity : ErbilActivity() {
             }
         }
     }
+
+
 }

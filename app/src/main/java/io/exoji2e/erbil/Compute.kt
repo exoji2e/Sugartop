@@ -33,7 +33,7 @@ class Compute {
             val ret =  if(res.equals("100.0")) "100" else res
             return String.format("%s %s", ret, "%")
         }
-        fun occurrencesBelow(lo: Float, bound: Float, data : List<GlucoseEntry>, sd: SensorData) : Int {
+        fun occurrencesBelow(lo: Float, data : List<GlucoseEntry>, sd: SensorData) : Int {
             var occs = 0
             var last = 0L
             for(g in data){
