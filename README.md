@@ -1,4 +1,4 @@
-# Sugartop
+![](/screens/logo_withtext.png)
 
 Freestyle Libre is a wearable sensor that measures the glucose level through the blood plasma.
 
@@ -8,7 +8,9 @@ Sugartop is an android app that logs the data from your Freestyle Libre sensors.
 Sugartop puts you in control of your own data by only saving it locally, and letting you export it either as a csv-file or as the raw database.
 
 ## Features
-Sugartop also handles multiple sensors as the same time, is open source and can calibrate your sensor to manually entered glucose readings.
+- Supports multiple sensors as the same time.
+- Calibrate your sensor with manually entered glucose readings.
+- Free and Open Source Software.
 
 ## How it looks like
 
