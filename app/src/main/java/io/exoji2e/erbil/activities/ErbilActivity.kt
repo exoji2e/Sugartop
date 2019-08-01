@@ -28,10 +28,10 @@ import kotlinx.android.synthetic.main.element_bottom_navigation.*
 import java.util.*
 
 
-abstract class ErbilActivity : AppCompatActivity() {
+abstract class ErbilActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
     abstract val TAG : String
     private lateinit var nfcAdapter: NfcAdapter
-    private val REQUEST_MANUAL = 0;
+    private val REQUEST_MANUAL = 0
     internal abstract fun getNavigationMenuItemId(): Int
     internal abstract fun getContentViewId(): Int
 
@@ -64,12 +64,6 @@ abstract class ErbilActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         val action = intent.action
-        if (    action == NfcAdapter.ACTION_TECH_DISCOVERED ||
-                action == NfcAdapter.ACTION_NDEF_DISCOVERED ||
-                action == NfcAdapter.ACTION_TAG_DISCOVERED) {
-            val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
-            NfcVReaderTask().execute(tag)
-        }
         if(action == Intent.ACTION_SEND) {
             val task = Runnable {
                 Log.d(TAG, "received-send-intent")
@@ -91,11 +85,27 @@ abstract class ErbilActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        setupForegroundDispatch(this, nfcAdapter)
-    }
+        nfcAdapter.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_V or NfcAdapter.FLAG_READER_NO_PLATFORM_SOUNDS, null)    }
     override fun onPause() {
         super.onPause()
-        stopForegroundDispatch(this, nfcAdapter)
+        nfcAdapter.disableReaderMode(this);
+    }
+
+    override fun onTagDiscovered(tag: Tag) {
+        val data = read_nfc_data(tag)
+        if(data!=null) {
+            vibrate(100L, true)
+            val tagId = RawParser.bin2long(tag.id)
+            val now = Time.now()
+            val task = Runnable {
+                val dc = DataContainer.getInstance(this@ErbilActivity)
+                dc.append(data, now, tagId)
+            }
+            DbWorkerThread.getInstance().postTask(task)
+            putOnTop(RecentActivity::class.java)
+        } else {
+            vibrate(300L, false)
+        }
     }
     fun putOnTop(cls: Class<*>) {
         val reopen = Intent(this, cls)
@@ -230,137 +240,72 @@ abstract class ErbilActivity : AppCompatActivity() {
         }
         return entries
     }
-    private inner class NfcVReaderTask : AsyncTask<Tag, Void, Tag>() {
-
-        private val data = ByteArray(360)
-        private var success = false
-        private var tagId = 0L
-        private val LOGTAG = "NFCREADER"
-        private var request_fail = -1
-
-        private fun vibrate(t : Long, double : Boolean) {
-            val v = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if(double) {
-                    val wave = LongArray(4, { _ -> t })
-                    v.vibrate(VibrationEffect.createWaveform(wave, -1))
-                } else {
-                    v.vibrate(VibrationEffect.createOneShot(t, VibrationEffect.DEFAULT_AMPLITUDE))
-                }
-            } else {
-                //deprecated in API 26
-                v.vibrate(t)
+    private fun read_nfc_data(tag: Tag) : ByteArray? {
+        val LOGTAG = "READINGNFC"
+        val nfcvTag = NfcV.get(tag)
+        val data = ByteArray(360)
+        try {
+            nfcvTag.connect()
+            val uid : ByteArray = tag.id
+            Log.d(LOGTAG, "TAGid sz: %d".format(uid.size))
+            val sb = StringBuilder()
+            for(b in uid){
+                sb.append((b+256)%256).append(' ')
             }
-        }
+            sb.append('\n')
+            Log.d(LOGTAG, "TAGid: %s".format(sb.toString()))
+            val tagId = RawParser.bin2long(uid)
 
-        override fun onPostExecute(tag: Tag?) {
-            if (tag == null || !success) {
-                vibrate(300L, false)
-                val S = "Failed to read sensor data."
-                val out = if(request_fail != -1) S + " " + request_fail + "/40" else S
-                Toast.makeText(this@ErbilActivity, out, Toast.LENGTH_LONG).show()
-
-                request_fail = -1
-                success = false
-                return
-            }
-            Log.d(LOGTAG, "Long " + Toast.LENGTH_LONG + "Short: " + Toast.LENGTH_SHORT)
-
-            vibrate(100L, true)
-            success = false
-            val sb = StringBuilder(2880) // At least enough.
-            for (i in 0..359) {
-                sb.append(i).append(" ").append(RawParser.byte2uns(data[i])).append("\n")
-            }
-            //Log.d(LOGTAG, sb.toString())
-            val now = Time.now()
-            val task = Runnable {
-                val dc = DataContainer.getInstance(this@ErbilActivity)
-                dc.append(data, now, tagId)
-            }
-            DbWorkerThread.getInstance().postTask(task)
-            putOnTop(RecentActivity::class.java)
-        }
-
-        override fun doInBackground(vararg params: Tag): Tag? {
-            val tag = params[0]
-            val nfcvTag = NfcV.get(tag)
-            try {
-                nfcvTag.connect()
-                val uid : ByteArray = tag.id
-                Log.d(LOGTAG, "TAGid sz: %d".format(uid.size))
-                val sb = StringBuilder()
-                for(b in uid){
-                    sb.append((b+256)%256).append(' ')
-                }
-                sb.append('\n')
-                Log.d(LOGTAG, "TAGid: %s".format(sb.toString()))
-                tagId = RawParser.bin2long(uid)
-
-                Log.d(LOGTAG, "TAGid: %d".format(tagId))
-                // Get bytes [i*8:(i+1)*8] from sensor memory and stores in data
-                for (i in 0..40) {
-                    val cmd = byteArrayOf(0x60, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, i.toByte(), 0)
-                    System.arraycopy(uid, 0, cmd, 2, 8)
-                    var resp: ByteArray
-                    val time = Time.now()
-                    while (true) {
-                        try {
-                            resp = nfcvTag.transceive(cmd)
-                            resp = Arrays.copyOfRange(resp, 2, resp.size)
-                            System.arraycopy(resp, 0, data, i * 8, resp.size)
-                            break
-                        } catch (e: Exception) {
-                            if (Time.now() > time + Time.SECOND*5) {
-                                Log.e(LOGTAG, "Timeout: took more than 1 second to read nfctag")
-                                request_fail = i
-                                return null
-                            }
+            Log.d(LOGTAG, "TAGid: %d".format(tagId))
+            // Get bytes [i*8:(i+1)*8] from sensor memory and stores in data
+            for (i in 0..40) {
+                val cmd = byteArrayOf(0x60, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, i.toByte(), 0)
+                System.arraycopy(uid, 0, cmd, 2, 8)
+                var resp: ByteArray
+                val time = Time.now()
+                while (true) {
+                    try {
+                        resp = nfcvTag.transceive(cmd)
+                        resp = Arrays.copyOfRange(resp, 2, resp.size)
+                        System.arraycopy(resp, 0, data, i * 8, resp.size)
+                        break
+                    } catch (e: Exception) {
+                        if (Time.now() > time + Time.SECOND*5) {
+                            Log.e(LOGTAG, "Timeout: took more than 5 seconds to read nfctag")
+                            val out = String.format("Failed to read sensor data. %d/40", i)
+                            Toast.makeText(this@ErbilActivity, out, Toast.LENGTH_LONG).show()
+                            return null
                         }
                     }
                 }
-
-            } catch (e: Exception) {
-                val sb = StringBuilder()
-                for(st in e.stackTrace) {
-                    sb.append(st.toString()).append('\n')
-                }
-                Log.i(LOGTAG, sb.toString())
-                return null
-            } finally {
-                try {
-                    nfcvTag.close()
-                } catch (e: Exception) {
-                    Log.e(LOGTAG, "Error closing tag!")
-                }
-
             }
-            success = true
-
-            return tag
+        } catch (e: Exception) {
+            e.printStackTrace()
+            val out = String.format("Failed to read sensor data")
+            Toast.makeText(this@ErbilActivity, out, Toast.LENGTH_LONG).show()
+            return null
+        } finally {
+            try {
+                nfcvTag.close()
+            } catch (e: Exception) {
+                Log.e(LOGTAG, "Error closing tag!")
+            }
         }
-
+        return data
     }
-    fun setupForegroundDispatch(activity: Activity, adapter: NfcAdapter) {
-        val intent = Intent(activity.applicationContext, activity.javaClass)
-        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-
-        val pendingIntent = PendingIntent.getActivity(activity.applicationContext, 0, intent, 0)
-
-        val filters = arrayOfNulls<IntentFilter>(1)
-        val techList = arrayOf<Array<String>>()
-
-        // Same filter as in manifest.
-        filters[0] = IntentFilter()
-        filters[0]?.addAction(NfcAdapter.ACTION_TECH_DISCOVERED)
-        filters[0]?.addAction(NfcAdapter.ACTION_NDEF_DISCOVERED)
-        filters[0]?.addAction(NfcAdapter.ACTION_TAG_DISCOVERED)
-        filters[0]?.addCategory(Intent.CATEGORY_DEFAULT)
-        adapter.enableForegroundDispatch(activity, pendingIntent, filters, techList)
-    }
-
-    fun stopForegroundDispatch(activity: Activity, adapter: NfcAdapter) {
-        adapter.disableForegroundDispatch(activity)
+    private fun vibrate(t : Long, double : Boolean) {
+        val v = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if(double) {
+                val wave = LongArray(4, { _ -> t })
+                v.vibrate(VibrationEffect.createWaveform(wave, -1))
+            } else {
+                v.vibrate(VibrationEffect.createOneShot(t, VibrationEffect.DEFAULT_AMPLITUDE))
+            }
+        } else {
+            //deprecated in API 26
+            v.vibrate(t)
+        }
     }
 
 }
