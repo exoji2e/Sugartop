@@ -1,16 +1,15 @@
-package io.exoji2e.erbil.activities
+package io.exoji2e.sugartop.activities
 
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
-import io.exoji2e.erbil.DataContainer
+import io.exoji2e.sugartop.DataContainer
 
-import io.exoji2e.erbil.R
-import io.exoji2e.erbil.database.DbWorkerThread
+import io.exoji2e.sugartop.R
+import io.exoji2e.sugartop.database.DbWorkerThread
 import kotlinx.android.synthetic.main.activity_lastreading.*
 import kotlinx.android.synthetic.main.reading_entry.view.*
 

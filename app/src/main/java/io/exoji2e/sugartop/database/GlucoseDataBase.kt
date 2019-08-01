@@ -1,4 +1,4 @@
-package io.exoji2e.erbil.database
+package io.exoji2e.sugartop.database
 
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
@@ -6,11 +6,11 @@ import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.migration.Migration
-import io.exoji2e.erbil.*
+import io.exoji2e.sugartop.*
 
 
 @Database(entities = arrayOf(GlucoseEntry::class, SensorContact::class, ManualGlucoseEntry::class, SensorCalibration::class), version = 2)
-abstract class ErbilDataBase : RoomDatabase() {
+abstract class GlucoseDataBase : RoomDatabase() {
     abstract fun glucoseEntryDao(): GlucoseDao
     abstract fun manualEntryDao(): ManualDao
     abstract fun sensorContactDao(): SensorContactDao
@@ -22,14 +22,14 @@ abstract class ErbilDataBase : RoomDatabase() {
             }
         }
         val NAME = "Erbil.db"
-        private var INSTANCE: ErbilDataBase? = null
+        private var INSTANCE: GlucoseDataBase? = null
 
-        fun getInstance(context: Context): ErbilDataBase {
-            synchronized(ErbilDataBase::class) {
+        fun getInstance(context: Context): GlucoseDataBase {
+            synchronized(GlucoseDataBase::class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(
                             context.getApplicationContext(),
-                            ErbilDataBase::class.java,
+                            GlucoseDataBase::class.java,
                             NAME)
                             .addMigrations(MIGRATION_1_2)
                             .build()

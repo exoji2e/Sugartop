@@ -1,10 +1,10 @@
-package io.exoji2e.erbil.database
+package io.exoji2e.sugartop.database
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
-import io.exoji2e.erbil.SensorCalibration
+import io.exoji2e.sugartop.SensorCalibration
 
 @Dao
 interface SensorCalibrationDao {

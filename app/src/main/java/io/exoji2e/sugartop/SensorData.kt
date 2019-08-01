@@ -1,19 +1,19 @@
-package io.exoji2e.erbil
+package io.exoji2e.sugartop
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import android.content.Context
-import io.exoji2e.erbil.database.ErbilDataBase
-import io.exoji2e.erbil.database.GlucoseEntry
-import io.exoji2e.erbil.database.ManualGlucoseEntry
-import io.exoji2e.erbil.database.SensorCalibrationDao
+import io.exoji2e.sugartop.database.GlucoseDataBase
+import io.exoji2e.sugartop.database.GlucoseEntry
+import io.exoji2e.sugartop.database.ManualGlucoseEntry
+import io.exoji2e.sugartop.database.SensorCalibrationDao
 
 class SensorData {
     val map = HashMap<Long, Pair<Double,Double>>()
     var sensorCalibrationDao: SensorCalibrationDao
     constructor(context: Context) {
-        sensorCalibrationDao = ErbilDataBase.getInstance(context).sensorCalibrationDao()
+        sensorCalibrationDao = GlucoseDataBase.getInstance(context).sensorCalibrationDao()
         for(s in sensorCalibrationDao.getAll()) {
             map[s.sensorId] = Pair(s.first, s.second)
         }
@@ -26,7 +26,7 @@ class SensorData {
     fun sensor2mmol(value: Int, p : Pair<Double, Double>) : Double = value*p.second + p.first
 
     fun start_end_sensor(sensorId: Long, context : Context) : Pair<Long, Long> {
-        val db = ErbilDataBase.getInstance(context)
+        val db = GlucoseDataBase.getInstance(context)
         val srs = db.sensorContactDao().getAll().filter{s -> s.sensorId == sensorId}.sortedBy { s -> s.utcTimeStamp }
         if(srs.isEmpty()) {
             return Pair(-1, -1)
@@ -36,7 +36,7 @@ class SensorData {
 
     fun manual_entries(sensorId: Long, context : Context) : List<ManualGlucoseEntry> {
         val (start, end) = start_end_sensor(sensorId, context)
-        val db = ErbilDataBase.getInstance(context)
+        val db = GlucoseDataBase.getInstance(context)
         return db.manualEntryDao().getAll().filter{m -> m.utcTimeStamp >= start && m.utcTimeStamp <= end}
     }
     fun get_calibration_pts(sensorId: Long, context: Context): List<Pair<ManualGlucoseEntry, GlucoseEntry>> {
@@ -44,7 +44,7 @@ class SensorData {
     }
     fun get_calibration_pts(sensorId: Long, context: Context, dt : Long): List<Pair<ManualGlucoseEntry, GlucoseEntry>> {
         val (start, end) = start_end_sensor(sensorId, context)
-        val db = ErbilDataBase.getInstance(context)
+        val db = GlucoseDataBase.getInstance(context)
         val manualData =  db.manualEntryDao().getAll().filter{m -> m.utcTimeStamp >= start && m.utcTimeStamp <= end}
         val entries = DataContainer.getInstance(context).get(start, end).filter { g -> g.sensorId == sensorId && g.status == 200}
         val out = mutableListOf<Pair<ManualGlucoseEntry, GlucoseEntry>>()

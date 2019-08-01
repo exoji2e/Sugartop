@@ -1,17 +1,17 @@
-package io.exoji2e.erbil.activities
+package io.exoji2e.sugartop.activities
 
 import android.os.Bundle
 import android.support.v4.app.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import io.exoji2e.erbil.*
-import io.exoji2e.erbil.database.DbWorkerThread
+import io.exoji2e.sugartop.*
+import io.exoji2e.sugartop.database.DbWorkerThread
 import kotlinx.android.synthetic.main.dashboard_layout.*
 
 
 
-class MainActivity : ErbilActivity() {
+class MainActivity : BaseActivity() {
     override val TAG = "MAIN-Activity"
     override fun getNavigationMenuItemId() = R.id.action_dashboard
     override fun getContentViewId() = R.layout.dashboard_layout

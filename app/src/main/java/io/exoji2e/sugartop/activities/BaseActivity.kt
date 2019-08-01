@@ -1,10 +1,8 @@
-package io.exoji2e.erbil.activities
+package io.exoji2e.sugartop.activities
 
 import android.app.Activity
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.NfcV
@@ -18,17 +16,17 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import io.exoji2e.erbil.*
-import io.exoji2e.erbil.database.DbWorkerThread
-import io.exoji2e.erbil.database.ErbilDataBase
-import io.exoji2e.erbil.database.GlucoseEntry
-import io.exoji2e.erbil.database.ManualGlucoseEntry
+import io.exoji2e.sugartop.*
+import io.exoji2e.sugartop.database.DbWorkerThread
+import io.exoji2e.sugartop.database.GlucoseDataBase
+import io.exoji2e.sugartop.database.GlucoseEntry
+import io.exoji2e.sugartop.database.ManualGlucoseEntry
 import java.io.*
 import kotlinx.android.synthetic.main.element_bottom_navigation.*
 import java.util.*
 
 
-abstract class ErbilActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
+abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
     abstract val TAG : String
     private lateinit var nfcAdapter: NfcAdapter
     private val REQUEST_MANUAL = 0
@@ -92,13 +90,14 @@ abstract class ErbilActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  
     }
 
     override fun onTagDiscovered(tag: Tag) {
+        vibrate(100L, false)
         val data = read_nfc_data(tag)
         if(data!=null) {
             vibrate(100L, true)
             val tagId = RawParser.bin2long(tag.id)
             val now = Time.now()
             val task = Runnable {
-                val dc = DataContainer.getInstance(this@ErbilActivity)
+                val dc = DataContainer.getInstance(this@BaseActivity)
                 dc.append(data, now, tagId)
             }
             DbWorkerThread.getInstance().postTask(task)
@@ -169,18 +168,18 @@ abstract class ErbilActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  
     }
 
     fun shareDB() {
-        val path = getDatabasePath(ErbilDataBase.NAME).getAbsolutePath()
+        val path = getDatabasePath(GlucoseDataBase.NAME).getAbsolutePath()
         share_file(path)
     }
     fun shareAsCSV() {
         val task = Runnable {
-            val v : List<GlucoseEntry> = ErbilDataBase.getInstance(this).glucoseEntryDao().getAll()
+            val v : List<GlucoseEntry> = GlucoseDataBase.getInstance(this).glucoseEntryDao().getAll()
             val sb = StringBuilder(v.size*100)
             sb.append(GlucoseEntry.headerString()).append('\n')
             for(entry in v) {
                 sb.append(entry.toString()).append('\n')
             }
-            val filename = Time.datetime() + "-Erbil.csv"
+            val filename = Time.datetime() + "-Sugartop.csv"
             Log.d(TAG, filename)
             val file = File(filesDir, filename)
             file.writeText(sb.toString())
@@ -194,8 +193,8 @@ abstract class ErbilActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  
         val file = File(path)
         try {
             val uri = FileProvider.getUriForFile(
-                    this@ErbilActivity,
-                    "io.exoji2e.erbil.fileprovider",
+                    this@BaseActivity,
+                    "io.exoji2e.sugartop.fileprovider",
                     file)
             val sharingIntent = Intent(Intent.ACTION_SEND)
             sharingIntent.setType("application/octet-stream");
@@ -220,7 +219,7 @@ abstract class ErbilActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  
             val entry = ManualGlucoseEntry(time, value)
             sb.setAction(R.string.undo, View.OnClickListener { _ ->
                 DbWorkerThread.getInstance().postTask(Runnable {
-                    ErbilDataBase.getInstance(this).manualEntryDao().deleteRecord(entry)
+                    GlucoseDataBase.getInstance(this).manualEntryDao().deleteRecord(entry)
                 })
                 val sb2 = Snackbar.make(window.decorView, "Removed last inserted manual entry", Snackbar.LENGTH_SHORT)
                 sb2.show()
@@ -273,7 +272,7 @@ abstract class ErbilActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  
                         if (Time.now() > time + Time.SECOND*5) {
                             Log.e(LOGTAG, "Timeout: took more than 5 seconds to read nfctag")
                             val out = String.format("Failed to read sensor data. %d/40", i)
-                            Toast.makeText(this@ErbilActivity, out, Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@BaseActivity, out, Toast.LENGTH_LONG).show()
                             return null
                         }
                     }
@@ -282,7 +281,7 @@ abstract class ErbilActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  
         } catch (e: Exception) {
             e.printStackTrace()
             val out = String.format("Failed to read sensor data")
-            Toast.makeText(this@ErbilActivity, out, Toast.LENGTH_LONG).show()
+            Toast.makeText(this@BaseActivity, out, Toast.LENGTH_LONG).show()
             return null
         } finally {
             try {

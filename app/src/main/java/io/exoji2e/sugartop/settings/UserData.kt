@@ -1,4 +1,4 @@
-package io.exoji2e.erbil.settings
+package io.exoji2e.sugartop.settings
 
 import android.content.Context
 import android.preference.PreferenceManager.getDefaultSharedPreferences
@@ -30,14 +30,13 @@ class UserData {
             getDefaultSharedPreferences(c).edit()
                     .putFloat(lo_th, Math.min(lo, hi))
                     .putFloat(hi_th, Math.max(lo, hi))
-                    .commit()
+                    .apply()
         }
         fun get_multiplier(c: Context) : Float {
             return if(get_unit(c) == mmol) 1.0f else 18.0f
         }
         fun get_unit(c: Context) : String {
-            return getDefaultSharedPreferences(c)
-                    .getString("unit", mmol)
+            return getDefaultSharedPreferences(c).getString("unit", mmol)
         }
     }
 }

@@ -1,7 +1,7 @@
-package io.exoji2e.erbil
+package io.exoji2e.sugartop
 
 import android.util.Log
-import io.exoji2e.erbil.database.SensorChunk
+import io.exoji2e.sugartop.database.SensorChunk
 
 class RawParser {
     companion object {

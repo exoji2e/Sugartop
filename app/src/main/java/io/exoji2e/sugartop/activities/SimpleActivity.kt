@@ -1,8 +1,7 @@
-package io.exoji2e.erbil.activities
+package io.exoji2e.sugartop.activities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.MenuItem
 
 

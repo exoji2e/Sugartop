@@ -9,12 +9,12 @@
         android:entries="@array/unitArray"
         android:entryValues="@array/unitArray"/>
      -->
-    <io.exoji2e.erbil.settings.LowThresholdPreference
+    <io.exoji2e.sugartop.settings.LowThresholdPreference
         android:title="Low threshold"
         android:inputType="numberDecimal"
         android:key="0001"
         android:defaultValue="abc"/>
-    <io.exoji2e.erbil.settings.HiThresholdPreference
+    <io.exoji2e.sugartop.settings.HiThresholdPreference
         android:title="Hi threshold"
         android:inputType="numberDecimal"
         android:key="0002"

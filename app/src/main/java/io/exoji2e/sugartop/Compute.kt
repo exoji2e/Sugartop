@@ -1,6 +1,6 @@
-package io.exoji2e.erbil
+package io.exoji2e.sugartop
 
-import io.exoji2e.erbil.database.GlucoseEntry
+import io.exoji2e.sugartop.database.GlucoseEntry
 
 class Compute {
     companion object {

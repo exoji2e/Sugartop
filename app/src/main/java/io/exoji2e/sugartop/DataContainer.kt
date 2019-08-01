@@ -1,20 +1,20 @@
-package io.exoji2e.erbil
+package io.exoji2e.sugartop
 
 import android.content.Context
 import android.util.Log
-import io.exoji2e.erbil.database.*
+import io.exoji2e.sugartop.database.*
 import kotlin.math.min
 
 class DataContainer {
     val noH = 32
     val TAG = "DataContainer"
-    private var mDb : ErbilDataBase? = null
+    private var mDb : GlucoseDataBase
     private val lock = java.lang.Object()
     private var lastTimeStamp : Int = 0
     //private var raw_data : ByteArray = byteArrayOf()
     private var readings : MutableList<ByteArray> = mutableListOf()
     constructor(context : Context) {
-        mDb = ErbilDataBase.getInstance(context)
+        mDb = GlucoseDataBase.getInstance(context)
     }
 
     fun append(raw_data: ByteArray, readingTime: Long, sensorId : Long) {
@@ -22,7 +22,7 @@ class DataContainer {
             readings.add(raw_data.copyOf())
             val timestamp = RawParser.timestamp(raw_data)
             if (timestamp == 0) {
-                mDb?.sensorContactDao()?.insert(SensorContact(0, readingTime, sensorId, 0, 0))
+                mDb.sensorContactDao().insert(SensorContact(0, readingTime, sensorId, 0, 0))
                 return
             }
             // Timestamp is 2 mod 15 every time a new reading to history is done.
@@ -34,7 +34,7 @@ class DataContainer {
             val history_prepared = prepare(now_history, sensorId, 15 * Time.MINUTE, start, minutesSinceLast != 14 && timestamp < Time.DURATION_MINUTES, true)
             val start_recent =
                     if (history_prepared.isEmpty()) {
-                        val last = mDb?.glucoseEntryDao()?.getLast(sensorId, true)
+                        val last = mDb.glucoseEntryDao().getLast(sensorId, true)
                         if (last != null) {
                             min(last.utcTimeStamp, readingTime - 16 * Time.MINUTE)
                         } else {
@@ -46,7 +46,7 @@ class DataContainer {
 
             val recent_prepared = prepare(now_recent, sensorId, 1 * Time.MINUTE, start_recent, true, false)
             val added = extend(recent_prepared) + extend(history_prepared)
-            mDb?.sensorContactDao()?.insert(SensorContact(0, sensorId, readingTime, timestamp, added))
+            mDb.sensorContactDao().insert(SensorContact(0, sensorId, readingTime, timestamp, added))
             lastTimeStamp = timestamp
         }
     }
@@ -65,7 +65,7 @@ class DataContainer {
         synchronized(lock){
             if(size() != 0) return
             for(g in v) {
-                mDb?.glucoseEntryDao()?.insert(g)
+                mDb.glucoseEntryDao().insert(g)
             }
         }
         Log.d(TAG, String.format("inserted %d vales into database", v.size))
@@ -76,7 +76,7 @@ class DataContainer {
             val toExtend = v.filter { g: GlucoseReading -> g.status != 0 && g.value > 10 }
                     .map { g: GlucoseReading -> GlucoseEntry(g, 0) }
             for (r: GlucoseEntry in toExtend) {
-                mDb?.glucoseEntryDao()?.insert(r)
+                mDb.glucoseEntryDao().insert(r)
             }
             Log.d(TAG, "Inserted into db!")
             return toExtend.size
@@ -90,7 +90,7 @@ class DataContainer {
                         start : Long,
                         certain : Boolean,
                         isHistory: Boolean) : List<GlucoseReading> {
-        val lastRecent = mDb?.glucoseEntryDao()?.getLast(sensorId, isHistory)
+        val lastRecent = mDb.glucoseEntryDao().getLast(sensorId, isHistory)
 
         if(lastRecent != null) {
             var match = -1
@@ -125,14 +125,14 @@ class DataContainer {
     }
     fun get(after: Long, before : Long, nice : Boolean) : List<GlucoseEntry> {
         synchronized(lock) {
-            val v = mDb?.glucoseEntryDao()?.getBetween(after, before).orEmpty().sortedBy{ g -> g.utcTimeStamp }
+            val v = mDb.glucoseEntryDao().getBetween(after, before).orEmpty().sortedBy{ g -> g.utcTimeStamp }
             if(!nice) return v
             else return v.filter{g -> nice(g)}
         }
     }
 
     private fun last() : GlucoseEntry? {
-        return mDb?.glucoseEntryDao()?.getLast(false)
+        return mDb.glucoseEntryDao().getLast(false)
     }
     fun guess() : Pair<GlucoseReading, GlucoseReading>? {
         synchronized(lock){
@@ -156,14 +156,14 @@ class DataContainer {
 
     fun size() : Int {
         synchronized(lock) {
-            val sz = mDb?.glucoseEntryDao()?.getSize()
-            return if(sz == null) 0 else sz
+            val sz = mDb.glucoseEntryDao().getSize()
+            return sz
         }
     }
 
     fun insertManual(manual : ManualGlucoseEntry) {
         synchronized(lock) {
-            mDb!!.manualEntryDao().insert(manual)
+            mDb.manualEntryDao().insert(manual)
         }
     }
     companion object {

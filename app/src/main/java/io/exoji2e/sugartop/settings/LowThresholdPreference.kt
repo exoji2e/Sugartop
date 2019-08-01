@@ -1,4 +1,4 @@
-package io.exoji2e.erbil.settings
+package io.exoji2e.sugartop.settings
 
 import android.content.Context
 import com.takisoft.fix.support.v7.preference.EditTextPreference

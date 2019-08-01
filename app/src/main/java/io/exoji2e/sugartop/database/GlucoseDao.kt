@@ -1,4 +1,4 @@
-package io.exoji2e.erbil.database
+package io.exoji2e.sugartop.database
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert

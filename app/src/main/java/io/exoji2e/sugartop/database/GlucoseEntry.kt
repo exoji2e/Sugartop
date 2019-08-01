@@ -1,10 +1,10 @@
-package io.exoji2e.erbil.database
+package io.exoji2e.sugartop.database
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import io.exoji2e.erbil.RawParser
-import io.exoji2e.erbil.SensorData
+import io.exoji2e.sugartop.RawParser
+import io.exoji2e.sugartop.SensorData
 
 data class SensorChunk(val value: Int, val status: Int, val history: Boolean, val rest: Int) {
     constructor(b : ByteArray, history : Boolean) :

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.exoji2e.erbil">
+    package="io.exoji2e.sugartop">
 
     <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -21,7 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".activities.MainActivity">
+        <activity android:name="io.exoji2e.sugartop.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -46,15 +46,15 @@
                 android:resource="@xml/nfc" />
         </activity>
         <activity
-            android:name=".activities.RecentActivity"
+            android:name="io.exoji2e.sugartop.activities.RecentActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".activities.HistoryActivity"
+            android:name="io.exoji2e.sugartop.activities.HistoryActivity"
             android:theme="@style/AppTheme" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="io.exoji2e.erbil.fileprovider"
+            android:authorities="io.exoji2e.sugartop.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -63,20 +63,20 @@
         </provider>
 
         <activity
-            android:name=".activities.ManualActivity"
+            android:name="io.exoji2e.sugartop.activities.ManualActivity"
             android:label="@string/title_activity_manual"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".activities.CalibrateActivity"
+            android:name="io.exoji2e.sugartop.activities.CalibrateActivity"
             android:label="@string/title_activity_calibrate"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".activities.LastReadingActivity"
+            android:name="io.exoji2e.sugartop.activities.LastReadingActivity"
             android:label="Last Raw Reading"
             android:theme="@style/AppTheme" />
         <activity
             android:theme="@style/AppTheme"
-            android:name=".activities.SettingsActivity"
+            android:name="io.exoji2e.sugartop.activities.SettingsActivity"
             android:label="@string/title_activity_settings" />
     </application>
 

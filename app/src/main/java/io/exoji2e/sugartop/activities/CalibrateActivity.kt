@@ -1,4 +1,4 @@
-package io.exoji2e.erbil.activities
+package io.exoji2e.sugartop.activities
 
 import android.os.Bundle
 import android.util.Log
@@ -7,13 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import io.exoji2e.erbil.DataContainer
-import io.exoji2e.erbil.R
-import io.exoji2e.erbil.SensorData
-import io.exoji2e.erbil.Time
-import io.exoji2e.erbil.database.DbWorkerThread
-import io.exoji2e.erbil.database.GlucoseEntry
-import io.exoji2e.erbil.database.ManualGlucoseEntry
+import io.exoji2e.sugartop.DataContainer
+import io.exoji2e.sugartop.R
+import io.exoji2e.sugartop.SensorData
+import io.exoji2e.sugartop.Time
+import io.exoji2e.sugartop.database.DbWorkerThread
+import io.exoji2e.sugartop.database.GlucoseEntry
+import io.exoji2e.sugartop.database.ManualGlucoseEntry
 import kotlinx.android.synthetic.main.activity_calibrate.*
 import kotlinx.android.synthetic.main.manual_checkbox_entry.view.*
 import kotlinx.android.synthetic.main.save_calibration.view.*

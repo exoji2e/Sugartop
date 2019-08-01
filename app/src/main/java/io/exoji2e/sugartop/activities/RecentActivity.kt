@@ -1,12 +1,12 @@
-package io.exoji2e.erbil.activities
+package io.exoji2e.sugartop.activities
 
-import io.exoji2e.erbil.*
-import io.exoji2e.erbil.database.*
-import io.exoji2e.erbil.settings.UserData
+import io.exoji2e.sugartop.*
+import io.exoji2e.sugartop.database.*
+import io.exoji2e.sugartop.settings.UserData
 import kotlinx.android.synthetic.main.element_recent_info.view.*
 import kotlinx.android.synthetic.main.recent_layout.*
 
-class RecentActivity : ErbilActivity() {
+class RecentActivity : BaseActivity() {
     override val TAG = "RecentActivity"
     override fun getNavigationMenuItemId() = R.id.action_recent
     override fun getContentViewId() = R.layout.recent_layout
@@ -46,7 +46,7 @@ class RecentActivity : ErbilActivity() {
             val start = end - Time.HOUR * 8
 
             val readings = dc.get(start, end)
-            val manual = ErbilDataBase.getInstance(this).manualEntryDao().getAll().filter{ entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
+            val manual = GlucoseDataBase.getInstance(this).manualEntryDao().getAll().filter{ entry -> entry.utcTimeStamp > start && entry.utcTimeStamp < end}
 
             val toPlot = if(guess == null) readings.map { g -> g.toReading() } else readings.map { g -> g.toReading() } + guess.second
             val timeStamp = dc.lastTimeStamp()

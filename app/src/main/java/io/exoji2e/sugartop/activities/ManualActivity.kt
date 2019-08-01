@@ -1,18 +1,17 @@
-package io.exoji2e.erbil.activities
+package io.exoji2e.sugartop.activities
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 
 import kotlinx.android.synthetic.main.activity_manual.*
 import android.view.inputmethod.InputMethodManager
-import io.exoji2e.erbil.DataContainer
-import io.exoji2e.erbil.R
-import io.exoji2e.erbil.Time
-import io.exoji2e.erbil.database.DbWorkerThread
-import io.exoji2e.erbil.database.ManualGlucoseEntry
+import io.exoji2e.sugartop.DataContainer
+import io.exoji2e.sugartop.R
+import io.exoji2e.sugartop.Time
+import io.exoji2e.sugartop.database.DbWorkerThread
+import io.exoji2e.sugartop.database.ManualGlucoseEntry
 
 class ManualActivity : SimpleActivity() {
     override val TAG = "ManualActivity"

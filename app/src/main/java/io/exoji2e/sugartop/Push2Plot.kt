@@ -1,4 +1,4 @@
-package io.exoji2e.erbil
+package io.exoji2e.sugartop
 
 import android.view.View
 import com.github.mikephil.charting.charts.CombinedChart
@@ -9,9 +9,9 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
-import io.exoji2e.erbil.database.GlucoseEntry
-import io.exoji2e.erbil.database.GlucoseReading
-import io.exoji2e.erbil.database.ManualGlucoseEntry
+import io.exoji2e.sugartop.database.GlucoseEntry
+import io.exoji2e.sugartop.database.GlucoseReading
+import io.exoji2e.sugartop.database.ManualGlucoseEntry
 import kotlinx.android.synthetic.main.element_data_row.view.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat

@@ -1,8 +1,8 @@
-package io.exoji2e.erbil.activities
+package io.exoji2e.sugartop.activities
 
 import android.os.Bundle
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat
-import io.exoji2e.erbil.R
+import io.exoji2e.sugartop.R
 
 class SettingsActivity : SimpleActivity() {
     override val TAG = "SettingsActivity"
