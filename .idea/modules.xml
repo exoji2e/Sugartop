@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Erbil.iml" filepath="$PROJECT_DIR$/Erbil.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Sugartop.iml" filepath="$PROJECT_DIR$/Sugartop.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
