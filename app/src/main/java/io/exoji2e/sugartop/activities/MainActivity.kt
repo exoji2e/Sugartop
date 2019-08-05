@@ -49,7 +49,7 @@ class MainActivity : BaseActivity() {
             val start = end - durations[section]
             if(context!=null) {
                 val task = generate_task(start, end, context!!, plotTypes[section])
-                DbWorkerThread.getInstance().postTask(task)
+                DbWorkerThread.postTask(task)
 
             }
             return rootView

@@ -70,7 +70,7 @@ class HistoryActivity : BaseActivity() {
             val (start, end) = Time.limits(day)
             if(context!=null) {
                 val task = generate_task(start, end, context!!, Push2Plot.PlotType.DAY)
-                DbWorkerThread.getInstance().postTask(task)
+                DbWorkerThread.postTask(task)
             }
             return rootView
         }

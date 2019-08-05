@@ -37,7 +37,7 @@ class LastReadingActivity : SimpleActivity() {
                     updateReadingList(i-1)
                 }
         }
-        DbWorkerThread.getInstance().postTask(task)
+        DbWorkerThread.postTask(task)
 
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +47,7 @@ class LastReadingActivity : SimpleActivity() {
         listhead.b.text="value"
         listhead.c.text="comment"
 
-        DbWorkerThread.getInstance().postTask(Runnable{
+        DbWorkerThread.postTask(Runnable{
             sz = DataContainer.getInstance(this).get_sz_raw_data()
             updateReadingList(sz - 1)
         })

@@ -1,6 +1,7 @@
 package io.exoji2e.sugartop.activities
 
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.nfc.NfcAdapter
@@ -24,6 +25,12 @@ import io.exoji2e.sugartop.database.ManualGlucoseEntry
 import java.io.*
 import kotlinx.android.synthetic.main.element_bottom_navigation.*
 import java.util.*
+import java.nio.file.Files.size
+import android.R.attr.src
+import android.net.Uri
+import android.provider.ContactsContract
+import io.exoji2e.sugartop.settings.UserData
+import java.nio.channels.Channels
 
 
 abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
@@ -63,21 +70,45 @@ abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
         super.onNewIntent(intent)
         val action = intent.action
         if(action == Intent.ACTION_SEND) {
-            val task = Runnable {
-                Log.d(TAG, "received-send-intent")
-                val dc = DataContainer.getInstance(this)
-                // Should maybe support merging later on?
-                if(dc.size() != 0){
-                    Toast.makeText(this, "Database not empty, aborting import.", Toast.LENGTH_LONG).show()
-                    return@Runnable
+
+            val mime = get_mime()
+            Log.d("MIME-TYPE", mime)
+            if(mime == "application/octet-stream") {
+                val task = Runnable {
+                    DataContainer.destroyInstance()
+                    val intentReader = ShareCompat.IntentReader.from(this)
+                    val uri = intentReader.stream
+                    val db_name = Time.datetime() + "-Sugartop.db"
+                    val path = getDatabasePath(db_name).absolutePath
+                    val inStream = contentResolver.openInputStream(uri)
+                    val outStream = FileOutputStream(path)
+                    val inChannel = Channels.newChannel(inStream)
+                    val outChannel = outStream.channel
+                    try {
+                        outChannel.transferFrom(inChannel, 0, Long.MAX_VALUE)
+                    } catch(e: Exception) {
+                    }
+                    inStream?.close()
+                    outStream.close()
+                    val old_db_name = UserData.get_db_path(this)
+                    UserData.set_db_path(this, db_name)
+                    try {
+                        val dc = DataContainer.getInstance(this)
+                        val x = dc.get(0, 0)
+                        Log.d(TAG, x.toString())
+                        Toast.makeText(this, "Import successful!", Toast.LENGTH_LONG).show()
+                    } catch(e: Exception) {
+                        DataContainer.destroyInstance()
+                        UserData.set_db_path(this, old_db_name)
+                        Toast.makeText(this, "Import failed!", Toast.LENGTH_LONG).show()
+                    }
+
+                    putOnTop(MainActivity::class.java)
+
                 }
-                Toast.makeText(this, "Importing data...", Toast.LENGTH_LONG).show()
-                val intentReader = ShareCompat.IntentReader.from(this)
-                dc.insert(read(intentReader))
-                Toast.makeText(this, "Import successful!", Toast.LENGTH_LONG).show()
+                DbWorkerThread.postTask(task)
 
             }
-            DbWorkerThread.getInstance().postTask(task)
         }
     }
 
@@ -100,7 +131,7 @@ abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
                 val dc = DataContainer.getInstance(this@BaseActivity)
                 dc.append(data, now, tagId)
             }
-            DbWorkerThread.getInstance().postTask(task)
+            DbWorkerThread.postTask(task)
             putOnTop(RecentActivity::class.java)
         } else {
             vibrate(300L, false)
@@ -137,7 +168,7 @@ abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
+        when (item.itemId) {
             R.id.share_db -> {
                 shareDB()
                 return true
@@ -168,9 +199,10 @@ abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
     }
 
     fun shareDB() {
-        val path = getDatabasePath(GlucoseDataBase.NAME).getAbsolutePath()
+        val path = getDatabasePath(UserData.get_db_path(this)).getAbsolutePath()
         share_file(path)
     }
+
     fun shareAsCSV() {
         val task = Runnable {
             val v : List<GlucoseEntry> = GlucoseDataBase.getInstance(this).glucoseEntryDao().getAll()
@@ -186,7 +218,7 @@ abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
             share_file(file.absolutePath)
             file.deleteOnExit()
         }
-        DbWorkerThread.getInstance().postTask(task)
+        DbWorkerThread.postTask(task)
     }
 
     private fun share_file(path: String) {
@@ -217,8 +249,8 @@ abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
             val str = data.getStringExtra("text")
             val sb = Snackbar.make(window.decorView, str, Snackbar.LENGTH_LONG)
             val entry = ManualGlucoseEntry(time, value)
-            sb.setAction(R.string.undo, View.OnClickListener { _ ->
-                DbWorkerThread.getInstance().postTask(Runnable {
+            sb.setAction(R.string.undo, View.OnClickListener {
+                DbWorkerThread.postTask(Runnable {
                     GlucoseDataBase.getInstance(this).manualEntryDao().deleteRecord(entry)
                 })
                 val sb2 = Snackbar.make(window.decorView, "Removed last inserted manual entry", Snackbar.LENGTH_SHORT)
@@ -227,17 +259,11 @@ abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
             sb.show()
         }
     }
-    private fun read(intentReader: ShareCompat.IntentReader) : List<GlucoseEntry> {
+    private fun get_mime() : String? {
+        val intentReader = ShareCompat.IntentReader.from(this)
         val s = intentReader.stream
-        val br = BufferedReader(InputStreamReader(contentResolver.openInputStream(s)))
-        var lines = br.readLines()
-        val entries = mutableListOf<GlucoseEntry>()
-        for (line in lines) {
-            val entry = GlucoseEntry.fromString(line)
-            if(entry != null)
-                entries.add(entry)
-        }
-        return entries
+        val mime = contentResolver.getType(s)
+        return mime
     }
     private fun read_nfc_data(tag: Tag) : ByteArray? {
         val LOGTAG = "READINGNFC"

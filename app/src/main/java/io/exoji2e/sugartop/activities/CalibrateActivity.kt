@@ -37,7 +37,7 @@ class CalibrateActivity : SimpleActivity() {
                     val inst = SensorData.instance(this)
                     inst.save(id, P)
                 }
-                DbWorkerThread.getInstance().postTask(task)
+                DbWorkerThread.postTask(task)
                 finish()
             }
         }
@@ -73,12 +73,12 @@ class CalibrateActivity : SimpleActivity() {
                     val task = Runnable {
                         inst.save(id, P)
                     }
-                    DbWorkerThread.getInstance().postTask(task)
+                    DbWorkerThread.postTask(task)
                     finish()
                 }
             }
         }
-        DbWorkerThread.getInstance().postTask(task)
+        DbWorkerThread.postTask(task)
 
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,7 +112,7 @@ class CalibrateActivity : SimpleActivity() {
                     finish()
                 }
             }
-            DbWorkerThread.getInstance().postTask(task)
+            DbWorkerThread.postTask(task)
         }
         default_save.post{
             default_save.text.text = "Default"
@@ -122,7 +122,7 @@ class CalibrateActivity : SimpleActivity() {
                     val inst = SensorData.instance(this)
                     inst.save(id, SensorData.default)
                 }
-                DbWorkerThread.getInstance().postTask(task)
+                DbWorkerThread.postTask(task)
                 finish()
             }
         }

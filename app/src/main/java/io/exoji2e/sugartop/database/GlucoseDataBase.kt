@@ -7,6 +7,7 @@ import android.content.Context
 import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.migration.Migration
 import io.exoji2e.sugartop.*
+import io.exoji2e.sugartop.settings.UserData
 
 
 @Database(entities = arrayOf(GlucoseEntry::class, SensorContact::class, ManualGlucoseEntry::class, SensorCalibration::class), version = 2)
@@ -21,7 +22,6 @@ abstract class GlucoseDataBase : RoomDatabase() {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `SensorCalibrations` (`sensorId` INTEGER NOT NULL, `first` REAL NOT NULL, `second` REAL NOT NULL, PRIMARY KEY(`sensorId`))")
             }
         }
-        val NAME = "Erbil.db"
         private var INSTANCE: GlucoseDataBase? = null
 
         fun getInstance(context: Context): GlucoseDataBase {
@@ -30,7 +30,7 @@ abstract class GlucoseDataBase : RoomDatabase() {
                     INSTANCE = Room.databaseBuilder(
                             context.getApplicationContext(),
                             GlucoseDataBase::class.java,
-                            NAME)
+                            UserData.get_db_path(context))
                             .addMigrations(MIGRATION_1_2)
                             .build()
                 }
@@ -41,6 +41,8 @@ abstract class GlucoseDataBase : RoomDatabase() {
         }
 
         fun destroyInstance() {
+            if (INSTANCE?.isOpen == true)
+                INSTANCE?.close()
             INSTANCE = null
         }
     }

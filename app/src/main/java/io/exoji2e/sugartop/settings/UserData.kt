@@ -8,6 +8,7 @@ class UserData {
         val mmol = "mmol/L"
         val lo_th = "lo_threshold"
         val hi_th = "hi_threshold"
+        val db_path = "db_path"
         fun get_low_threshold(c: Context) : Float {
             val default = get_multiplier(c) *4.0f
             try {
@@ -37,6 +38,12 @@ class UserData {
         }
         fun get_unit(c: Context) : String {
             return getDefaultSharedPreferences(c).getString("unit", mmol)
+        }
+        fun get_db_path(c : Context) : String {
+            return getDefaultSharedPreferences(c).getString(db_path, "Erbil.db")
+        }
+        fun set_db_path(c : Context, path: String) {
+            getDefaultSharedPreferences(c).edit().putString(db_path, path).apply()
         }
     }
 }

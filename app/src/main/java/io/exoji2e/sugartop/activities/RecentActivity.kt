@@ -77,6 +77,6 @@ class RecentActivity : BaseActivity() {
                 }
             }
         }
-        DbWorkerThread.getInstance().postTask(task)
+        DbWorkerThread.postTask(task)
     }
 }

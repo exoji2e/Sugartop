@@ -17,7 +17,7 @@ class DbWorkerThread(threadName: String) : HandlerThread(threadName) {
     }
     companion object {
         var mThread : DbWorkerThread? = null
-        fun getInstance() : DbWorkerThread {
+        private fun getInstance() : DbWorkerThread {
             if(mThread == null){
                 synchronized(DbWorkerThread::class.java){
                     if(mThread == null) {
@@ -28,6 +28,9 @@ class DbWorkerThread(threadName: String) : HandlerThread(threadName) {
                 }
             }
             return mThread!!
+        }
+        fun postTask(task : Runnable) {
+            getInstance().postTask(task)
         }
     }
 }

@@ -177,5 +177,14 @@ class DataContainer {
             }
             return this.INSTANCE!!
         }
+        fun destroyInstance(){
+            synchronized(DataContainer::class){
+                GlucoseDataBase.destroyInstance()
+                if(INSTANCE != null){
+                    INSTANCE = null
+                }
+            }
+
+        }
     }
 }
