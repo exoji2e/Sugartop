@@ -28,7 +28,7 @@ import java.util.*
 
 abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
     abstract val TAG : String
-    private lateinit var nfcAdapter: NfcAdapter
+    private var nfcAdapter: NfcAdapter? = null
     private val REQUEST_MANUAL = 0
     internal abstract fun getNavigationMenuItemId(): Int
     internal abstract fun getContentViewId(): Int
@@ -83,10 +83,10 @@ abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
 
     override fun onResume() {
         super.onResume()
-        nfcAdapter.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_V or NfcAdapter.FLAG_READER_NO_PLATFORM_SOUNDS, null)    }
+        nfcAdapter?.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_V or NfcAdapter.FLAG_READER_NO_PLATFORM_SOUNDS, null)    }
     override fun onPause() {
         super.onPause()
-        nfcAdapter.disableReaderMode(this);
+        nfcAdapter?.disableReaderMode(this);
     }
 
     override fun onTagDiscovered(tag: Tag) {

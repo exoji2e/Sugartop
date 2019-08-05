@@ -62,9 +62,10 @@ class Push2Plot {
             return if(t == PlotType.RECENT || t == PlotType.DAY) {
                 object : IAxisValueFormatter {
                     private val mCalendar = Calendar.getInstance()
+                    val TimeFormatter = SimpleDateFormat("HH:mm", Locale.getDefault())
                     override fun getFormattedValue(value: Float, axis: AxisBase): String {
                         mCalendar.timeInMillis = value.toLong() + start + Time.SECOND*10
-                        return DateFormat.getTimeInstance(DateFormat.SHORT).format(mCalendar.timeInMillis)
+                        return TimeFormatter.format(mCalendar.timeInMillis)
                     }
                 }
             } else if(t == PlotType.WEEK) {
