@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--
-    <ListPreference
+    <io.exoji2e.sugartop.settings.UnitPreference
         android:title="Glucose unit"
         android:summary="%s"
         android:key="unit"
         android:defaultValue="@string/mmol"
         android:entries="@array/unitArray"
         android:entryValues="@array/unitArray"/>
-     -->
     <io.exoji2e.sugartop.settings.LowThresholdPreference
         android:title="Low threshold"
         android:inputType="numberDecimal"
-        android:key="0001"
-        android:defaultValue="abc"/>
+        android:key="lo_threshold"/>
     <io.exoji2e.sugartop.settings.HiThresholdPreference
         android:title="Hi threshold"
         android:inputType="numberDecimal"
-        android:key="0002"
-        android:defaultValue="abc"/>
+        android:key="hi_threshold"/>
 </PreferenceScreen>

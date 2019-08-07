@@ -255,6 +255,7 @@ abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
                 })
                 val sb2 = Snackbar.make(window.decorView, "Removed last inserted manual entry", Snackbar.LENGTH_SHORT)
                 sb2.show()
+                
             })
             sb.show()
         }

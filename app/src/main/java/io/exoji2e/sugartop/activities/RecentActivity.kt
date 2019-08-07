@@ -21,10 +21,10 @@ class RecentActivity : BaseActivity() {
                                 sd: SensorData,
                                 manual : List<ManualGlucoseEntry>) : String{
         if(readings.isNotEmpty() && guess != null) {
-            val diff = guess.second.tommol(sd) - guess.first.tommol(sd)
+            val diff = (guess.second.tounit(sd) - guess.first.tounit(sd))/sd.get_multiplier()
             val trend = if (diff > .5) "↑↑" else if (diff > .25) "↑" else if (diff < -.5) "↓↓" else if (diff < -.25) "↓" else "→"
             if (Time.now() - readings.last().utcTimeStamp < Time.HOUR)
-                return String.format("%.1f %s", guess.second.tommol(sd), trend)
+                return String.format("%.1f %s", guess.second.tounit(sd), trend)
         }
         if(manual.isNotEmpty()) {
             if(Time.now() - manual.last().utcTimeStamp < Time.HOUR)
@@ -50,7 +50,7 @@ class RecentActivity : BaseActivity() {
 
             val toPlot = if(guess == null) readings.map { g -> g.toReading() } else readings.map { g -> g.toReading() } + guess.second
             val timeStamp = dc.lastTimeStamp()
-            val (above, left, unit) = Time.timeLeft(timeStamp)
+            val (above, left, time_unit) = Time.timeLeft(timeStamp)
 
             val recentText = get_recent_text(readings, guess, sd, manual)
             val avg = Compute.avg(readings, sd)
@@ -59,6 +59,8 @@ class RecentActivity : BaseActivity() {
 
             if(graph!=null) {
                 recentData.text = recentText
+                recentUnit.text = UserData.get_unit(this)
+
                 Push2Plot._setPlot(toPlot, manual, graph, start, end, sd, Push2Plot.PlotType.RECENT, thresholds)
                 val goal = Compute.inGoal(thresholds.first, thresholds.second, readings, sd)
                 insideBox.post {
@@ -68,12 +70,12 @@ class RecentActivity : BaseActivity() {
                 avgBox.post {
                     avgBox.recent_info_text.text = "Average:"
                     avgBox.recent_info_data.text = String.format("%.1f", avg)
-                    avgBox.recent_info_unit.text = "mmol/L"
+                    avgBox.recent_info_unit.text = UserData.get_unit(this)
                 }
                 timeBox.post {
                     timeBox.recent_info_text.text = above
                     timeBox.recent_info_data.text = left
-                    timeBox.recent_info_unit.text = unit
+                    timeBox.recent_info_unit.text = time_unit
                 }
             }
         }

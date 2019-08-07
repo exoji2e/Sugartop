@@ -14,6 +14,7 @@ import io.exoji2e.sugartop.Time
 import io.exoji2e.sugartop.database.DbWorkerThread
 import io.exoji2e.sugartop.database.GlucoseEntry
 import io.exoji2e.sugartop.database.ManualGlucoseEntry
+import io.exoji2e.sugartop.settings.UserData
 import kotlinx.android.synthetic.main.activity_calibrate.*
 import kotlinx.android.synthetic.main.manual_checkbox_entry.view.*
 import kotlinx.android.synthetic.main.save_calibration.view.*
@@ -28,6 +29,7 @@ class CalibrateActivity : SimpleActivity() {
     var id = 0L
     var P = Pair(0.0, 0.0)
     var DT = 5L
+
     private fun recalib() {
         P = SensorData.recalibrate(s.toList())
         if(calibrated_save != null) {
@@ -55,6 +57,7 @@ class CalibrateActivity : SimpleActivity() {
                 return@Runnable
             }
             val inst = SensorData.instance(this)
+            P = inst.recalibrate(id, this)
             val pairs = inst.get_calibration_pts(id, this, Time.MINUTE*DT).sortedBy{p -> -p.first.utcTimeStamp}.toMutableList()
             s.clear()
             s.addAll(pairs)
@@ -63,7 +66,6 @@ class CalibrateActivity : SimpleActivity() {
                 checkbox_list.adapter = adapter
                 adapter.refresh()
             }
-            P = inst.recalibrate(id, this)
 
 
             calibrated_save.post {
@@ -152,10 +154,10 @@ class CalibrateActivity : SimpleActivity() {
                 recalib()
                 refresh()
             }
-
-            view.value.text = String.format("%.1f", p.first.value)
-            view.calib_value.text = String.format("%.1f", SensorData.sensor2mmol(p.second.value, P))
-            view.default_value.text = String.format("%.1f", SensorData.sensor2mmol(p.second.value))
+            val sd = SensorData.instance(this@CalibrateActivity)
+            view.value.text = String.format("%.1f", p.first.value * UserData.get_multiplier(this@CalibrateActivity))
+            view.calib_value.text = String.format("%.1f", sd.sensor2unit(p.second.value, P))
+            view.default_value.text = String.format("%.1f", sd.sensor2unit(p.second.value))
             view.time.text = Time.datetime(p.first.utcTimeStamp).replace('T', ' ')
             return view
         }

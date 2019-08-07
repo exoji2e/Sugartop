@@ -7,8 +7,9 @@ import android.util.Log
 
 class LowThresholdPreference(val c: Context, attrs: AttributeSet): EditTextPreference(c, attrs) {
     init{
-        summary = UserData.get_low_threshold(c).toString()
+        summary = "%s %s".format(UserData.get_low_threshold(c).toString(), UserData.get_unit(c))
     }
+
     override fun getPersistedString(defaultReturnValue: String?) : String {
         val v : String =  UserData.get_low_threshold(c).toString()
         Log.d("LOWTHRESH", v)
@@ -20,7 +21,6 @@ class LowThresholdPreference(val c: Context, attrs: AttributeSet): EditTextPrefe
         if(v < 2 || v > 20) return false
         Log.d("LOWTHRESH", "persistString:" + v.toString())
         UserData.set_thresholds(c, value.toFloat(), UserData.get_hi_threshold(c))
-        summary = UserData.get_low_threshold(c).toString()
         return true
     }
 }

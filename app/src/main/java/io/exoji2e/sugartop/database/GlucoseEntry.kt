@@ -16,7 +16,8 @@ data class SensorChunk(val value: Int, val status: Int, val history: Boolean, va
 data class GlucoseReading(val value: Int, val utcTimeStamp: Long, val sensorId: Long, val status: Int, val history: Boolean, val rest: Int) {
     constructor(s: SensorChunk, utcTimeStamp: Long, sensorId: Long):
             this(s.value, utcTimeStamp, sensorId, s.status, s.history, s.rest)
-    fun tommol(sd: SensorData) : Double = sd.sensor2mmol(value, sensorId)
+    fun tounit(sd: SensorData, multiplier : Float) : Double = sd.sensor2unit(value, sensorId, multiplier)
+    fun tounit(sd: SensorData) : Double = sd.sensor2unit(value, sensorId)
 }
 
 @Entity(tableName = "GlucoseEntries")
@@ -31,7 +32,8 @@ data class GlucoseEntry(@PrimaryKey(autoGenerate = true) val id: Int,
             this(id, s.value, s.utcTimeStamp, s.sensorId, s.status, s.history, s.rest)
     fun toReading() : GlucoseReading = GlucoseReading(value, utcTimeStamp, sensorId, status, history, rest)
 
-    fun tommol(sd: SensorData) : Double = sd.sensor2mmol(value, sensorId)
+    fun tounit(sd: SensorData, multiplier : Float) : Double = sd.sensor2unit(value, sensorId, multiplier)
+    fun tounit(sd: SensorData) : Double = sd.sensor2unit(value, sensorId)
     fun eq(s: SensorChunk) =
             value == s.value &&
             s.status == s.status &&

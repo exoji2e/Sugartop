@@ -8,11 +8,14 @@ import io.exoji2e.sugartop.database.GlucoseDataBase
 import io.exoji2e.sugartop.database.GlucoseEntry
 import io.exoji2e.sugartop.database.ManualGlucoseEntry
 import io.exoji2e.sugartop.database.SensorCalibrationDao
+import io.exoji2e.sugartop.settings.UserData
 
 class SensorData {
     val map = HashMap<Long, Pair<Double,Double>>()
-    var sensorCalibrationDao: SensorCalibrationDao
+    private val sensorCalibrationDao: SensorCalibrationDao
+    private val ctx : Context
     constructor(context: Context) {
+        ctx = context
         sensorCalibrationDao = GlucoseDataBase.getInstance(context).sensorCalibrationDao()
         for(s in sensorCalibrationDao.getAll()) {
             map[s.sensorId] = Pair(s.first, s.second)
@@ -22,6 +25,14 @@ class SensorData {
         if(sensorId in map) return map[sensorId]!!
         return default
     }
+
+    fun get_multiplier() : Float = UserData.get_multiplier(ctx)
+
+
+    fun sensor2unit(value : Int, sensorId: Long, multiplier : Float) : Double = multiplier * sensor2mmol(value, sensorId)
+    fun sensor2unit(value : Int, sensorId: Long) : Double = sensor2unit(value, sensorId, get_multiplier())
+    fun sensor2unit(value : Int, p : Pair<Double, Double>) : Double = get_multiplier() * sensor2mmol(value, p)
+    fun sensor2unit(value: Int) : Double = get_multiplier() * sensor2mmol(value, default)
     fun sensor2mmol(value: Int, sensorId: Long): Double = sensor2mmol(value, get(sensorId))
     fun sensor2mmol(value: Int, p : Pair<Double, Double>) : Double = value*p.second + p.first
 
@@ -70,8 +81,8 @@ class SensorData {
     companion object {
         var sData : SensorData? = null
         val default = Pair(-0.04605, 0.00567)
-        fun sensor2mmol(value: Int, p : Pair<Double, Double>) : Double = value*p.second + p.first
-        fun sensor2mmol(value: Int) : Double = sensor2mmol(value, default)
+        //fun sensor2mmol(value: Int, p : Pair<Double, Double>) : Double = value*p.second + p.first
+        //fun sensor2mmol(value: Int) : Double = sensor2mmol(value, default)
         fun recalibrate(calib : List<Pair<ManualGlucoseEntry, GlucoseEntry>>) : Pair<Double, Double> {
             val xs = mutableListOf<Int>()
             val ys = mutableListOf<Double>()

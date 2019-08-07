@@ -6,22 +6,25 @@ class Compute {
     companion object {
         fun avg(data : List<GlucoseEntry>, sd: SensorData) : Double {
             if(data.isEmpty()) return 0.0
-            if(data.size == 1) return data[0].tommol(sd)
+            if(data.size == 1) return data[0].tounit(sd)
+            val multiplier = sd.get_multiplier()
+
             var sum = 0.0
             for (i in 1..data.size - 1) {
                 val tdiff = Math.min(data[i].utcTimeStamp - data[i-1].utcTimeStamp, 15*Time.MINUTE)
-                sum += (data[i-1].tommol(sd)+ data[i].tommol(sd))/2.0*tdiff
+                sum += (data[i-1].tounit(sd, multiplier)+ data[i].tounit(sd, multiplier))/2.0*tdiff
             }
             return sum/(data.last().utcTimeStamp - data[0].utcTimeStamp)
         }
         fun stddev(data: List<GlucoseEntry>, sd : SensorData) : Double {
             val avg = avg(data, sd)
             if(data.size < 2) return 0.0
+            val multiplier = sd.get_multiplier()
             var sum = 0.0
             var sum_w = 0.0
             for (i in 1..data.size - 1) {
                 val tdiff = Math.min(data[i].utcTimeStamp - data[i-1].utcTimeStamp, 15*Time.MINUTE)
-                val dx = ((data[i-1].tommol(sd)+ data[i].tommol(sd))/2.0 - avg)
+                val dx = ((data[i-1].tounit(sd, multiplier)+ data[i].tounit(sd, multiplier))/2.0 - avg)
                 sum += dx*dx*tdiff
                 sum_w += tdiff
             }
@@ -36,8 +39,9 @@ class Compute {
         fun occurrencesBelow(lo: Float, data : List<GlucoseEntry>, sd: SensorData) : Int {
             var occs = 0
             var last = 0L
+            val multiplier = sd.get_multiplier()
             for(g in data){
-                val below = sd.sensor2mmol(g.value, g.sensorId) < lo
+                val below = g.tounit(sd, multiplier) < lo
                 if(below) {
                     if(last + Time.MINUTE*30 < g.utcTimeStamp) occs += 1
                     last = g.utcTimeStamp
@@ -48,14 +52,15 @@ class Compute {
         private fun _inGoal(lo: Float, hi : Float, data: List<GlucoseEntry>, sd: SensorData) : Double {
             if(data.isEmpty()) return 0.0
             if(data.size == 1) {
-                val v = data[0].tommol(sd)
+                val v = data[0].tounit(sd)
                 if(v < lo || hi < v) return 0.0
                 return 1.0
             }
+            val multiplier = sd.get_multiplier()
             var sum = 0.0
             for (i in 1..data.size - 1) {
                 val tdiff = data[i].utcTimeStamp - data[i-1].utcTimeStamp
-                val (v0, v1) = Pair(data[i-1].tommol(sd), data[i].tommol(sd))
+                val (v0, v1) = Pair(data[i-1].tounit(sd, multiplier), data[i].tounit(sd, multiplier))
                 val min = Math.min(v0, v1)
                 val max = Math.max(v0, v1)
                 if (max <= lo) continue

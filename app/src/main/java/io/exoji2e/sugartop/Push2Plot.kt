@@ -120,8 +120,9 @@ class Push2Plot {
                 val values = entries
                         .groupBy { g -> g.sensorId }
                 val sets = mutableListOf<LineDataSet>()
-                var max = 17f
-                var min = 2f
+                val multiplier = sd.get_multiplier()
+                var max = 17f * multiplier
+                var min = 2f * multiplier
                 for ((c, li) in values.toList().withIndex()) {
                     val gr = li.second
                     val out = arrayListOf<Entry>()
@@ -129,7 +130,7 @@ class Push2Plot {
                         val th = gr[i]
                         if (i > 0 && gr[i - 1].utcTimeStamp + Time.MINUTE > th.utcTimeStamp) continue
                         if (th.status == 200 || th.value < 5000) //5000 corresponds to 28 mmol/L with default calibration.
-                            out.add(Entry((th.utcTimeStamp - start).toFloat(), th.tommol(sd).toFloat()))
+                            out.add(Entry((th.utcTimeStamp - start).toFloat(), th.tounit(sd, multiplier).toFloat()))
                     }
                     val vmax = out.maxBy { v -> v.y }?.y
                     val vmin = out.minBy { v -> v.y }?.y
@@ -138,8 +139,7 @@ class Push2Plot {
                     sets.add(standardLineDataSet(out, false, Color.lineColor(c)))
                 }
 
-                val scatter = ScatterData(scatter(manual.map { m -> Entry((m.utcTimeStamp - start).toFloat(), m.value.toFloat()) }))
-                // TODO: Move constants to user.
+                val scatter = ScatterData(scatter(manual.map { m -> Entry((m.utcTimeStamp - start).toFloat(), m.value.toFloat() * multiplier) }))
                 val lo = arrayListOf(Entry(0f, thresholds.first), Entry((end - start).toFloat(), thresholds.first))
                 val hi = arrayListOf(Entry(0f, thresholds.second), Entry((end - start).toFloat(), thresholds.second))
                 sets.add(standardLineDataSet(lo, true, Color.gray))
@@ -150,8 +150,8 @@ class Push2Plot {
                     combData.setData(scatter)
                     val mmin = manual.minBy { m -> m.value }?.value?.toFloat()
                     val mmax = manual.maxBy { m -> m.value }?.value?.toFloat()
-                    if (mmin != null) min = Math.min(min, mmin)
-                    if (mmax != null) max = Math.max(max, mmax)
+                    if (mmin != null) min = Math.min(min, mmin * multiplier)
+                    if (mmax != null) max = Math.max(max, mmax * multiplier)
                 }
                 graph.data = combData
                 graph.legend.isEnabled = false
@@ -161,9 +161,9 @@ class Push2Plot {
                 val leftAxis = graph.axisLeft
                 leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART)
                 leftAxis.setDrawGridLines(true)
-                leftAxis.granularity = 4f
+                leftAxis.granularity = 4f * multiplier
                 leftAxis.axisMinimum = Math.max(min, 0f)
-                leftAxis.axisMaximum = Math.min(max, 25f)
+                leftAxis.axisMaximum = Math.min(max, 25f * multiplier)
                 leftAxis.textSize = 12f
                 leftAxis.textColor = Color.black
 

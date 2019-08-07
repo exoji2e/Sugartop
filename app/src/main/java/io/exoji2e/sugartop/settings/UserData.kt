@@ -6,9 +6,11 @@ import android.preference.PreferenceManager.getDefaultSharedPreferences
 class UserData {
     companion object {
         val mmol = "mmol/L"
+        val mgdl = "mg/dL"
         val lo_th = "lo_threshold"
         val hi_th = "hi_threshold"
         val db_path = "db_path"
+        val UNIT = "unit"
         fun get_low_threshold(c: Context) : Float {
             val default = get_multiplier(c) *4.0f
             try {
@@ -31,6 +33,20 @@ class UserData {
             getDefaultSharedPreferences(c).edit()
                     .putFloat(lo_th, Math.min(lo, hi))
                     .putFloat(hi_th, Math.max(lo, hi))
+                    .apply()
+        }
+        fun set_mmol(c: Context) {
+            if (get_unit(c) == mmol) return
+            set_thresholds(c, 4.0f, 8.0f)
+            getDefaultSharedPreferences(c).edit()
+                    .putString(UNIT, mmol)
+                    .apply()
+        }
+        fun set_mgdl(c: Context) {
+            if(get_unit(c) == mgdl) return
+            set_thresholds(c, 4.0f*18, 8.0f*18)
+            getDefaultSharedPreferences(c).edit()
+                    .putString(UNIT, mgdl)
                     .apply()
         }
         fun get_multiplier(c: Context) : Float {
