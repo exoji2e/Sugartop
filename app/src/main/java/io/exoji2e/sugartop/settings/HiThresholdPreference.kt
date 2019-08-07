@@ -6,7 +6,12 @@ import android.util.AttributeSet
 
 class HiThresholdPreference(val c: Context, attrs: AttributeSet): EditTextPreference(c, attrs) {
     init{
-        summary = "%s %s".format(UserData.get_hi_threshold(c).toString(), UserData.get_unit(c))
+        refresh()
+    }
+    fun refresh() {
+        val value = UserData.get_hi_threshold(c).toString()
+        text = value
+        summary = "%s %s".format(value, UserData.get_unit(c))
     }
     override fun getPersistedString(defaultReturnValue: String?) : String {
         return UserData.get_hi_threshold(c).toString()

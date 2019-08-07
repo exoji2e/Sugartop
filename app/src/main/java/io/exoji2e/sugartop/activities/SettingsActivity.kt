@@ -6,6 +6,8 @@ import io.exoji2e.sugartop.R
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.support.v4.app.FragmentManager
+import io.exoji2e.sugartop.settings.HiThresholdPreference
+import io.exoji2e.sugartop.settings.LowThresholdPreference
 import io.exoji2e.sugartop.settings.UserData
 
 
@@ -39,8 +41,8 @@ class SettingsActivity : SimpleActivity(), SharedPreferences.OnSharedPreferenceC
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences,
                                   key: String) {
 
-        fragment.findPreference(UserData.lo_th).summary = "%s %s".format(UserData.get_low_threshold(this).toString(), UserData.get_unit(this))
-        fragment.findPreference(UserData.hi_th).summary = "%s %s".format(UserData.get_hi_threshold(this).toString(), UserData.get_unit(this))
+        (fragment.findPreference(UserData.lo_th) as LowThresholdPreference).refresh()
+        (fragment.findPreference(UserData.hi_th) as HiThresholdPreference).refresh()
 
         fragment.findPreference(UserData.UNIT).summary = UserData.get_unit(this)
     }
