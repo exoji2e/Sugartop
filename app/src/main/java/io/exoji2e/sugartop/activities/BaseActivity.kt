@@ -86,7 +86,7 @@ abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
                     val outChannel = outStream.channel
                     try {
                         outChannel.transferFrom(inChannel, 0, Long.MAX_VALUE)
-                    } catch(e: Exception) {
+                    } catch(e: java.lang.Exception) {
                     }
                     inStream?.close()
                     outStream.close()
@@ -114,7 +114,7 @@ abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
 
     override fun onResume() {
         super.onResume()
-        nfcAdapter?.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_V or NfcAdapter.FLAG_READER_NO_PLATFORM_SOUNDS, null)    }
+        nfcAdapter?.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_NFC_B or NfcAdapter.FLAG_READER_NFC_F or NfcAdapter.FLAG_READER_NFC_V or NfcAdapter.FLAG_READER_NO_PLATFORM_SOUNDS, null)    }
     override fun onPause() {
         super.onPause()
         nfcAdapter?.disableReaderMode(this);
@@ -122,19 +122,35 @@ abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
 
     override fun onTagDiscovered(tag: Tag) {
         vibrate(100L, false)
-        val data = read_nfc_data(tag)
+        val (data, msg) = NFCReader.onTag(tag)
+        nfcAdapter?.ignore(tag, 1000, null, null)
         if(data!=null) {
             vibrate(100L, true)
             val tagId = RawParser.bin2long(tag.id)
             val now = Time.now()
-            val task = Runnable {
-                val dc = DataContainer.getInstance(this@BaseActivity)
-                dc.append(data, now, tagId)
+            val timestamp = RawParser.timestamp(data)
+            //Dont accept values if timestamp is less than 30 minutes (Values are off in the beginning)
+            if(timestamp < 30){
+                this@BaseActivity.runOnUiThread{
+                    Toast.makeText(this@BaseActivity, "Wait for %d minutes until reading".format(30 - timestamp), Toast.LENGTH_LONG).show()
+                }
+            } else {
+                val task = Runnable {
+                    val dc = DataContainer.getInstance(this@BaseActivity)
+                    dc.append(data, now, tagId)
+                }
+                DbWorkerThread.postTask(task)
+                putOnTop(RecentActivity::class.java)
             }
-            DbWorkerThread.postTask(task)
-            putOnTop(RecentActivity::class.java)
         } else {
-            vibrate(300L, false)
+            if(msg == NFCReader.start_str) {
+                vibrate(100L, true)
+            } else {
+                vibrate(300L, false)
+            }
+            this@BaseActivity.runOnUiThread {
+                Toast.makeText(this@BaseActivity, msg, Toast.LENGTH_LONG).show()
+            }
         }
     }
     fun putOnTop(cls: Class<*>) {
@@ -266,59 +282,7 @@ abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
         val mime = contentResolver.getType(s)
         return mime
     }
-    private fun read_nfc_data(tag: Tag) : ByteArray? {
-        val LOGTAG = "READINGNFC"
-        val nfcvTag = NfcV.get(tag)
-        val data = ByteArray(360)
-        try {
-            nfcvTag.connect()
-            val uid : ByteArray = tag.id
-            Log.d(LOGTAG, "TAGid sz: %d".format(uid.size))
-            val sb = StringBuilder()
-            for(b in uid){
-                sb.append((b+256)%256).append(' ')
-            }
-            sb.append('\n')
-            Log.d(LOGTAG, "TAGid: %s".format(sb.toString()))
-            val tagId = RawParser.bin2long(uid)
 
-            Log.d(LOGTAG, "TAGid: %d".format(tagId))
-            // Get bytes [i*8:(i+1)*8] from sensor memory and stores in data
-            for (i in 0..40) {
-                val cmd = byteArrayOf(0x60, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, i.toByte(), 0)
-                System.arraycopy(uid, 0, cmd, 2, 8)
-                var resp: ByteArray
-                val time = Time.now()
-                while (true) {
-                    try {
-                        resp = nfcvTag.transceive(cmd)
-                        resp = Arrays.copyOfRange(resp, 2, resp.size)
-                        System.arraycopy(resp, 0, data, i * 8, resp.size)
-                        break
-                    } catch (e: Exception) {
-                        if (Time.now() > time + Time.SECOND*5) {
-                            Log.e(LOGTAG, "Timeout: took more than 5 seconds to read nfctag")
-                            val out = String.format("Failed to read sensor data. %d/40", i)
-                            Toast.makeText(this@BaseActivity, out, Toast.LENGTH_LONG).show()
-                            return null
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            val out = String.format("Failed to read sensor data")
-            Toast.makeText(this@BaseActivity, out, Toast.LENGTH_LONG).show()
-            return null
-        } finally {
-            try {
-                nfcvTag.close()
-            } catch (e: Exception) {
-                Log.e(LOGTAG, "Error closing tag!")
-            }
-        }
-        return data
-    }
     private fun vibrate(t : Long, double : Boolean) {
         val v = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
