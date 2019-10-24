@@ -21,7 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name="io.exoji2e.sugartop.activities.MainActivity">
+        <activity 
+            android:name="io.exoji2e.sugartop.activities.MainActivity"
+            android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,10 +49,12 @@
         </activity>
         <activity
             android:name="io.exoji2e.sugartop.activities.RecentActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:screenOrientation="nosensor" />
         <activity
             android:name="io.exoji2e.sugartop.activities.HistoryActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:screenOrientation="nosensor" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -65,19 +69,23 @@
         <activity
             android:name="io.exoji2e.sugartop.activities.ManualActivity"
             android:label="@string/title_activity_manual"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:screenOrientation="nosensor" />
         <activity
             android:name="io.exoji2e.sugartop.activities.CalibrateActivity"
             android:label="@string/title_activity_calibrate"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:screenOrientation="nosensor" />
         <activity
             android:name="io.exoji2e.sugartop.activities.LastReadingActivity"
             android:label="Last Raw Reading"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:screenOrientation="nosensor" />
         <activity
             android:theme="@style/AppTheme"
             android:name="io.exoji2e.sugartop.activities.SettingsActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_settings"
+            android:screenOrientation="nosensor" />
     </application>
 
 </manifest>
