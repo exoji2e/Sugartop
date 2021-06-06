@@ -9,7 +9,7 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "io.exoji2e.erbil"
+        applicationId "io.exoji2e.sugartop"
         minSdkVersion 24
         targetSdkVersion 28
         versionCode 1

@@ -13,7 +13,7 @@ class RecentActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        showLayout()
+        refreshLayout()
     }
 
     private fun get_recent_text(readings: List<GlucoseEntry>,
@@ -34,7 +34,7 @@ class RecentActivity : BaseActivity() {
 
     }
 
-    private fun showLayout() {
+    fun refreshLayout() {
         val task = Runnable {
             val dc = DataContainer.getInstance(this)
             val sd = SensorData.instance(this)

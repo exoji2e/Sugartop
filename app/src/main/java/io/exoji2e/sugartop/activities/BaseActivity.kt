@@ -140,7 +140,7 @@ abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
                     dc.append(data, now, tagId)
                 }
                 DbWorkerThread.postTask(task)
-                putOnTop(RecentActivity::class.java)
+                putRecentOnTop()
             }
         } else {
             if(msg == NFCReader.start_str) {
@@ -157,6 +157,17 @@ abstract class BaseActivity  : AppCompatActivity(), NfcAdapter.ReaderCallback  {
         val reopen = Intent(this, cls)
         reopen.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
         startActivityIfNeeded(reopen, 0)
+    }
+    fun putRecentOnTop() {
+        if(this is RecentActivity) {
+            val that : RecentActivity = this
+            mainLooper.run {
+                that.refreshLayout()
+            }
+        } else {
+            putOnTop(RecentActivity::class.java)
+        }
+
     }
     private fun startActivity(cls: Class<*>) {
         val intent = Intent(this, cls)

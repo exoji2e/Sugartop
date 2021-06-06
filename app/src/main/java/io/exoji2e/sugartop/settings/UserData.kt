@@ -56,7 +56,7 @@ class UserData {
             return getDefaultSharedPreferences(c).getString("unit", mmol)
         }
         fun get_db_path(c : Context) : String {
-            return getDefaultSharedPreferences(c).getString(db_path, "Erbil.db")
+            return getDefaultSharedPreferences(c).getString(db_path, "Sugartop.db")
         }
         fun set_db_path(c : Context, path: String) {
             getDefaultSharedPreferences(c).edit().putString(db_path, path).apply()
