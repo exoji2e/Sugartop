@@ -1,3 +1,5 @@
+2023-10-11: This app was made for Freestyle Libre v1, and does not work for the v2 or v3. Since v1 sensors are not produced and sold anymore I'm archiving this project.
+
 ![](/screens/logo_withtext.png)
 
 Freestyle Libre is a wearable sensor that measures the glucose level through the blood plasma.
@@ -22,5 +24,3 @@ Sugartop puts you in control of your own data by only saving it locally, and let
 
 ## Warning:
 - If you end up using this app, it's your responsibility to take care of your diabetes. If the app does not work properly I take no responsibility, yadayada. If something is not working as intended, post an issue, or a pull request.
-
-- Use only when the sensor has been activated. I've not yet looked into what data is sent when the sensor starts, trying to poll data before a sensor is activated might disable or damage the sensor.
